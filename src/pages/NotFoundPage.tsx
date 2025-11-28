@@ -2,7 +2,7 @@
 import hero from "../assets/hero.jpg";
 import { Link } from "react-router-dom";
 
-const NotFoundPage = () => {
+export default function NotFoundPage() {
   return (
     <>
       {/* <NavBar /> */}
@@ -28,6 +28,4 @@ const NotFoundPage = () => {
       </div>
     </>
   );
-};
-
-export default NotFoundPage;
+}

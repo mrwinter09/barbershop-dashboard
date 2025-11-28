@@ -1,22 +1,20 @@
 /** @format */
 
-import Hero from "../components/sections/HeroSection";
-import ImageSlider from "../components/sections/ImageSliderSection";
-import Offers from "../components/sections/OffersSection";
-import Plan from "../components/sections/PlanSection";
-import Shops from "../components/sections/ShopSection";
+import HeroSection from "../components/sections/HeroSection";
+import ImageSliderSection from "../components/sections/ImageSliderSection";
+import OffersSection from "../components/sections/OffersSection";
+import PlanSection from "../components/sections/PlanSection";
+import ShopSection from "../components/sections/ShopSection";
 import "../styles/global.css";
 
-function LandingPage() {
+export default function LandingPage() {
   return (
     <>
-      <Hero />
-      <Offers />
-      <Plan />
-      <Shops />
-      <ImageSlider />
+      <HeroSection />
+      <OffersSection />
+      <PlanSection />
+      <ShopSection />
+      <ImageSliderSection />
     </>
   );
 }
-
-export default LandingPage;

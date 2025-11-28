@@ -4,7 +4,7 @@ import { useState, type SetStateAction } from "react";
 import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
 
-const ImageSlider = () => {
+const ImageSliderSection = () => {
   const slides = [
     {
       url: "https://images.pexels.com/photos/1319460/pexels-photo-1319460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -73,4 +73,4 @@ const ImageSlider = () => {
   );
 };
 
-export default ImageSlider;
+export default ImageSliderSection;

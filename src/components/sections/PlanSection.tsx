@@ -6,7 +6,7 @@ import planThree from "../../assets/plan3.jpg";
 import planFour from "../../assets/plan4.jpg";
 import planFive from "../../assets/plan5.jpg";
 
-const Plan = () => {
+const PlanSection = () => {
   return (
     <div
       id="information"
@@ -73,4 +73,4 @@ const Plan = () => {
   );
 };
 
-export default Plan;
+export default PlanSection;

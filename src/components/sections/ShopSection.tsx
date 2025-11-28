@@ -4,7 +4,7 @@ import shopOne from "../../assets/shop1.jpg";
 import shopTwo from "../../assets/shop2.jpg";
 import shopThree from "../../assets/shop3.jpeg";
 
-const Shops = () => {
+const ShopSection = () => {
   return (
     <div
       id="location"
@@ -36,4 +36,4 @@ const Shops = () => {
   );
 };
 
-export default Shops;
+export default ShopSection;

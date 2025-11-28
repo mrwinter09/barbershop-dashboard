@@ -4,11 +4,11 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { HiMenuAlt3 } from "react-icons/hi";
 
-export const NavBar = () => {
+export default function NavBar() {
   const [menu, setMenu] = useState(false);
   const location = useLocation();
 
-  const isCalendar = location.pathname === "/calendar";
+  const isCalendar = location.pathname === "/appointments";
 
   const logoColor = isCalendar ? "black" : "white";
   const menuColor = isCalendar ? "black" : "white";
@@ -25,9 +25,11 @@ export const NavBar = () => {
 
   return (
     <div className="absolute w-full flex justify-between p-4 items-center z-30">
-      <h1 style={{ color: logoColor }} className="text-2xl z-20">
-        髪を切る
-      </h1>
+      <Link to="/">
+        <h1 style={{ color: logoColor }} className="text-2xl z-20">
+          髪を切る
+        </h1>
+      </Link>
 
       <HiMenuAlt3
         style={{ color: menuColor }}
@@ -50,25 +52,14 @@ export const NavBar = () => {
 
           {/* These can stay anchors for now – simple and works */}
           <li className="font-bold text-3xl p-8" onClick={closeNav}>
-            <a href="/#information">Information</a>
+            <Link to="/appointments">Appointments</Link>
           </li>
 
           <li className="font-bold text-3xl p-8" onClick={closeNav}>
-            <a href="/#location">Location</a>
-          </li>
-
-          {/* Reservation: real route to /calendar */}
-          <li className="font-bold text-3xl p-8" onClick={closeNav}>
-            <Link to="/calendar">Reservation</Link>
-          </li>
-
-          <li className="font-bold text-3xl p-8" onClick={closeNav}>
-            <a href="/#contact">Contact</a>
+            <Link to="/about">About</Link>
           </li>
         </ul>
       </div>
     </div>
   );
-};
-
-export default NavBar;
+}
