@@ -6,7 +6,7 @@ import type { Appointment } from "../types/Appointment";
 import {
   serviceLabelByValue,
   barberLabelByValue,
-} from "../../../features/appointments/constants";
+} from "../constants/constants";
 
 const statusOptions = [
   { value: "scheduled", label: "Scheduled" },
@@ -95,6 +95,7 @@ export default function AppointmentsTable({
           disabled={isPending}
         />
       </Table.Td>
+      <Table.Td>{appt.notes}</Table.Td>
     </Table.Tr>
   ));
 
@@ -109,6 +110,7 @@ export default function AppointmentsTable({
           <Table.Th>Time</Table.Th>
           <Table.Th>Status</Table.Th>
           <Table.Th>Confirm</Table.Th>
+          <Table.Th>Notes</Table.Th>
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>{rows}</Table.Tbody>

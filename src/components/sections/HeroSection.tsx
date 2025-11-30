@@ -20,7 +20,7 @@ const HeroSection = () => {
             volutpat mauris. Suspendisse lobortis elementum hendrerit. Donec vel
             interdum nunc.
           </p>
-          <a href="/calender">
+          <a href="/appointments">
             <button className="text-black bg-white">Book Now</button>
           </a>
         </div>

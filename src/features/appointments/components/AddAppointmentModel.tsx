@@ -3,7 +3,8 @@
 import { Modal } from "@mantine/core";
 import AppointmentForm from "./AppointmentForm";
 import { useCreateAppointment } from "../api/useCreateAppointment";
-import type { AppointmentFormValues } from "../validation/appointmentSchema";
+import type { AppointmentFormValues } from "../types/Appointment";
+import { useUsers } from "../../users/api/useUsers";
 
 interface AddAppointmentModalProps {
   opened: boolean;
@@ -15,6 +16,7 @@ export default function AddAppointmentModal({
   onClose,
 }: AddAppointmentModalProps) {
   const { mutateAsync, isPending } = useCreateAppointment();
+  const { data: clients } = useUsers(); // ⬅️ new
 
   async function handleSubmit(values: AppointmentFormValues) {
     await mutateAsync(values);
@@ -23,7 +25,11 @@ export default function AddAppointmentModal({
 
   return (
     <Modal opened={opened} onClose={onClose} title="New appointment" centered>
-      <AppointmentForm onSubmit={handleSubmit} isSubmitting={isPending} />
+      <AppointmentForm
+        onSubmit={handleSubmit}
+        isSubmitting={isPending}
+        clients={clients ?? []}
+      />
     </Modal>
   );
 }

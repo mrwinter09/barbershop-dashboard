@@ -1,36 +1,31 @@
 /** @format */
 
 import { useQuery } from "@tanstack/react-query";
-import type { Appointment } from "../types/Appointment";
+import {
+  AppointmentsListZod,
+  type AppointmentFromApi,
+} from "../../../lib/appointmentSchema.zod";
+import { loadAppointments, saveAppointments } from "./appointments.storage";
 
-const mockAppointments: Appointment[] = [
-  {
-    id: "1",
-    clientName: "John Doe",
-    service: "Fade + Beard trim",
-    date: "2025-12-01",
-    time: "14:00",
-    barberName: "Kiru",
-    status: "scheduled",
-    notes: "Likes low fade",
-  },
-  {
-    id: "2",
-    clientName: "Aya Tanaka",
-    service: "Cut & Style",
-    date: "2025-12-01",
-    time: "15:30",
-    barberName: "Kami",
-    status: "completed",
-  },
-];
+async function fetchAppointments(): Promise<AppointmentFromApi[]> {
+  const stored = loadAppointments();
+  if (stored) {
+    const parsed = AppointmentsListZod.parse(stored);
+    return parsed;
+  }
 
-async function fetchAppointments(): Promise<Appointment[]> {
-  return Promise.resolve(mockAppointments);
+  const res = await fetch("/appointments.json");
+  const json = await res.json();
+
+  const parsed = AppointmentsListZod.parse(json);
+
+  saveAppointments(parsed);
+
+  return parsed;
 }
 
 export function useGetAppointments() {
-  return useQuery<Appointment[]>({
+  return useQuery<AppointmentFromApi[]>({
     queryKey: ["appointments"],
     queryFn: fetchAppointments,
   });

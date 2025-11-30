@@ -5,6 +5,7 @@ import LandingPage from "./pages/LandingPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
 import AboutPage from "./pages/AbountPage";
+import UsersPage from "./pages/UsersPage";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       {
         path: "/appointments",
         element: <AppointmentsPage />,
+      },
+      {
+        path: "/users",
+        element: <UsersPage />,
       },
       {
         path: "/about",

@@ -1,0 +1,117 @@
+# @format
+
+openapi: 3.0.3
+info:
+  title: Pom o Kiru Users API
+  version: 1.0.0
+
+servers:
+  - url: https://jsonplaceholder.typicode.com
+
+paths:
+  /users:
+    get:
+      summary: Get all users
+      operationId: getUsers
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUser"
+      responses:
+        "201":
+          description: User created (mocked by JSONPlaceholder)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+components:
+  schemas:
+    Geo:
+      type: object
+      properties:
+        lat:
+          type: string
+        lng:
+          type: string
+
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+        suite:
+          type: string
+        city:
+          type: string
+        zipcode:
+          type: string
+        geo:
+          $ref: "#/components/schemas/Geo"
+
+    Company:
+      type: object
+      properties:
+        name:
+          type: string
+        catchPhrase:
+          type: string
+        bs:
+          type: string
+
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - username
+        - email
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+        phone:
+          type: string
+        website:
+          type: string
+        company:
+          $ref: "#/components/schemas/Company"
+
+    NewUser:
+      type: object
+      required:
+        - name
+        - username
+        - email
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        website:
+          type: string
