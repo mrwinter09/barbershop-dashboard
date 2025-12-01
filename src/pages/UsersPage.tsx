@@ -39,14 +39,14 @@ export default function UsersPage() {
 
   return (
     <>
+      {/* Hero */}
       <div className="relative w-full h-[260px]">
         <img className="w-full h-full object-cover" alt="/" src={hero} />
         <div className="absolute inset-0 bg-black/30" />
-        <div className="absolute top-0 left-0 w-full h-screen bg-black/10" />
-        <div className="absolute top-0 left-0 w-full h-screen flex flex-col items-center text-white">
-          <Container size="lg" py="xl" my={64}>
-            <Group justify="space-between" mb="md">
-              <div className="text-center">
+        <div className="absolute inset-0 flex items-center text-white">
+          <Container size="lg">
+            <Group justify="space-between">
+              <div className="text-center w-full">
                 <Title order={2}>Clients dashboard</Title>
                 <Text c="white" size="xl">
                   All barbershop clients loaded from the JSONPlaceholder
@@ -56,29 +56,31 @@ export default function UsersPage() {
             </Group>
           </Container>
         </div>
-        <Container size="lg" py="xl">
-          <Group justify="space-between" mb="md">
-            <Select
-              placeholder="Select client to view details"
-              data={clientOptions}
-              value={selectedClientId}
-              onChange={setSelectedClientId}
-              searchable
-              nothingFoundMessage="No clients found"
-              w="60%"
-            />
-            <Button onClick={() => setOpened(true)}>New client</Button>
-          </Group>
-
-          <ClientDetailsCard user={selectedClient} />
-
-          <Paper withBorder radius="md" p="md">
-            <UsersTable users={users} isLoading={isLoading} isError={isError} />
-          </Paper>
-        </Container>
-
-        <AddUserModal opened={opened} onClose={() => setOpened(false)} />
       </div>
+
+      {/* Main content */}
+      <Container size="lg" py="xl">
+        <Group justify="space-between" mb="md">
+          <Select
+            placeholder="Select client to view details"
+            data={clientOptions}
+            value={selectedClientId}
+            onChange={setSelectedClientId}
+            searchable
+            nothingFoundMessage="No clients found"
+            w="60%"
+          />
+          <Button onClick={() => setOpened(true)}>New client</Button>
+        </Group>
+
+        <ClientDetailsCard user={selectedClient} />
+
+        <Paper withBorder radius="md" p="md">
+          <UsersTable users={users} isLoading={isLoading} isError={isError} />
+        </Paper>
+      </Container>
+
+      <AddUserModal opened={opened} onClose={() => setOpened(false)} />
     </>
   );
 }

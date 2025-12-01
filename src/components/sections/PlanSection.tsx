@@ -61,12 +61,16 @@ const PlanSection = () => {
         </p>
         <div>
           {" "}
-          <button className="border-black mr-4 hover:shadow-md">
-            Learn More
-          </button>
-          <button className="bg-black text-white hover:shadow-md">
-            Book Your Appointment
-          </button>
+          <a href="/appointments">
+            <button className="border-black mr-4 hover:shadow-md">
+              Learn More
+            </button>
+          </a>
+          <a href="/appointments">
+            <button className="bg-black text-white hover:shadow-md">
+              Book Your Appointment
+            </button>
+          </a>
         </div>
       </div>
     </div>
