@@ -1,16 +1,42 @@
 /** @format */
 
+import { useState, useMemo } from "react";
 import hero from "../assets/hero.jpg";
-import { Title, Text, Container, Group, Paper, Button } from "@mantine/core";
+import {
+  Title,
+  Text,
+  Container,
+  Group,
+  Paper,
+  Button,
+  Select,
+} from "@mantine/core";
 
 import UsersTable from "../features/users/components/UsersTable";
 import { useUsers } from "../features/users/api/useUsers";
-import { useState } from "react";
 import AddUserModal from "../features/users/components/AddUserModal";
+import ClientDetailsCard from "../features/users/components/ClientDetailsCard";
 
-export default function AppointmentsPage() {
+export default function UsersPage() {
   const { data, isLoading, isError } = useUsers();
   const [opened, setOpened] = useState(false);
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const users = data ?? [];
+
+  const clientOptions = useMemo(
+    () =>
+      users.map((user) => ({
+        value: String(user.id),
+        label: user.name,
+      })),
+    [users]
+  );
+
+  const selectedClient =
+    users.find((user) => String(user.id) === selectedClientId) ?? null;
+
   return (
     <>
       <div className="relative w-full h-[260px]">
@@ -23,27 +49,34 @@ export default function AppointmentsPage() {
               <div className="text-center">
                 <Title order={2}>Clients dashboard</Title>
                 <Text c="white" size="xl">
-                  All barbershop clients loaded from the JSONPlaceholder /users
-                  API.
+                  All barbershop clients loaded from the JSONPlaceholder
+                  <code> /users</code> API.
                 </Text>
               </div>
             </Group>
           </Container>
         </div>
-
-        {/* Main content */}
         <Container size="lg" py="xl">
-          <div className="flex flex-row justify-end mb-8">
-            <Button onClick={() => setOpened(true)}>New Clients</Button>
-          </div>
-          <Paper withBorder radius="md" p="md">
-            <UsersTable
-              users={data ?? []}
-              isLoading={isLoading}
-              isError={isError}
+          <Group justify="space-between" mb="md">
+            <Select
+              placeholder="Select client to view details"
+              data={clientOptions}
+              value={selectedClientId}
+              onChange={setSelectedClientId}
+              searchable
+              nothingFoundMessage="No clients found"
+              w="60%"
             />
+            <Button onClick={() => setOpened(true)}>New client</Button>
+          </Group>
+
+          <ClientDetailsCard user={selectedClient} />
+
+          <Paper withBorder radius="md" p="md">
+            <UsersTable users={users} isLoading={isLoading} isError={isError} />
           </Paper>
         </Container>
+
         <AddUserModal opened={opened} onClose={() => setOpened(false)} />
       </div>
     </>

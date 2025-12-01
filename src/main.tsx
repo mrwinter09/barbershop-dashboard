@@ -4,8 +4,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { MantineProvider } from "@mantine/core";
-import "@mantine/core/styles.css"; // Mantine base styles
-import "./styles/global.css"; // your Tailwind/global styles
+import "@mantine/core/styles.css";
+import "./styles/global.css";
 import App from "./App.tsx";
 import { queryClient } from "./lib/queryClient";
 import { mantineProviderProps } from "./lib/mantine";

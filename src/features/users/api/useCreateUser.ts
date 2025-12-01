@@ -2,18 +2,33 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { components } from "../../../lib/schema";
-import type { User } from "./useUsers";
+import type { UserFormValues } from "../validation/userSchema";
 
-type NewUser = components["schemas"]["NewUser"];
+type User = components["schemas"]["User"];
 
 const BASE_URL = "https://jsonplaceholder.typicode.com";
 
-async function postUser(payload: NewUser): Promise<User> {
+async function createUser(values: UserFormValues): Promise<User> {
+  const payload = {
+    name: values.name,
+    username: values.username,
+    email: values.email,
+    phone: values.phone,
+    website: values.website,
+    ...(values.street || values.city || values.zipcode
+      ? {
+          address: {
+            street: values.street,
+            city: values.city,
+            zipcode: values.zipcode,
+          },
+        }
+      : {}),
+  };
+
   const res = await fetch(`${BASE_URL}/users`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
@@ -29,11 +44,10 @@ export function useCreateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: postUser,
-    onSuccess: (createdUser) => {
-      // 🔥 keep /users list + existing-client select in sync
+    mutationFn: createUser,
+    onSuccess: (newUser) => {
       queryClient.setQueryData<User[]>(["users"], (old) =>
-        old ? [...old, createdUser] : [createdUser]
+        old ? [...old, newUser] : [newUser]
       );
     },
   });

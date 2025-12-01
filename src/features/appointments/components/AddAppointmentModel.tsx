@@ -16,7 +16,7 @@ export default function AddAppointmentModal({
   onClose,
 }: AddAppointmentModalProps) {
   const { mutateAsync, isPending } = useCreateAppointment();
-  const { data: clients } = useUsers(); // ⬅️ new
+  const { data: clients } = useUsers();
 
   async function handleSubmit(values: AppointmentFormValues) {
     await mutateAsync(values);

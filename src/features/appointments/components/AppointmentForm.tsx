@@ -14,7 +14,7 @@ import { useState } from "react";
 import { appointmentSchema } from "../validation/appointmentSchema";
 import type { NewAppointment } from "../api/useCreateAppointment";
 import { serviceOptions, barberOptions } from "../constants/constants";
-import type { User } from "../../users/api/useUsers"; // ⬅️ new
+import type { User } from "../../users/api/useUsers";
 
 interface AppointmentFormProps {
   initialValues?: NewAppointment;

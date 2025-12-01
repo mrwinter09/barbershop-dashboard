@@ -10,7 +10,6 @@ interface UpdateStatusPayload {
   status: AppointmentStatus;
 }
 
-// Fake API for now – just resolves the new status payload
 async function updateAppointmentStatus(
   payload: UpdateStatusPayload
 ): Promise<UpdateStatusPayload> {
