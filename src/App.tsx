@@ -4,7 +4,7 @@ import AppShellLayout from "./components/layout/AppShellLayout";
 import LandingPage from "./pages/LandingPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
-import AboutPage from "./pages/AbountPage";
+import AboutPage from "./pages/AboutPage";
 import UsersPage from "./pages/UsersPage";
 
 const router = createBrowserRouter([
