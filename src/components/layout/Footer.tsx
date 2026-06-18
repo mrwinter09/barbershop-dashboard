@@ -121,7 +121,7 @@ export default function Footer() {
         }}
       >
         <span>ClipperTakes Studio · Rotterdam · 2026</span>
-        <span>An independent cultural project</span>
+        <Link to="/admin" style={{ ...linkStyle, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#5E9099" }}>Studio admin</Link>
       </Box>
     </footer>
   );

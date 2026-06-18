@@ -10,7 +10,7 @@ async function createStory(data: NewStoryInput): Promise<Story> {
   const existing: Story[] = loadStories() ?? [];
   const nextNumber = Math.max(...existing.map((s) => s.number), 0) + 1;
   const story: Story = {
-    id: crypto.randomUUID(),
+    id: "req-" + crypto.randomUUID(),
     number: nextNumber,
     status: "upcoming",
     ...data,

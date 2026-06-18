@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Container, Box, Text, TextInput, Textarea, Button } from "@mantine/core";
+import { loadRecommendations, saveRecommendations } from "../features/stories/api/stories.storage";
 
 export default function RecommendPage() {
   const [form, setForm] = useState({ who: "", how: "", why: "", from: "" });
@@ -14,6 +15,16 @@ export default function RecommendPage() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.who.trim() || !form.why.trim()) return;
+    const rec = {
+      id: crypto.randomUUID(),
+      who: form.who.trim(),
+      how: form.how.trim() || undefined,
+      why: form.why.trim(),
+      from: form.from.trim() || undefined,
+      date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase(),
+      status: "new" as const,
+    };
+    saveRecommendations([...loadRecommendations(), rec]);
     setDone(true);
   };
 
