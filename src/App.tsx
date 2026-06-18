@@ -8,6 +8,7 @@ import StoryDetailPage from "./pages/StoryDetailPage";
 import AboutPage from "./pages/AboutPage";
 import SubmitPage from "./pages/SubmitPage";
 import RecommendPage from "./pages/RecommendPage";
+import AdminPage from "./pages/AdminPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 const router = createBrowserRouter([
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/about", element: <AboutPage /> },
       { path: "/submit", element: <SubmitPage /> },
       { path: "/recommend", element: <RecommendPage /> },
+      { path: "/admin", element: <AdminPage /> },
     ],
   },
   { path: "*", element: <NotFoundPage /> },
