@@ -1,0 +1,52 @@
+/* ============================================================
+   ClipperTakes Studio — Typography tokens
+   Headlines in an editorial serif (Newsreader); body in a clean
+   humanist sans (Hanken Grotesk); story numbers + eyebrows in a
+   monospace (Space Mono) for an archival, catalogued feel.
+   ============================================================ */
+
+:root {
+  /* ---- Families ---- */
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Default body family alias (base.css uses --font-sans directly) */
+
+  /* ---- Weights ---- */
+  --weight-regular:  400;
+  --weight-medium:   500; /* links, buttons, labels */
+  --weight-semibold: 600; /* card titles, emphasis */
+  --weight-bold:     700; /* section heads, accents */
+
+  /* ---- Type scale ----
+     Editorial and generous. Display is serif and photographic;
+     UI/body text sits on the sans at calm, readable sizes. */
+  --text-hero:     clamp(2.85rem, 7vw, 6rem);    /* "50 Conversations. One City." */
+  --text-display:  clamp(2.5rem, 5.5vw, 4.5rem); /* page headlines */
+  --text-h1:       clamp(2rem, 4vw, 3.25rem);    /* section headline */
+  --text-h2:       clamp(1.6rem, 2.6vw, 2.25rem);/* 26–36px */
+  --text-h3:       1.5rem;   /* 24px */
+  --text-h4:       1.25rem;  /* 20px */
+  --text-quote:    clamp(1.5rem, 3vw, 2.4rem);   /* the answer / pull-quote */
+  --text-lg:       1.125rem; /* 18px lead */
+  --text-base:     1rem;     /* 16px body */
+  --text-sm:       0.875rem; /* 14px secondary */
+  --text-xs:       0.75rem;  /* 12px labels, meta */
+  --text-mono-num: clamp(0.95rem, 1.1vw, 1.05rem); /* "Story 07 / 50" */
+
+  /* ---- Line heights ---- */
+  --leading-tight:   1.05;  /* hero serif display */
+  --leading-snug:    1.18;  /* headings */
+  --leading-quote:   1.28;  /* the answer / pull-quotes */
+  --leading-normal:  1.6;   /* body copy */
+  --leading-relaxed: 1.75;
+
+  /* ---- Letter spacing ---- */
+  --tracking-tight:  -0.02em; /* large serif display */
+  --tracking-snug:   -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.06em;  /* eyebrows, small caps labels */
+  --tracking-wider:  0.18em;  /* mono overlines, story-number kicker */
+}

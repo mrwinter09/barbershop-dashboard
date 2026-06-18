@@ -1,0 +1,51 @@
+<!-- @dsCard group="Components" viewport="700x320" name="Buttons" subtitle="Variants, sizes, icon & on-dark states" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; padding: 24px; font-family: var(--font-sans); }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .row:last-child { margin-bottom: 0; }
+  .lbl { width: 100%; font-family: var(--font-mono); font-size: 11px; letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--text-faint); margin-bottom: 2px; }
+  .onimg { background: var(--petrol-900); padding: 16px; border-radius: var(--radius-md); }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    const { Button } = window.KiruBarbershopDesignSystem_db9aa3;
+    const Arrow = () => (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    );
+    function Demo() {
+      return (
+        <div>
+          <div className="row"><span className="lbl">Variants</span>
+            <Button variant="primary">Explore the Stories</Button>
+            <Button variant="accent">Tell your story</Button>
+            <Button variant="outline">Recommend someone</Button>
+            <Button variant="ghost">Read more</Button>
+          </div>
+          <div className="row"><span className="lbl">Sizes &amp; icon</span>
+            <Button size="sm" variant="primary">Small</Button>
+            <Button size="md" variant="primary" rightIcon={<Arrow/>}>Read this story</Button>
+            <Button size="lg" variant="accent">Get involved</Button>
+            <Button variant="primary" disabled>Disabled</Button>
+          </div>
+          <div className="row onimg"><span className="lbl" style={{color:'var(--petrol-100)'}}>On petrol / photography</span>
+            <Button variant="on-dark">Explore the Stories</Button>
+            <Button variant="accent">Tell your story</Button>
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+  </script>
+</body>
+</html>

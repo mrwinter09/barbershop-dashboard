@@ -1,63 +1,86 @@
 /** @format */
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { HiMenuAlt3 } from "react-icons/hi";
+import { Link, useLocation } from "react-router-dom";
+import { Button, Box, Text } from "@mantine/core";
 
-export default function NavBar() {
-  const [menu, setMenu] = useState(false);
+const NAV = [
+  { path: "/", label: "Home" },
+  { path: "/stories", label: "The Stories" },
+  { path: "/about", label: "The Chair" },
+  { path: "/recommend", label: "Recommend someone" },
+];
 
-  const handleNav = () => {
-    setMenu((prev) => !prev);
-    document.body.style.overflow = !menu ? "hidden" : "scroll";
-  };
-
-  const closeNav = () => {
-    setMenu(false);
-    document.body.style.overflow = "scroll";
-  };
+export default function Navbar() {
+  const { pathname } = useLocation();
 
   return (
-    <div className="absolute w-full flex justify-between p-4 items-center z-30">
-      <Link to="/">
-        <h1 style={{ color: "white" }} className="text-2xl z-20">
-          髪を切る
-        </h1>
+    <Box
+      component="nav"
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 20,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "16px clamp(20px, 5vw, 56px)",
+        backgroundColor: "rgba(245, 238, 223, 0.88)",
+        backdropFilter: "blur(10px) saturate(1.1)",
+        borderBottom: "1px solid #E0D3B8",
+      }}
+    >
+      <Link to="/" style={{ textDecoration: "none" }}>
+        <Text
+          style={{
+            fontFamily: '"Newsreader", Georgia, serif',
+            fontWeight: 600,
+            fontSize: 22,
+            letterSpacing: "-0.02em",
+            color: "#211A12",
+          }}
+        >
+          Clipper<em style={{ fontStyle: "italic", color: "#C26B4A" }}>Takes</em>
+        </Text>
       </Link>
 
-      <HiMenuAlt3
-        style={{ color: "white" }}
-        onClick={handleNav}
-        className="z-20 cursor-pointer"
-        size={25}
-      />
-
-      <div
-        className={
-          menu
-            ? "fixed text-gray-300 left-0 top-0 w-full h-full bg-black/90 px-4 py-7 flex-col z-10 duration-300"
-            : "fixed text-gray-300 left-[-100%] top-0 w-full h-full bg-black/90 px-4 py-7 flex-col z-10 duration-300"
-        }>
-        <ul className="flex flex-col w-full h-full items-center justify-center cursor-pointer">
-          {/* Home: route to landing page root */}
-          <li className="font-bold text-3xl p-8" onClick={closeNav}>
-            <Link to="/">Home</Link>
-          </li>
-
-          {/* These can stay anchors for now – simple and works */}
-          <li className="font-bold text-3xl p-8" onClick={closeNav}>
-            <Link to="/appointments">Appointments</Link>
-          </li>
-
-          <li className="font-bold text-3xl p-8" onClick={closeNav}>
-            <Link to="/users">Clients</Link>
-          </li>
-
-          <li className="font-bold text-3xl p-8" onClick={closeNav}>
-            <Link to="/about">About</Link>
-          </li>
-        </ul>
-      </div>
-    </div>
+      <Box
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "clamp(14px, 2.4vw, 30px)",
+          flexWrap: "wrap",
+        }}
+      >
+        {NAV.map((n) => {
+          const active = pathname === n.path || (n.path !== "/" && pathname.startsWith(n.path));
+          return (
+            <Link key={n.path} to={n.path} style={{ textDecoration: "none" }}>
+              <Text
+                size="sm"
+                style={{
+                  fontWeight: 500,
+                  color: active ? "#15454F" : "#3F2D20",
+                  borderBottom: active ? "2px solid #F2C200" : "2px solid transparent",
+                  paddingBottom: 2,
+                  transition: "color .2s, border-color .2s",
+                }}
+              >
+                {n.label}
+              </Text>
+            </Link>
+          );
+        })}
+        <Button
+          component={Link}
+          to="/submit"
+          color="yellow"
+          variant="filled"
+          size="sm"
+          styles={{ root: { color: "#211A12", fontWeight: 600 } }}
+        >
+          Tell your story
+        </Button>
+      </Box>
+    </Box>
   );
 }

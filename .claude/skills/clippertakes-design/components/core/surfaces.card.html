@@ -1,0 +1,57 @@
+<!-- @dsCard group="Components" viewport="700x250" name="Badges, Cards & Avatars" subtitle="Tone pills, warm-paper surfaces, participant chips" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; padding: 24px; font-family: var(--font-sans); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .lbl { font-family: var(--font-mono); font-size: 11px; letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--text-faint); margin-bottom: 10px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    const { Badge, Card, Avatar } = window.KiruBarbershopDesignSystem_db9aa3;
+    function Demo() {
+      return (
+        <div className="grid">
+          <Card padding="md">
+            <div className="lbl">Tone pills</div>
+            <div className="pills">
+              <Badge tone="petrol">New this week</Badge>
+              <Badge tone="accent">Story 24 added</Badge>
+              <Badge tone="clay" dot>Entrepreneur</Badge>
+              <Badge tone="moss">Volunteer</Badge>
+              <Badge tone="outline">2026</Badge>
+            </div>
+            <div className="lbl" style={{marginTop:18}}>Participant avatars</div>
+            <div style={{display:'flex', gap:8, alignItems:'center'}}>
+              <Avatar name="Fatima El Amrani" tone="clay" />
+              <Avatar name="Ivan Winter" tone="petrol" size="lg" />
+              <Avatar name="Sanne Bakker" tone="moss" />
+              <Avatar name="K M" size="sm" />
+            </div>
+          </Card>
+          <Card padding="md" hoverable>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8}}>
+              <strong style={{fontFamily:'var(--font-serif)', fontSize:'1.25rem', color:'var(--text-strong)'}}>Fatima El Amrani</strong>
+              <Badge tone="outline">Afrikaanderwijk</Badge>
+            </div>
+            <div style={{fontSize:14, color:'var(--text-muted)', lineHeight:1.7}}>
+              Community organizer · Story 07 / 50<br/>Recorded at the Afrikaandermarkt, March 2026
+            </div>
+          </Card>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+  </script>
+</body>
+</html>

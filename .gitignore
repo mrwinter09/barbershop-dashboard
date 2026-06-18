@@ -20,4 +20,5 @@ bun-debug.log*
 
 # env
 .env
-.env.*.local
+.env.*.local.claude/worktrees/
+.claude/worktrees/

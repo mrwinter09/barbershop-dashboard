@@ -1,38 +1,28 @@
 /** @format */
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppShellLayout from "./components/layout/AppShellLayout";
-import LandingPage from "./pages/LandingPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import AppointmentsPage from "./pages/AppointmentsPage";
+import HomePage from "./pages/HomePage";
+import StoriesPage from "./pages/StoriesPage";
+import StoryDetailPage from "./pages/StoryDetailPage";
 import AboutPage from "./pages/AboutPage";
-import UsersPage from "./pages/UsersPage";
+import SubmitPage from "./pages/SubmitPage";
+import RecommendPage from "./pages/RecommendPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const router = createBrowserRouter([
   {
     element: <AppShellLayout />,
     children: [
-      {
-        path: "/",
-        element: <LandingPage />,
-      },
-      {
-        path: "/appointments",
-        element: <AppointmentsPage />,
-      },
-      {
-        path: "/users",
-        element: <UsersPage />,
-      },
-      {
-        path: "/about",
-        element: <AboutPage />,
-      },
+      { path: "/", element: <HomePage /> },
+      { path: "/stories", element: <StoriesPage /> },
+      { path: "/stories/:id", element: <StoryDetailPage /> },
+      { path: "/about", element: <AboutPage /> },
+      { path: "/submit", element: <SubmitPage /> },
+      { path: "/recommend", element: <RecommendPage /> },
     ],
   },
-  {
-    path: "*",
-    element: <NotFoundPage />,
-  },
+  { path: "*", element: <NotFoundPage /> },
 ]);
 
 export default function App() {
