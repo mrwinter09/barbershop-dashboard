@@ -1,0 +1,120 @@
+/* ============================================================
+   ClipperTakes Studio — Color tokens
+   A Rotterdam cultural-storytelling palette. Deep PETROL blue +
+   warm PAPER off-white carry the identity; COFFEE, CLAY and MOSS
+   are the secondary editorial hues; ROTTERDAM YELLOW and warm
+   ORANGE are the accents. Nothing here is a SaaS ink+blue scale —
+   surfaces are warm and paper-like, never flat clinical white.
+   ============================================================ */
+
+:root {
+  /* ---- Petrol (primary — deep teal-blue) ---- */
+  --petrol-900: #0C2A30; /* deepest — inverse panels, footer */
+  --petrol-800: #103840;
+  --petrol-700: #15454F; /* PRIMARY brand petrol */
+  --petrol-600: #1C5862;
+  --petrol-500: #2A6E79;
+  --petrol-300: #79A6AD;
+  --petrol-100: #CBDEE0;
+  --petrol-50:  #E9F1F1;
+
+  /* ---- Paper (warm off-white neutral) ---- */
+  --paper-0:   #FCF8F0; /* card / raised surface */
+  --paper-50:  #F5EEDF; /* page background */
+  --paper-100: #ECE2CC; /* sunken fills, hover */
+  --paper-200: #E0D3B8; /* hairline on paper */
+  --paper-300: #CBB994; /* stronger border on paper */
+
+  /* ---- Coffee (warm brown — body ink + woody depth) ---- */
+  --coffee-900: #261A12;
+  --coffee-700: #3F2D20; /* strong body text on paper */
+  --coffee-500: #6A5440;
+  --coffee-300: #9C8268;
+
+  /* ---- Clay (terracotta) ---- */
+  --clay-600: #AE5234;
+  --clay-500: #C26B4A;
+  --clay-300: #DDA488;
+  --clay-100: #F1DACB;
+
+  /* ---- Moss (muted green) ---- */
+  --moss-700: #4C5A34;
+  --moss-600: #5E6E44;
+  --moss-500: #74855A;
+  --moss-300: #A9B58E;
+  --moss-100: #DEE3CC;
+
+  /* ---- Rotterdam yellow (accent) ---- */
+  --yellow-500: #F2C200; /* the bright Rotterdam yellow */
+  --yellow-400: #FFD22E;
+  --yellow-200: #FAE48A;
+  --yellow-100: #FBEFBF;
+
+  /* ---- Warm orange (secondary accent) ---- */
+  --orange-600: #D2632A;
+  --orange-500: #E47B3C;
+  --orange-100: #F8E0CB;
+
+  /* ---- Warm neutral ink (text + lines) ---- */
+  --ink-900: #211A12; /* headlines */
+  --ink-700: #423829; /* body */
+  --ink-500: #6E6453; /* muted */
+  --ink-400: #968A75; /* faint / placeholder */
+
+  /* ============================================================
+     Semantic aliases — prefer these in components
+     ============================================================ */
+
+  /* Text */
+  --text-strong:  var(--ink-900);
+  --text-body:    var(--coffee-700);
+  --text-muted:   var(--ink-500);
+  --text-faint:   var(--ink-400);
+  --text-inverse: var(--paper-0);
+  --text-link:    var(--petrol-700);
+  --text-accent:  var(--clay-600);
+
+  /* Surfaces */
+  --surface-page:    var(--paper-50);
+  --surface-card:    var(--paper-0);
+  --surface-raised:  var(--paper-0);
+  --surface-sunken:  var(--paper-100);
+  --surface-ink:     var(--petrol-900); /* dark inverse panels / footer */
+  --surface-tint:    var(--petrol-50);  /* quiet informational fill */
+  --surface-accent:  var(--yellow-500); /* the loud accent block */
+
+  /* Borders */
+  --border-hairline: var(--paper-200);
+  --border-default:  var(--paper-300);
+  --border-strong:   var(--coffee-700);
+  --border-focus:    var(--petrol-600);
+
+  /* Brand */
+  --brand-petrol:  var(--petrol-700);
+  --brand-primary: var(--petrol-700);
+  --brand-accent:  var(--yellow-500);
+  --brand-on-dark: var(--paper-0);
+
+  /* Neutral fills */
+  --fill-quiet:  var(--paper-100);
+  --fill-hover:  var(--paper-200);
+
+  /* Danger (form validation only — a muted brick red, not a SaaS red) */
+  --danger-fg:     #A83B2C;
+  --danger-bg:     #F4DBD3;
+  --danger-border: #CF8474;
+
+  /* Story status — replaces the old scheduled/completed/cancelled
+     vocabulary. A story moves upcoming → published → withdrawn. */
+  --status-upcoming-fg:  var(--clay-600);
+  --status-upcoming-bg:  var(--clay-100);
+  --status-published-fg: var(--moss-700);
+  --status-published-bg: var(--moss-100);
+  --status-withdrawn-fg: var(--ink-500);
+  --status-withdrawn-bg: var(--paper-100);
+
+  /* Scrims & overlays (session photography) */
+  --scrim-30: rgba(12, 42, 48, 0.30);
+  --scrim-50: rgba(12, 42, 48, 0.52);
+  --scrim-70: rgba(12, 42, 48, 0.74);
+}

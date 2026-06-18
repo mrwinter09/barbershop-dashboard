@@ -1,0 +1,16 @@
+/* ============================================================
+   ClipperTakes Studio — Webfonts
+   Editorial pairing for "culture + trust", not "tech + startup":
+     · Newsreader  — editorial display serif with real character
+                     (optical sizing, journalistic), used for
+                     headlines and the one-question / answer voice.
+     · Hanken Grotesk — clean, warm, legible humanist sans for body.
+     · Space Mono  — archival monospace for story numbers (07 / 50),
+                     eyebrows and metadata.
+
+   SUBSTITUTION NOTE: the brief named no specific typefaces, only a
+   direction. These three are the chosen interpretation, all served
+   from Google Fonts. Swap in licensed faces later if desired.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");

@@ -1,0 +1,42 @@
+<!-- @dsCard group="Components" viewport="700x340" name="Form controls" subtitle="TextInput, Select, Switch — with error & focus states" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; padding: 24px; font-family: var(--font-sans); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 20px; align-items: start; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    const { TextInput, Select, Switch } = window.KiruBarbershopDesignSystem_db9aa3;
+    const HOODS = ['Afrikaanderwijk','Blijdorp','Delfshaven','Nieuwe Binnenweg','Noord','Rotterdam West'];
+    function Demo() {
+      const [on, setOn] = React.useState(true);
+      return (
+        <div className="grid">
+          <TextInput label="Your name" placeholder="First name" defaultValue="Fatima El Amrani" required />
+          <Select label="Neighborhood" placeholder="Where in Rotterdam?" defaultValue="Afrikaanderwijk"
+            data={HOODS} />
+          <TextInput label="Email" type="email" defaultValue="not-an-email" error="That doesn't look like an email" />
+          <Select label="You are a…" placeholder="Pick one" defaultValue=""
+            data={['Resident','Entrepreneur','Volunteer','Maker','Organizer']} />
+          <TextInput label="What's your story about?" multiline rows={2} placeholder="A sentence or two…" hint="Optional — we'll talk more when we meet" />
+          <div style={{display:'flex', flexDirection:'column', gap:14, paddingTop:24}}>
+            <Switch label="I'd like to stay in touch about the project" checked={on} onChange={(e)=>setOn(e.currentTarget.checked)} />
+            <Switch label="Happy to be filmed in the chair" checked={false} onChange={()=>{}} />
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+  </script>
+</body>
+</html>

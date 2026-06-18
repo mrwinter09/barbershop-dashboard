@@ -1,0 +1,25 @@
+<!-- @dsCard group="Spacing" viewport="700x190" name="Space scale" subtitle="4px base grid — bars show relative step size" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 22px 24px; font-family: var(--font-sans); }
+  .row { display:flex; align-items:center; gap:14px; padding: 4px 0; }
+  .name { width: 90px; font-size: 12px; font-family: var(--font-mono); color: var(--text-muted); }
+  .bar { height: 14px; background: var(--petrol-700); border-radius: 3px; }
+  .px { font-size: 11px; color: var(--text-faint); }
+</style>
+</head>
+<body>
+  <div class="row"><span class="name">space-1</span><span class="bar" style="width:4px"></span><span class="px">4px</span></div>
+  <div class="row"><span class="name">space-2</span><span class="bar" style="width:8px"></span><span class="px">8px</span></div>
+  <div class="row"><span class="name">space-3</span><span class="bar" style="width:12px"></span><span class="px">12px</span></div>
+  <div class="row"><span class="name">space-4</span><span class="bar" style="width:16px"></span><span class="px">16px</span></div>
+  <div class="row"><span class="name">space-6</span><span class="bar" style="width:24px"></span><span class="px">24px</span></div>
+  <div class="row"><span class="name">space-8</span><span class="bar" style="width:32px"></span><span class="px">32px</span></div>
+  <div class="row"><span class="name">space-12</span><span class="bar" style="width:48px"></span><span class="px">48px</span></div>
+  <div class="row"><span class="name">space-16</span><span class="bar" style="width:64px"></span><span class="px">64px · section rhythm</span></div>
+</body>
+</html>

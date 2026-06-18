@@ -1,0 +1,75 @@
+<!-- @dsCard group="Components" viewport="700x560" name="Story" subtitle="StoryCard · ProgressCounter · status & neighborhood tags · reflections" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; padding: 24px; }
+  .wrap { display: flex; flex-direction: column; gap: 22px; max-width: 652px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .panel { background: var(--surface-card); background-image: var(--paper-texture);
+    border: 1px solid var(--border-hairline); border-radius: var(--radius-lg); padding: 20px; }
+</style>
+</head>
+<body>
+<div id="root" class="wrap"></div>
+<script type="text/babel">
+  const { StoryCard, ProgressCounter, StoryStatusTag, NeighborhoodTag, ReflectionItem } =
+    window.KiruBarbershopDesignSystem_db9aa3;
+
+  function Demo() {
+    return (
+      <>
+        <ProgressCounter count={23} total={50} size="md" />
+        <div className="cards">
+          <StoryCard
+            number={7} total={50}
+            name="Fatima El Amrani"
+            role="Community organizer"
+            neighborhood="Afrikaanderwijk"
+            image="../../assets/img/interior-1.jpg"
+            teaser="“The market taught me the whole city in one street.”"
+            statusTag={<StoryStatusTag status="published" />}
+            as="div"
+          />
+          <StoryCard
+            number={24} total={50}
+            name="Story 24"
+            role="Maker"
+            neighborhood="Noord"
+            image="../../assets/img/interior-3.jpg"
+            status="upcoming"
+            statusTag={<StoryStatusTag status="upcoming" />}
+            as="div"
+          />
+        </div>
+        <div className="row">
+          <NeighborhoodTag name="All of Rotterdam" count={23} active />
+          <NeighborhoodTag name="Afrikaanderwijk" count={5} />
+          <NeighborhoodTag name="Delfshaven" count={3} />
+          <NeighborhoodTag name="Noord" count={4} />
+        </div>
+        <div className="panel">
+          <ReflectionItem
+            text="I grew up two streets from here. This is exactly how I remember the market on a Saturday."
+            name="Sanne" neighborhood="Afrikaanderwijk" date="14 MAR 2026"
+          />
+          <ReflectionItem
+            text="Made me want to call my grandfather. Beautiful."
+            name="Marco" date="12 MAR 2026"
+          />
+        </div>
+      </>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script>
+</body>
+</html>

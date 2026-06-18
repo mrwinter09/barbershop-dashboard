@@ -1,0 +1,27 @@
+<!-- @dsCard group="Brand" viewport="700x180" name="Wordmark lockup" subtitle="ClipperTakes set in Newsreader — on petrol and on paper" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; font-family: var(--font-sans); display:flex; }
+  .panel { flex:1; height: 150px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; }
+  .ink { background: var(--petrol-900); }
+  .paper { background: var(--surface-card); background-image: var(--paper-texture); border-left: 1px solid var(--border-hairline); }
+  .mark { font-family: var(--font-serif); font-weight: 600; font-size: 38px; letter-spacing: -.02em; }
+  .mark .takes { font-style: italic; }
+  .rom { font-family: var(--font-mono); font-size: 10px; letter-spacing: var(--tracking-wider); text-transform: uppercase; }
+  .ink .mark { color: var(--paper-0); }
+  .ink .mark .takes { color: var(--yellow-500); }
+  .ink .rom { color: var(--petrol-100); }
+  .paper .mark { color: var(--ink-900); }
+  .paper .mark .takes { color: var(--clay-600); }
+  .paper .rom { color: var(--text-muted); }
+</style>
+</head>
+<body>
+  <div class="panel ink"><div class="mark">Clipper<span class="takes">Takes</span></div><div class="rom">Stories from Rotterdam</div></div>
+  <div class="panel paper"><div class="mark">Clipper<span class="takes">Takes</span></div><div class="rom">Stories from Rotterdam</div></div>
+</body>
+</html>

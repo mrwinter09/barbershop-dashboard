@@ -1,0 +1,77 @@
+/* ============================================================
+   ClipperTakes Studio — base element styles
+   Establishes the editorial voice: serif headlines, warm paper
+   ground with a faint grain, petrol links, Rotterdam-yellow marks.
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-body);
+  background-color: var(--surface-page);
+  background-image: var(--paper-texture);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  color: var(--text-strong);
+  font-family: var(--font-serif);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-snug);
+}
+
+p { margin: 0; }
+
+a {
+  color: var(--text-link);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  transition: var(--transition-colors);
+}
+a:hover { color: var(--petrol-500); text-decoration: underline; }
+
+img { display: block; max-width: 100%; }
+
+::selection {
+  background: var(--yellow-500);
+  color: var(--ink-900);
+}
+
+/* ---- Reusable editorial utilities ---- */
+
+/* Mono kicker / eyebrow — "STORY 07 / 50", "ROTTERDAM · 2026" */
+.ct-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Paper-texture surface helper */
+.ct-paper {
+  background-color: var(--surface-card);
+  background-image: var(--paper-texture);
+}
+
+/* The wordmark — set in the serif, tight */
+.ct-wordmark {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+}

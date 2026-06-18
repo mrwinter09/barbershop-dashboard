@@ -1,0 +1,116 @@
+<!-- @dsCard group="ClipperTakes site" viewport="1280x780" name="ClipperTakes Studio — the platform" subtitle="Home · Stories Board · Story detail · About · Submit · Recommend" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ClipperTakes Studio — Stories from Rotterdam</title>
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="data.js"></script>
+<style>
+  html, body { margin: 0; }
+  #app { min-height: 100vh; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script type="text/babel" src="chrome.jsx" data-presets="react"></script>
+<script type="text/babel" src="screens.jsx" data-presets="react"></script>
+<script type="text/babel" src="forms.jsx" data-presets="react"></script>
+
+<script type="text/babel" data-presets="react">
+const { Header, Footer } = window.CTChrome;
+const { Home, StoriesBoard, StoryDetail } = window.CTScreens;
+const { About, SubmitStory, Recommend } = window.CTForms;
+const { STORIES, SEED_REFLECTIONS, TARGET } = window.CT_DATA;
+const KEY = "ct_studio_kit_v1";
+
+function loadStore() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
+}
+function saveStore(s) {
+  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {}
+}
+
+function App() {
+  const persisted = React.useRef(loadStore());
+  const [route, setRoute] = React.useState("home");
+  const [storyId, setStoryId] = React.useState(null);
+  const [submissions, setSubmissions] = React.useState(persisted.current.submissions || []);
+  const [reflections, setReflections] = React.useState(() => {
+    const base = {};
+    Object.keys(SEED_REFLECTIONS).forEach((k) => { base[k] = SEED_REFLECTIONS[k].slice(); });
+    const saved = persisted.current.reflections || {};
+    Object.keys(saved).forEach((k) => { base[k] = (base[k] || []).concat(saved[k]); });
+    return base;
+  });
+
+  const stories = React.useMemo(() => STORIES.concat(submissions), [submissions]);
+  const collected = stories.filter((s) => s.status === "published").length;
+
+  const persist = (next) => { persisted.current = { ...persisted.current, ...next }; saveStore(persisted.current); };
+
+  const go = (r) => { setRoute(r); window.scrollTo(0, 0); };
+  const openStory = (id) => { setStoryId(id); setRoute("story"); window.scrollTo(0, 0); };
+
+  const addReflection = (id) => ({ name, text }) => {
+    const date = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase();
+    const entry = { name: name || "Anonymous", text, date };
+    setReflections((prev) => {
+      const next = { ...prev, [id]: (prev[id] || []).concat(entry) };
+      const savedRefl = { ...(persisted.current.reflections || {}) };
+      savedRefl[id] = (savedRefl[id] || []).concat(entry);
+      persist({ reflections: savedRefl });
+      return next;
+    });
+  };
+
+  const addSubmission = (f) => {
+    const maxNum = stories.reduce((m, s) => Math.max(m, s.number), 0);
+    const number = maxNum + 1;
+    const entry = {
+      id: "sub-" + number, number, status: "upcoming",
+      name: f.name.trim(), role: f.role || "Resident",
+      neighborhood: f.neighborhood || "Rotterdam West",
+      date: f.date ? "Requested " + f.date : "Recording soon",
+      image: "../../assets/img/shop-3.jpg",
+      question: "What did this city teach you that nobody sat you down to explain?",
+      answer: "",
+    };
+    setSubmissions((prev) => {
+      const next = prev.concat(entry);
+      persist({ submissions: next });
+      return next;
+    });
+    return number;
+  };
+
+  let screen;
+  if (route === "home") screen = <Home stories={stories} collected={collected} go={go} openStory={openStory} />;
+  else if (route === "stories") screen = <StoriesBoard stories={stories} collected={collected} openStory={openStory} />;
+  else if (route === "story") {
+    const story = stories.find((s) => s.id === storyId) || stories[0];
+    screen = <StoryDetail story={story} reflections={reflections[story.id] || []} onReflect={addReflection(story.id)} back={() => go("stories")} go={go} />;
+  }
+  else if (route === "about") screen = <About go={go} collected={collected} />;
+  else if (route === "submit") screen = <SubmitStory onSubmit={addSubmission} />;
+  else if (route === "recommend") screen = <Recommend onSubmit={() => {}} />;
+
+  return (
+    <div className="site">
+      <Header route={route} go={go} />
+      <main className="site__main">{screen}</main>
+      <Footer go={go} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+</script>
+</body>
+</html>
