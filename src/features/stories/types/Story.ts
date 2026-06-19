@@ -1,11 +1,16 @@
 /** @format */
 
 export type StoryStatus = "upcoming" | "published" | "withdrawn";
+export type StoryStage = "draft" | "confirmed" | "shooting" | "producing" | "published";
 
 export interface Story {
   id: string;
   number: number;
   status: StoryStatus;
+  stage?: StoryStage;
+  checklist?: Record<string, boolean>;
+  contactEmail?: string;
+  appointmentDate?: string;
   name: string;
   role: string;
   neighborhood: string;
@@ -34,5 +39,5 @@ export interface Recommendation {
   why: string;
   from?: string;
   date: string;
-  status: "new" | "reviewed";
+  status: "new" | "reviewed" | "picked-up" | "declined";
 }
