@@ -5,7 +5,7 @@ import { loadStories, loadReflections } from "../features/stories/api/stories.st
 import { SEED_STORIES, SEED_REFLECTIONS, TARGET, NEIGHBORHOODS } from "../features/stories/api/seed";
 import type { Story, Reflection } from "../features/stories/types/Story";
 
-// ─── Design tokens (inline — no Mantine, pure mobile shell) ─────────────────
+// ─── Design tokens (inline, no Mantine, pure mobile shell) ─────────────────
 
 const T = {
   serif: '"Newsreader", Georgia, serif',
@@ -145,7 +145,7 @@ function MobileHome({ onNav }: { onNav: (t: Tab) => void }) {
         <div style={{ padding: "22px 20px 6px" }}>
           <div style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: T.muted }}>Rotterdam · A living archive</div>
           <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 40, lineHeight: 1.02, letterSpacing: "-.025em", color: T.ink, margin: "10px 0 0" }}>50 Conversations.<br />One City.</h1>
-          <p style={{ fontSize: 16, lineHeight: 1.6, color: T.body, marginTop: 14 }}>A barber chair travels the city. People sit down, the clippers start, and we ask one question. Each answer becomes a short portrait — kept for everyone.</p>
+          <p style={{ fontSize: 16, lineHeight: 1.6, color: T.body, marginTop: 14 }}>A barber chair travels the city. People sit down, the clippers start, and we ask one question. Each answer becomes a short portrait, kept for everyone.</p>
           <button
             onClick={() => onNav("stories")}
             style={{ display: "block", width: "100%", marginTop: 18, padding: 15, border: 0, borderRadius: 8, background: T.yellow, color: T.ink, fontFamily: T.sans, fontSize: 16, fontWeight: 600, cursor: "pointer" }}
@@ -420,7 +420,7 @@ function MobileAbout({ onNav }: { onNav: (t: Tab) => void }) {
         <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: T.clay6 }}>The Chair</span>
         <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 34, lineHeight: 1.06, letterSpacing: "-.02em", color: T.ink, margin: "12px 0 16px" }}>One question.<br />One haircut.<br />One story.</h1>
         <p style={{ fontSize: 16, lineHeight: 1.7, color: T.body }}>
-          ClipperTakes is a mobile barber chair that travels through Rotterdam. Founder Ivan Winter — barber and theatre maker — sits people down and asks one question. The conversation that happens while the clippers run becomes a short audiovisual portrait.
+          ClipperTakes is a mobile barber chair that travels through Rotterdam. Founder Ivan Winter, barber and theatre maker, sits people down and asks one question. The conversation that happens while the clippers run becomes a short audiovisual portrait.
         </p>
         <p style={{ fontSize: 16, lineHeight: 1.7, color: T.body, marginTop: 16 }}>
           The goal is fifty portraits. {published.length} collected so far.
@@ -509,9 +509,9 @@ function MobileTell({ onNav }: { onNav: (t: Tab) => void }) {
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: T.paper, backgroundImage: PAPER_TEX }}>
       <MHead back onBack={() => onNav("stories")} />
       <div style={{ flex: 1, overflowY: "auto", padding: "24px 20px 32px" }}>
-        <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: T.clay6 }}>An invitation — not a booking</span>
+        <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: T.clay6 }}>An invitation, not a booking</span>
         <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 32, lineHeight: 1.06, letterSpacing: "-.02em", color: T.ink, margin: "12px 0 6px" }}>Tell us who you are.</h1>
-        <p style={{ fontSize: 15, lineHeight: 1.6, color: T.body, marginBottom: 22 }}>Leave a few details and we'll reach out. No form to perfect — just the start of a conversation.</p>
+        <p style={{ fontSize: 15, lineHeight: 1.6, color: T.body, marginBottom: 22 }}>Leave a few details and we'll reach out. No form to perfect, just the start of a conversation.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={field}>
             <label style={label}>Your name <span style={{ color: T.clay6 }}>*</span></label>
@@ -543,8 +543,8 @@ function MobileTell({ onNav }: { onNav: (t: Tab) => void }) {
           </div>
           <div style={field}>
             <label style={label}>What might your story be about?</label>
-            <textarea style={{ ...input, minHeight: 88, resize: "vertical" }} value={form.about} onChange={set("about")} placeholder="A sentence or two — what you'd talk about while the clippers run." />
-            <span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted }}>Optional — we'll talk more when we meet.</span>
+            <textarea style={{ ...input, minHeight: 88, resize: "vertical" }} value={form.about} onChange={set("about")} placeholder="A sentence or two, what you'd talk about while the clippers run." />
+            <span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted }}>Optional, we'll talk more when we meet.</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "8px 0" }}>
             <MSwitch label="I'd like to stay in touch about the project" checked={touch} onChange={() => setTouch((v) => !v)} />

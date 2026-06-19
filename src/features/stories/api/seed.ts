@@ -17,7 +17,7 @@ export const SEED_STORIES: Story[] = [
     name: "Fatima El Amrani", role: "Community organizer", neighborhood: "Afrikaanderwijk", date: "14 MAR 2026",
     image: img1,
     question: "What did this city teach you that nobody sat you down to explain?",
-    answer: "The market taught me the whole city in one street. You learn every language by the time you've bought your vegetables. That's Rotterdam — nobody explains it, you just stand in it long enough.",
+    answer: "The market taught me the whole city in one street. You learn every language by the time you've bought your vegetables. That's Rotterdam, nobody explains it, you just stand in it long enough.",
   },
   {
     id: "2", number: 2, status: "published",
@@ -45,7 +45,7 @@ export const SEED_STORIES: Story[] = [
     name: "Amira Haddad", role: "Nurse", neighborhood: "Blijdorp", date: "17 FEB 2026",
     image: img5,
     question: "What did this city teach you that nobody sat you down to explain?",
-    answer: "How to be calm for two people at once — the patient, and myself. Rotterdam is blunt but it shows up. When it matters, people here show up.",
+    answer: "How to be calm for two people at once, the patient, and myself. Rotterdam is blunt but it shows up. When it matters, people here show up.",
   },
   {
     id: "6", number: 6, status: "published",

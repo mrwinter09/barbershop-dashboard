@@ -93,7 +93,7 @@ export default function SubmitPage() {
           <Text style={{ color: "#3F2D20", lineHeight: 1.6, maxWidth: "44ch", margin: "12px auto 0" }}>
             You're pencilled in as{" "}
             <strong>Story {pad(done.number)} / {TARGET}</strong>, waiting in the chair. We'll
-            reach out to find a time and a place. No haircut is mandatory — but it's encouraged.
+            reach out to find a time and a place. No haircut is mandatory, but it's encouraged.
           </Text>
           <Button component={Link} to="/stories" color="petrol" variant="outline" mt={28}>
             See the archive →
@@ -115,7 +115,7 @@ export default function SubmitPage() {
             color: "#C26B4A",
           }}
         >
-          An invitation — not a booking
+          An invitation, not a booking
         </Text>
         <Text
           component="h1"
@@ -137,7 +137,7 @@ export default function SubmitPage() {
           style={{ fontSize: "clamp(16px, 1.8vw, 19px)", lineHeight: 1.6, color: "#3F2D20" }}
         >
           If you'd like to sit in the chair, leave a few details and we'll be in touch. There's
-          no form to perfect here — just the start of a conversation.
+          no form to perfect here, just the start of a conversation.
         </Text>
 
         <Box component="form" onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -173,8 +173,8 @@ export default function SubmitPage() {
           </Box>
           <Textarea
             label="What might your story be about?"
-            placeholder="A sentence or two — what you'd talk about while the clippers run."
-            description="Optional — we'll talk more when we meet."
+            placeholder="A sentence or two, what you'd talk about while the clippers run."
+            description="Optional, we'll talk more when we meet."
             value={form.about}
             onChange={set("about")}
             rows={3}

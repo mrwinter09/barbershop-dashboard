@@ -197,7 +197,7 @@ export default function StoryDetailPage() {
           Reflections
         </Text>
         <Text c="dimmed" mb={18} style={{ lineHeight: 1.6 }}>
-          Read this story? Leave a short response — a sentence is plenty. Like a word
+          Read this story? Leave a short response, a sentence is plenty. Like a word
           dropped in the barbershop on your way out.
         </Text>
 
