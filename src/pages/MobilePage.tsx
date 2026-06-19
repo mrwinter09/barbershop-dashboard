@@ -1,6 +1,6 @@
 /** @format */
 
-import { useState, useRef, useEffect, useReducer } from "react";
+import { useState, useRef, useEffect } from "react";
 import { loadStories, loadReflections } from "../features/stories/api/stories.storage";
 import { SEED_STORIES, SEED_REFLECTIONS, TARGET, NEIGHBORHOODS } from "../features/stories/api/seed";
 import type { Story, Reflection } from "../features/stories/types/Story";
@@ -42,54 +42,6 @@ function getReflections(): Record<string, Reflection[]> {
   return Object.keys(r).length ? r : SEED_REFLECTIONS;
 }
 
-// ─── Pipeline definitions (matches AdminPage) ─────────────────────────────────
-
-const STAGES = [
-  { key: "draft", label: "Draft", dot: T.clay6 },
-  { key: "confirmed", label: "Confirmed", dot: "#2A6E79" },
-  { key: "shooting", label: "Filming", dot: T.clay6 },
-  { key: "producing", label: "Producing", dot: T.moss6 },
-  { key: "published", label: "Published", dot: T.petrol7 },
-];
-
-const NEXT: Record<string, string | null> = {
-  draft: "confirmed", confirmed: "shooting", shooting: "producing", producing: "published", published: null,
-};
-
-const STAGE_LABEL: Record<string, string> = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
-
-type CheckDef = { k: string; l: string; hard?: boolean };
-const SPEC: Record<string, { intro: string; checks: CheckDef[] }> = {
-  draft: { intro: "Decide if this voice belongs in the archive.", checks: [{ k: "worthPursuing", l: "Confirmed worth pursuing" }] },
-  confirmed: {
-    intro: "Lock the logistics before the chair travels.",
-    checks: [
-      { k: "contactComplete", l: "Contact details complete" },
-      { k: "inviteSent", l: "Calendar invite sent" },
-      { k: "camera", l: "Camera operator assigned" },
-      { k: "location", l: "Location set" },
-      { k: "script", l: "Question / script ready" },
-    ],
-  },
-  shooting: {
-    intro: "Filmed — hand off to edit. Now public as 'in the chair soon'.",
-    checks: [
-      { k: "editor", l: "Editor assigned" },
-      { k: "editEta", l: "Edit time estimated" },
-      { k: "drive", l: "Upload drive set" },
-    ],
-  },
-  producing: {
-    intro: "Final cut only. Cannot publish until the video is uploaded.",
-    checks: [{ k: "videoUploaded", l: "Final video uploaded", hard: true }],
-  },
-  published: { intro: "Live on the public archive.", checks: [] },
-};
-
-function stageOf(s: Story): string {
-  return (s.stage as string) ?? (s.status === "published" ? "published" : "draft");
-}
-
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
 const Ico = {
@@ -108,25 +60,14 @@ const Ico = {
       <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.5 15.5M14.5 14.5 20 20M8.5 8.5 11 11"/>
     </svg>
   ),
-  admin: (a: boolean) => (
-    <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={a ? 2.4 : 2} strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>
-    </svg>
-  ),
 };
-
-const Tick = (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 6 9 17l-5-5"/>
-  </svg>
-);
 
 // ─── Bottom tab bar ───────────────────────────────────────────────────────────
 
-type Tab = "stories" | "about" | "tell" | "admin";
+type Tab = "stories" | "about" | "tell";
 
 function TabBar({ active, onNav, dark }: { active: Tab; onNav: (t: Tab) => void; dark?: boolean }) {
-  const TABS: [Tab, string][] = [["stories", "Stories"], ["about", "The Chair"], ["tell", "Tell yours"], ["admin", "Studio"]];
+  const TABS: [Tab, string][] = [["stories", "Stories"], ["about", "The Chair"], ["tell", "Tell yours"]];
   const bg = dark ? "linear-gradient(to top, rgba(0,0,0,.65), transparent)" : "rgba(252,248,240,.88)";
   const activeCl = dark ? "#fff" : T.petrol7;
   const inactiveCl = dark ? "rgba(255,255,255,.55)" : T.muted;
@@ -223,7 +164,7 @@ function MobileHome({ onNav }: { onNav: (t: Tab) => void }) {
         <ProgressBar count={published.length} dark />
         <div style={{ height: 12 }} />
       </div>
-      <TabBar active="stories" onNav={onNav} />
+      <TabBar active="about" onNav={onNav} />
     </div>
   );
 }
@@ -243,7 +184,17 @@ function MobileStories({ onOpen, onNav }: { onOpen: (s: Story) => void; onNav: (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: T.paper, backgroundImage: PAPER_TEX }}>
       <MHead count={published.length} />
       <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" as "touch" }}>
-        <ProgressBar count={published.length} />
+        {/* Big counter */}
+        <div style={{ padding: "20px 20px 10px" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 6, lineHeight: 1 }}>
+            <span style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 56, color: T.clay6, letterSpacing: "-.03em" }}>{published.length}</span>
+            <span style={{ fontFamily: T.serif, fontWeight: 400, fontSize: 40, color: T.faint, letterSpacing: "-.02em" }}>/ {TARGET}</span>
+            <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: T.muted, alignSelf: "flex-end", paddingBottom: 8, marginLeft: 4 }}>Stories collected</span>
+          </div>
+          <div style={{ height: 6, borderRadius: 3, background: T.border, marginTop: 8 }}>
+            <div style={{ height: "100%", width: `${(published.length / TARGET) * 100}%`, background: T.petrol7, borderRadius: 3 }} />
+          </div>
+        </div>
         {/* Neighbourhood filter chips */}
         <div style={{ display: "flex", gap: 8, overflowX: "auto", padding: "10px 20px 4px", scrollbarWidth: "none" }}>
           {hoods.map((h) => (
@@ -545,236 +496,17 @@ function MobileTell({ onNav }: { onNav: (t: Tab) => void }) {
   );
 }
 
-// ─── Mobile Admin ─────────────────────────────────────────────────────────────
-
-type MobStory = Story & { checks?: Record<string, boolean> };
-
-function Sheet({ story, onClose, onAdvance, onToggle }: {
-  story: MobStory;
-  onClose: () => void;
-  onAdvance: (s: MobStory, next: string) => void;
-  onToggle: (s: MobStory, k: string) => void;
-}) {
-  const stage = stageOf(story);
-  const spec = SPEC[stage];
-  const checks = story.checks ?? {};
-  const curIdx = STAGES.findIndex((s) => s.key === stage);
-  const total = spec.checks.length;
-  const done = spec.checks.filter((c) => checks[c.k]).length;
-  const ready = total === 0 || done === total;
-  const next = NEXT[stage];
-
-  return (
-    <div
-      onClick={onClose}
-      style={{ position: "absolute", inset: 0, zIndex: 20, background: "rgba(33,26,18,.5)", display: "flex", alignItems: "flex-end" }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{ width: "100%", maxHeight: "88%", background: T.paper, backgroundImage: PAPER_TEX, borderRadius: "22px 22px 0 0", boxShadow: "0 -8px 40px rgba(12,42,48,.2)", display: "flex", flexDirection: "column", overflow: "hidden" }}
-      >
-        <div style={{ width: 40, height: 5, borderRadius: 3, background: T.faint, margin: "10px auto 4px", flexShrink: 0 }} />
-        {/* Sheet header */}
-        <div style={{ padding: "6px 20px 14px", borderBottom: `1px solid ${T.border}`, flexShrink: 0 }}>
-          <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: T.clay6 }}>Story {pad(story.number)} / {TARGET} · {STAGE_LABEL[stage]}</div>
-          <div style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 23, color: T.ink, marginTop: 2 }}>{story.name || "Untitled"}</div>
-          {/* Stage stepper */}
-          <div style={{ display: "flex", gap: 3, marginTop: 12 }}>
-            {STAGES.map((s, i) => (
-              <div key={s.key} style={{
-                flex: 1, textAlign: "center",
-                fontFamily: T.mono, fontSize: 8.5, letterSpacing: ".04em", textTransform: "uppercase",
-                padding: "6px 1px", borderRadius: 4,
-                background: i < curIdx ? T.moss1 : i === curIdx ? T.petrol7 : T.paper,
-                border: `1px solid ${i < curIdx ? "transparent" : i === curIdx ? "transparent" : T.border}`,
-                color: i < curIdx ? T.moss6 : i === curIdx ? T.paper0 : T.faint,
-              }}>
-                {s.label}
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Checklist */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
-          <p style={{ fontSize: 14, color: T.muted, lineHeight: 1.5, marginBottom: 12 }}>{spec.intro}</p>
-          {spec.checks.length === 0 && <p style={{ fontFamily: T.serif, fontStyle: "italic", color: T.faint }}>This story is live. Nothing left to do.</p>}
-          {spec.checks.map((c) => {
-            const on = !!checks[c.k];
-            return (
-              <div
-                key={c.k}
-                onClick={() => onToggle(story, c.k)}
-                style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 0", borderTop: `1px solid ${T.border}`, cursor: "pointer" }}
-              >
-                <span style={{ width: 24, height: 24, borderRadius: 7, flexShrink: 0, border: on ? "none" : `1.5px solid ${T.border}`, background: on ? (c.hard ? T.clay6 : T.moss6) : T.card, display: "flex", alignItems: "center", justifyContent: "center", transition: "background .15s" }}>
-                  {on && Tick}
-                </span>
-                <span>
-                  <div style={{ fontSize: 15.5, color: T.ink, fontWeight: 500 }}>{c.l}</div>
-                  {c.hard && <div style={{ fontFamily: T.mono, fontSize: 9.5, letterSpacing: ".06em", textTransform: "uppercase", color: T.clay6, marginTop: 2 }}>Required to publish</div>}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-        {/* Footer */}
-        <div style={{ padding: "14px 20px 28px", borderTop: `1px solid ${T.border}`, flexShrink: 0 }}>
-          {next && (
-            <>
-              <div style={{ fontSize: 13, color: T.muted, marginBottom: 10, textAlign: "center" }}>
-                {ready
-                  ? <span>All done — ready for <strong style={{ color: T.ink }}>{STAGE_LABEL[next]}</strong>.</span>
-                  : <span><strong style={{ color: T.ink }}>{total - done}</strong> of {total} left before <strong style={{ color: T.ink }}>{STAGE_LABEL[next]}</strong>.</span>
-                }
-              </div>
-              <button
-                disabled={!ready}
-                onClick={() => onAdvance(story, next)}
-                style={{ display: "block", width: "100%", boxSizing: "border-box", textAlign: "center", padding: 15, border: 0, borderRadius: 8, fontFamily: T.sans, fontSize: 16, fontWeight: 600, cursor: ready ? "pointer" : "not-allowed", background: ready ? T.petrol7 : T.border, color: ready ? T.paper0 : T.muted, transition: "background .2s" }}
-              >
-                Advance to {STAGE_LABEL[next]} →
-              </button>
-            </>
-          )}
-          {!next && (
-            <button disabled style={{ display: "block", width: "100%", boxSizing: "border-box", textAlign: "center", padding: 15, border: 0, borderRadius: 8, fontFamily: T.sans, fontSize: 16, fontWeight: 600, background: T.moss1, color: T.moss6, cursor: "default" }}>
-              ● Live on the public archive
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MobileAdmin({ onNav }: { onNav: (t: Tab) => void }) {
-  const baseStories: MobStory[] = (getStories() as MobStory[]);
-  const [data, setData] = useState<MobStory[]>(() => baseStories.map((s) => ({ ...s, checks: { ...(s.checklist ?? {}) } })));
-  const [stageFilter, setStageFilter] = useState("confirmed");
-  const [open, setOpen] = useState<MobStory | null>(null);
-  const [authed, setAuthed] = useState(false);
-  const [pw, setPw] = useState("");
-  const [, forceUpdate] = useReducer((x: number) => x + 1, 0);
-
-  const counts = Object.fromEntries(STAGES.map((s) => [s.key, data.filter((d) => stageOf(d) === s.key).length]));
-  const rows = data.filter((d) => stageOf(d) === stageFilter);
-
-  const toggle = (story: MobStory, k: string) =>
-    setData((arr) => arr.map((d) => d.id === story.id ? { ...d, checks: { ...(d.checks ?? {}), [k]: !(d.checks ?? {})[k] } } : d));
-
-  const advance = (story: MobStory, next: string) => {
-    const status: string = next === "published" ? "published" : (next === "shooting" || next === "producing") ? "upcoming" : "upcoming";
-    setData((arr) => arr.map((d) => d.id === story.id ? { ...d, stage: next as Story["stage"], status: status as Story["status"] } : d));
-    setOpen(null);
-    setStageFilter(next);
-    forceUpdate();
-  };
-
-  // Sync open sheet when data changes
-  useEffect(() => {
-    if (open) {
-      const updated = data.find((d) => d.id === open.id);
-      if (updated) setOpen(updated);
-    }
-  }, [data]);
-
-  if (!authed) {
-    return (
-      <div style={{ height: "100%", display: "flex", flexDirection: "column", background: T.paper, backgroundImage: PAPER_TEX }}>
-        <MHead />
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 24px" }}>
-          <form onSubmit={(e) => { e.preventDefault(); setAuthed(true); }} style={{ width: "100%", maxWidth: 380, background: T.card, backgroundImage: PAPER_TEX, border: `1px solid ${T.border}`, borderRadius: 16, padding: 28 }}>
-            <div style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 24, color: T.ink }}>Clipper<em style={{ fontStyle: "italic", color: T.clay6 }}>Takes</em></div>
-            <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: T.muted, margin: "4px 0 20px" }}>Studio admin · private</div>
-            <label style={{ fontFamily: T.sans, fontSize: 13, fontWeight: 600, color: T.body }}>Passphrase</label>
-            <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="••••••••" style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "13px 14px", border: `1.5px solid ${T.border}`, borderRadius: 8, background: T.paper, fontFamily: T.sans, fontSize: 16, color: T.ink, outline: "none", marginTop: 6, marginBottom: 6 }} />
-            <p style={{ fontSize: 12, color: T.muted, marginBottom: 16 }}>Demo: any value gets you in.</p>
-            <button type="submit" style={{ display: "block", width: "100%", padding: 15, border: 0, borderRadius: 8, background: T.petrol7, color: T.paper0, fontFamily: T.sans, fontSize: 16, fontWeight: 600, cursor: "pointer" }}>Enter the studio</button>
-          </form>
-        </div>
-        <TabBar active="admin" onNav={onNav} />
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: T.paper, backgroundImage: PAPER_TEX, position: "relative" }}>
-      {/* Header */}
-      <div style={{ position: "sticky", top: 0, zIndex: 8, padding: "52px 20px 12px", background: "rgba(245,238,223,.88)", backdropFilter: "blur(12px)", borderBottom: `1px solid ${T.border}` }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 18, letterSpacing: "-.02em", color: T.ink }}>Clipper<em style={{ fontStyle: "italic", color: T.clay6 }}>Takes</em></span>
-          <span style={{ fontFamily: T.mono, fontSize: 9.5, letterSpacing: ".14em", textTransform: "uppercase", color: "#1C5862", background: T.petrol1, padding: "4px 9px", borderRadius: 99 }}>Studio · Admin</span>
-        </div>
-        <div style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 26, color: T.ink, marginTop: 12, letterSpacing: "-.01em" }}>Production</div>
-      </div>
-      {/* Stage filter chips */}
-      <div style={{ display: "flex", gap: 7, overflowX: "auto", padding: "12px 16px 6px", scrollbarWidth: "none", flexShrink: 0 }}>
-        {STAGES.map((s) => (
-          <button
-            key={s.key}
-            onClick={() => setStageFilter(s.key)}
-            style={{ flexShrink: 0, display: "flex", alignItems: "center", gap: 7, padding: "8px 13px", borderRadius: 99, border: `1.5px solid ${stageFilter === s.key ? T.petrol7 : T.border}`, background: stageFilter === s.key ? T.petrol7 : "transparent", fontFamily: T.sans, fontSize: 13, fontWeight: 600, color: stageFilter === s.key ? T.paper0 : T.body, cursor: "pointer", whiteSpace: "nowrap" }}
-          >
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: stageFilter === s.key ? T.paper0 : s.dot }} />
-            {s.label}
-            <span style={{ fontFamily: T.mono, fontSize: 11, color: stageFilter === s.key ? "rgba(252,248,240,.7)" : T.faint, fontWeight: 700 }}>{counts[s.key]}</span>
-          </button>
-        ))}
-      </div>
-      {/* Story cards */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "8px 16px 24px" }}>
-        {rows.length === 0 && (
-          <p style={{ fontFamily: T.serif, fontStyle: "italic", color: T.faint, fontSize: 16, padding: "24px 4px" }}>Nothing in {STAGE_LABEL[stageFilter]} right now.</p>
-        )}
-        {rows.map((s) => {
-          const spec = SPEC[stageOf(s)];
-          const total = spec.checks.length;
-          const done = spec.checks.filter((c) => (s.checks ?? {})[c.k]).length;
-          const ready = total > 0 && done === total;
-          return (
-            <button
-              key={s.id}
-              onClick={() => setOpen(s)}
-              style={{ display: "flex", gap: 12, alignItems: "stretch", background: T.card, backgroundImage: PAPER_TEX, border: `1px solid ${T.border}`, borderRadius: 12, overflow: "hidden", cursor: "pointer", padding: 0, width: "100%", textAlign: "left", fontFamily: T.sans, marginBottom: 11 }}
-            >
-              <img src={s.image} alt="" style={{ width: 76, flexShrink: 0, objectFit: "cover", background: T.petrol1 }} />
-              <div style={{ padding: "12px 12px 12px 0", display: "flex", flexDirection: "column", gap: 3, minWidth: 0, flex: 1 }}>
-                <span style={{ fontFamily: T.mono, fontSize: 10, fontWeight: 700, color: T.clay6, letterSpacing: ".04em" }}>STORY {pad(s.number)} / {TARGET}</span>
-                <span style={{ fontFamily: T.serif, fontSize: 18, fontWeight: 600, color: T.ink, lineHeight: 1.1 }}>{s.name || "Untitled"}</span>
-                <span style={{ fontSize: 12, color: T.muted }}>{s.role || "—"} · {s.neighborhood || "—"}</span>
-                {stageFilter === "published" ? (
-                  <span style={{ fontFamily: T.mono, fontSize: 10, color: T.moss6, marginTop: 4 }}>● Live</span>
-                ) : (
-                  <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 6 }}>
-                    <div style={{ flex: 1, height: 5, borderRadius: 3, background: T.border, overflow: "hidden" }}>
-                      <div style={{ height: "100%", background: T.moss6, width: `${total ? (done / total) * 100 : 0}%` }} />
-                    </div>
-                    <span style={{ fontFamily: T.mono, fontSize: 10, color: ready ? T.moss6 : T.muted }}>{ready ? "✓ ready" : `${done}/${total}`}</span>
-                  </div>
-                )}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-      {open && <Sheet story={open} onClose={() => setOpen(null)} onAdvance={advance} onToggle={toggle} />}
-      <TabBar active="admin" onNav={onNav} />
-    </div>
-  );
-}
-
 // ─── Mobile App shell ─────────────────────────────────────────────────────────
 
-type Route = { screen: "home" | "stories" | "story" | "about" | "tell" | "admin"; story?: Story };
+type Route = { screen: "home" | "stories" | "story" | "about" | "tell"; story?: Story };
 
 export default function MobilePage() {
-  const [route, setRoute] = useState<Route>({ screen: "stories" });
+  const [route, setRoute] = useState<Route>({ screen: "home" });
 
   const nav = (t: Tab) => {
     if (t === "stories") setRoute({ screen: "stories" });
-    else if (t === "about") setRoute({ screen: "about" });
+    else if (t === "about") setRoute({ screen: "home" });
     else if (t === "tell") setRoute({ screen: "tell" });
-    else if (t === "admin") setRoute({ screen: "admin" });
   };
 
   return (
@@ -784,7 +516,6 @@ export default function MobilePage() {
       {route.screen === "story" && route.story && <MobileStory story={route.story} onNav={nav} onBack={() => setRoute({ screen: "stories" })} />}
       {route.screen === "about" && <MobileAbout onNav={nav} />}
       {route.screen === "tell" && <MobileTell onNav={nav} />}
-      {route.screen === "admin" && <MobileAdmin onNav={nav} />}
     </div>
   );
 }
