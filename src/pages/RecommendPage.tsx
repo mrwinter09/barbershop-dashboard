@@ -58,7 +58,7 @@ export default function RecommendPage() {
               margin: "0 0 16px",
             }}
           >
-            Noted — thank you.
+            Noted, thank you.
           </Text>
           <Text style={{ color: "#3F2D20", lineHeight: 1.6, maxWidth: "44ch", margin: "12px auto 0" }}>
             We'll look into <strong>{form.who.trim()}</strong>. Rotterdam helps decide who sits
@@ -141,7 +141,7 @@ export default function RecommendPage() {
             <Button type="submit" color="petrol" variant="filled" size="lg">
               Send recommendation
             </Button>
-            <Text size="sm" c="dimmed">Goes to us privately — nothing is published automatically.</Text>
+            <Text size="sm" c="dimmed">Goes to us privately, nothing is published automatically.</Text>
           </Box>
         </Box>
       </Box>

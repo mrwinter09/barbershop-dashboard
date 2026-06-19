@@ -73,7 +73,7 @@ const STAGE_SPEC: Record<string, StageSpec> = {
   },
   shooting: {
     next: "producing",
-    intro: "Filming done — hand off to the edit. The participant now shows publicly as 'in the chair soon'.",
+    intro: "Filming done, hand off to the edit. The participant now shows publicly as 'in the chair soon'.",
     checks: [
       { key: "editor", label: "Editor assigned", field: { key: "editorName", placeholder: "Who edits?" } },
       { key: "editEta", label: "Edit time estimated", field: { key: "editDuration", placeholder: "e.g. 2 weeks" } },
@@ -139,7 +139,7 @@ function gcalLink(story: Story & Record<string, unknown>): string {
       dates = `&dates=${fmtDate(d)}/${fmtDate(e)}`;
     }
   }
-  const text = encodeURIComponent(`ClipperTakes — filming with ${story.name || "participant"}`);
+  const text = encodeURIComponent(`ClipperTakes, filming with ${story.name || "participant"}`);
   const locName = (story["locationName"] as string) ?? "";
   const details = encodeURIComponent(`ClipperTakes session. One question while the clippers run.${locName ? `\nLocation: ${locName}` : ""}`);
   const loc = locName ? `&location=${encodeURIComponent(locName)}` : "";
@@ -417,7 +417,7 @@ function EditDrawer({
               <Text style={{ fontSize: 13, color: "#9C8466" }}>
                 {spec.next
                   ? (done
-                    ? <span>All done — ready for <strong style={{ color: "#211A12" }}>{STAGE_LABEL[spec.next]}</strong>.</span>
+                    ? <span>All done, ready for <strong style={{ color: "#211A12" }}>{STAGE_LABEL[spec.next]}</strong>.</span>
                     : <span><strong style={{ color: "#211A12" }}>{missing}</strong> of {total} left before <strong style={{ color: "#211A12" }}>{STAGE_LABEL[spec.next]}</strong>.</span>)
                   : <span>This story is <strong style={{ color: "#211A12" }}>live</strong> on the public archive.</span>
                 }
@@ -922,7 +922,7 @@ export default function AdminPage() {
       <div>
         <Text style={{ fontFamily: '"Newsreader", Georgia, serif', fontWeight: 600, fontSize: 34, color: "#211A12", letterSpacing: "-0.01em" }}>Recommendations</Text>
         <Text c="dimmed" mt={6} mb={26} style={{ maxWidth: "64ch", lineHeight: 1.6 }}>
-          Rotterdam pointing you toward who should sit in the chair next — from the public "Recommend someone" form.
+          Rotterdam pointing you toward who should sit in the chair next, from the public "Recommend someone" form.
         </Text>
         {allRecs.length === 0
           ? <Text style={{ fontFamily: '"Newsreader", Georgia, serif', fontStyle: "italic", color: "#B7A079", fontSize: 18, padding: "30px 0" }}>No recommendations yet.</Text>
@@ -961,7 +961,7 @@ export default function AdminPage() {
           <div>
             <Text style={{ fontFamily: '"Newsreader", Georgia, serif', fontWeight: 600, fontSize: 34, color: "#211A12", letterSpacing: "-0.01em" }}>Story requests</Text>
             <Text c="dimmed" mt={6} mb={18} style={{ maxWidth: "64ch", lineHeight: 1.6 }}>
-              People who put themselves forward via "Tell your story". Pick one up to start its Draft — or add someone yourself.
+              People who put themselves forward via "Tell your story". Pick one up to start its Draft, or add someone yourself.
             </Text>
           </div>
           <Button color="yellow" variant="filled" styles={{ root: { color: "#211A12", fontWeight: 600 } }} onClick={newDraft}>+ New story</Button>

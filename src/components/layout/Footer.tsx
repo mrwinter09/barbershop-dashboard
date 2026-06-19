@@ -54,7 +54,7 @@ export default function Footer() {
             mt={10}
             style={{ maxWidth: 360, lineHeight: 1.6, color: "#A9CACE", fontSize: 15 }}
           >
-            A travelling barber chair collecting fifty voices from Rotterdam — one
+            A travelling barber chair collecting fifty voices from Rotterdam, one
             conversation, one haircut, one story at a time.
           </Text>
         </div>

@@ -14,7 +14,7 @@ const STEPS = [
   {
     n: "01",
     title: "The chair arrives",
-    body: "It travels to a neighbourhood — a market square, a festival, a quiet street corner — and sets up where people already are.",
+    body: "It travels to a neighbourhood, a market square, a festival, a quiet street corner, and sets up where people already are.",
   },
   {
     n: "02",
@@ -24,7 +24,7 @@ const STEPS = [
   {
     n: "03",
     title: "A portrait is kept",
-    body: "The conversation becomes a short film, numbered and added to the archive of fifty — for the city to keep and come back to.",
+    body: "The conversation becomes a short film, numbered and added to the archive of fifty, for the city to keep and come back to.",
   },
 ];
 
@@ -76,14 +76,14 @@ export default function AboutPage() {
               mt={20}
               style={{ fontSize: "clamp(16px, 1.8vw, 19px)", lineHeight: 1.65, color: "#3F2D20" }}
             >
-              ClipperTakes takes that idea on the road. Ivan Winter — a barber and theatre
-              maker — brings a travelling chair to Rotterdam's streets, markets and festivals.
+              ClipperTakes takes that idea on the road. Ivan Winter, a barber and theatre
+              maker, brings a travelling chair to Rotterdam's streets, markets and festivals.
               You sit down for a haircut. While the clippers run, he asks one question. The
               conversation becomes a two-to-three minute portrait.
             </Text>
             <Text mt={16} style={{ lineHeight: 1.65, color: "#3F2D20" }}>
               Fifty portraits, numbered one to fifty, building a public archive of the city's
-              ordinary, extraordinary voices — neighbours, makers, organisers. Not influencers.
+              ordinary, extraordinary voices, neighbours, makers, organisers. Not influencers.
               Not celebrities. People you'd recognise before you'd follow.
             </Text>
             <Box mt={26} style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
