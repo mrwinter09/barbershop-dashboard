@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Container, Box, Text, TextInput, Textarea, Select, Button } from "@mantine/core";
+import { Container, Box, Text, TextInput, Textarea, Select, Button, Switch } from "@mantine/core";
 import { useCreateStory } from "../features/stories/api/useCreateStory";
 import { TARGET, NEIGHBORHOODS } from "../features/stories/api/seed";
 
@@ -16,11 +16,14 @@ export default function SubmitPage() {
   const { mutate: createStory } = useCreateStory();
   const [form, setForm] = useState({
     name: "",
+    email: "",
     neighborhood: "",
     role: "",
     date: "",
     about: "",
   });
+  const [touch, setTouch] = useState(false);
+  const [filmed, setFilmed] = useState(false);
   const [done, setDone] = useState<{ name: string; number: number } | null>(null);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -136,6 +139,13 @@ export default function SubmitPage() {
             onChange={set("name")}
             required
           />
+          <TextInput
+            label="Email"
+            type="email"
+            placeholder="We'll reach out here"
+            value={form.email}
+            onChange={set("email")}
+          />
           <Box style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }} className="ct-form-grid">
             <Select
               label="Your neighbourhood"
@@ -152,20 +162,28 @@ export default function SubmitPage() {
               data={ROLES}
             />
           </Box>
-          <TextInput
-            label="A time that might suit you"
-            type="date"
-            value={form.date}
-            onChange={set("date")}
-            description="Just a rough preference — we'll confirm."
-          />
           <Textarea
             label="What might your story be about?"
             placeholder="A sentence or two — what you'd talk about while the clippers run."
+            description="Optional — we'll talk more when we meet."
             value={form.about}
             onChange={set("about")}
             rows={3}
           />
+          <Box style={{ display: "flex", flexDirection: "column", gap: 12, paddingTop: 4 }}>
+            <Switch
+              label="I'd like to stay in touch about the project"
+              checked={touch}
+              onChange={(e) => setTouch(e.currentTarget.checked)}
+              color="petrol"
+            />
+            <Switch
+              label="Happy to be filmed in the chair"
+              checked={filmed}
+              onChange={(e) => setFilmed(e.currentTarget.checked)}
+              color="petrol"
+            />
+          </Box>
           <Box style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 8 }}>
             <Button type="submit" color="yellow" variant="filled" size="lg" styles={{ root: { color: "#211A12", fontWeight: 600 } }}>
               Send it in

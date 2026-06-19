@@ -440,11 +440,38 @@ function MobileAbout({ onNav }: { onNav: (t: Tab) => void }) {
 
 // ─── Tell your story screen ───────────────────────────────────────────────────
 
+const ROLES = ["Resident", "Entrepreneur", "Volunteer", "Maker", "Organiser", "Other"];
+
+function MSwitch({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
+  return (
+    <label style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
+      <span
+        onClick={onChange}
+        style={{
+          position: "relative", width: 40, height: 24, flexShrink: 0, borderRadius: 12,
+          background: checked ? T.petrol7 : T.border, transition: "background .2s", display: "block",
+        }}
+      >
+        <span style={{
+          position: "absolute", top: 3, left: checked ? 19 : 3, width: 18, height: 18,
+          borderRadius: "50%", background: T.paper0, boxShadow: "0 1px 3px rgba(0,0,0,.18)",
+          transition: "left .2s",
+        }} />
+      </span>
+      <span style={{ fontFamily: T.sans, fontSize: 14, color: T.body, lineHeight: 1.4 }}>{label}</span>
+    </label>
+  );
+}
+
 function MobileTell({ onNav }: { onNav: (t: Tab) => void }) {
-  const [form, setForm] = useState({ name: "", neighborhood: "", role: "", about: "" });
+  const [form, setForm] = useState({ name: "", email: "", neighborhood: "", role: "", about: "" });
+  const [touch, setTouch] = useState(false);
+  const [filmed, setFilmed] = useState(false);
   const [done, setDone] = useState(false);
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm((f) => ({ ...f, [k]: e.target.value }));
-  const inputStyle: React.CSSProperties = { display: "block", width: "100%", boxSizing: "border-box", padding: "13px 14px", border: `1.5px solid ${T.border}`, borderRadius: 8, background: T.card, fontFamily: T.sans, fontSize: 16, color: T.ink, outline: "none", marginTop: 6 };
+  const field: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 6 };
+  const label: React.CSSProperties = { fontFamily: T.sans, fontSize: 13, fontWeight: 600, color: T.body };
+  const input: React.CSSProperties = { display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", border: `1.5px solid ${T.border}`, borderRadius: 8, background: T.card, fontFamily: T.sans, fontSize: 16, color: T.ink, outline: "none" };
 
   if (done) return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: T.paper, backgroundImage: PAPER_TEX }}>
@@ -464,25 +491,47 @@ function MobileTell({ onNav }: { onNav: (t: Tab) => void }) {
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: T.paper, backgroundImage: PAPER_TEX }}>
       <MHead back onBack={() => onNav("stories")} />
-      <div style={{ flex: 1, overflowY: "auto", padding: "24px 20px 24px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "24px 20px 32px" }}>
         <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: T.clay6 }}>An invitation — not a booking</span>
         <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 32, lineHeight: 1.06, letterSpacing: "-.02em", color: T.ink, margin: "12px 0 6px" }}>Tell us who you are.</h1>
         <p style={{ fontSize: 15, lineHeight: 1.6, color: T.body, marginBottom: 22 }}>Leave a few details and we'll reach out. No form to perfect — just the start of a conversation.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div>
-            <label style={{ fontFamily: T.sans, fontSize: 13, fontWeight: 600, color: T.body }}>Your name *</label>
-            <input style={inputStyle} value={form.name} onChange={set("name")} placeholder="First and last" />
+          <div style={field}>
+            <label style={label}>Your name <span style={{ color: T.clay6 }}>*</span></label>
+            <input style={input} value={form.name} onChange={set("name")} placeholder="First and last" />
           </div>
-          <div>
-            <label style={{ fontFamily: T.sans, fontSize: 13, fontWeight: 600, color: T.body }}>Your neighbourhood</label>
-            <select style={{ ...inputStyle, appearance: "none" }} value={form.neighborhood} onChange={set("neighborhood")}>
-              <option value="">Where in Rotterdam?</option>
-              {NEIGHBORHOODS.map((n) => <option key={n} value={n}>{n}</option>)}
-            </select>
+          <div style={field}>
+            <label style={label}>Email</label>
+            <input style={input} type="email" value={form.email} onChange={set("email")} placeholder="We'll reach out here" />
           </div>
-          <div>
-            <label style={{ fontFamily: T.sans, fontSize: 13, fontWeight: 600, color: T.body }}>What might your story be about?</label>
-            <textarea style={{ ...inputStyle, minHeight: 88, resize: "vertical" }} value={form.about} onChange={set("about")} placeholder="A sentence or two." />
+          <div style={field}>
+            <label style={label}>Your neighbourhood</label>
+            <div style={{ position: "relative" }}>
+              <select style={{ ...input, appearance: "none", paddingRight: 36 }} value={form.neighborhood} onChange={set("neighborhood")}>
+                <option value="">Where in Rotterdam?</option>
+                {NEIGHBORHOODS.map((n) => <option key={n} value={n}>{n}</option>)}
+              </select>
+              <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%) rotate(45deg)", width: 8, height: 8, borderRight: `1.6px solid ${T.muted}`, borderBottom: `1.6px solid ${T.muted}`, pointerEvents: "none" }} />
+            </div>
+          </div>
+          <div style={field}>
+            <label style={label}>You are a…</label>
+            <div style={{ position: "relative" }}>
+              <select style={{ ...input, appearance: "none", paddingRight: 36 }} value={form.role} onChange={set("role")}>
+                <option value="">Pick the closest</option>
+                {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+              </select>
+              <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%) rotate(45deg)", width: 8, height: 8, borderRight: `1.6px solid ${T.muted}`, borderBottom: `1.6px solid ${T.muted}`, pointerEvents: "none" }} />
+            </div>
+          </div>
+          <div style={field}>
+            <label style={label}>What might your story be about?</label>
+            <textarea style={{ ...input, minHeight: 88, resize: "vertical" }} value={form.about} onChange={set("about")} placeholder="A sentence or two — what you'd talk about while the clippers run." />
+            <span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted }}>Optional — we'll talk more when we meet.</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "8px 0" }}>
+            <MSwitch label="I'd like to stay in touch about the project" checked={touch} onChange={() => setTouch((v) => !v)} />
+            <MSwitch label="Happy to be filmed in the chair" checked={filmed} onChange={() => setFilmed((v) => !v)} />
           </div>
           <button
             onClick={() => { if (form.name.trim()) setDone(true); }}
@@ -490,6 +539,7 @@ function MobileTell({ onNav }: { onNav: (t: Tab) => void }) {
           >
             Send it in
           </button>
+          <p style={{ textAlign: "center", fontSize: 12, color: T.muted, margin: 0 }}>We read every one. No spam, ever.</p>
         </div>
       </div>
       <TabBar active="tell" onNav={onNav} />
