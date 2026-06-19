@@ -72,7 +72,7 @@ function TabBar({ active, onNav, dark }: { active: Tab; onNav: (t: Tab) => void;
   const activeCl = dark ? "#fff" : T.petrol7;
   const inactiveCl = dark ? "rgba(255,255,255,.55)" : T.muted;
   return (
-    <div style={{ display: "flex", padding: "8px 12px 34px", gap: 4, background: bg, backdropFilter: "blur(12px)", borderTop: dark ? "none" : `1px solid ${T.border}` }}>
+    <div style={{ display: "flex", padding: "8px 12px calc(16px + env(safe-area-inset-bottom, 0px))", gap: 4, background: bg, backdropFilter: "blur(12px)", borderTop: dark ? "none" : `1px solid ${T.border}` }}>
       {TABS.map(([k, label]) => (
         <button
           key={k}
@@ -98,18 +98,19 @@ function MHead({ count, back, onBack }: { count?: number; back?: boolean; onBack
       background: "rgba(245,238,223,.88)", backdropFilter: "blur(12px)",
       borderBottom: `1px solid ${T.border}`,
     }}>
-      {back
-        ? <button onClick={onBack} style={{ width: 38, height: 38, borderRadius: "50%", border: 0, background: T.card, boxShadow: "0 1px 4px rgba(33,26,18,.1)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        {back && (
+          <button onClick={onBack} style={{ width: 32, height: 32, borderRadius: "50%", border: 0, background: T.card, boxShadow: "0 1px 4px rgba(33,26,18,.1)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", marginRight: 4 }}>
             <svg width="11" height="18" viewBox="0 0 12 20" fill="none"><path d="M10 2 2 10l8 8" stroke={T.ink} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
-        : <span style={{ width: 38 }} />
-      }
-      <span style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 19, letterSpacing: "-.02em", color: T.ink }}>
-        Clipper<em style={{ fontStyle: "italic", color: T.clay6 }}>Takes</em>
-      </span>
+        )}
+        <span style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 19, letterSpacing: "-.02em", color: T.ink }}>
+          Clipper<em style={{ fontStyle: "italic", color: T.clay6 }}>Takes</em>
+        </span>
+      </div>
       {count != null
         ? <span style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: ".08em", color: T.ink, background: T.yellow, padding: "4px 9px", borderRadius: 99, fontWeight: 700 }}>{count} / {TARGET}</span>
-        : <span style={{ width: 38 }} />
+        : <span />
       }
     </div>
   );
