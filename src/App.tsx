@@ -9,6 +9,7 @@ import AboutPage from "./pages/AboutPage";
 import SubmitPage from "./pages/SubmitPage";
 import RecommendPage from "./pages/RecommendPage";
 import AdminPage from "./pages/AdminPage";
+import MobilePage from "./pages/MobilePage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 const router = createBrowserRouter([
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
       { path: "/admin", element: <AdminPage /> },
     ],
   },
+  { path: "/mobile", element: <MobilePage /> },
   { path: "*", element: <NotFoundPage /> },
 ]);
 
