@@ -29,9 +29,18 @@ export default function SubmitPage() {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const submit = (e: React.FormEvent) => {
+  const FORMSPREE = import.meta.env.VITE_FORMSPREE_URL as string | undefined;
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) return;
+    if (FORMSPREE) {
+      await fetch(FORMSPREE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ ...form, stayInTouch: touch, happyToBeFilmed: filmed }),
+      }).catch(() => null);
+    }
     createStory(
       {
         name: form.name.trim(),

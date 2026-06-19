@@ -463,12 +463,29 @@ function MSwitch({ label, checked, onChange }: { label: string; checked: boolean
   );
 }
 
+const FORMSPREE = import.meta.env.VITE_FORMSPREE_URL as string | undefined;
+
 function MobileTell({ onNav }: { onNav: (t: Tab) => void }) {
   const [form, setForm] = useState({ name: "", email: "", neighborhood: "", role: "", about: "" });
   const [touch, setTouch] = useState(false);
   const [filmed, setFilmed] = useState(false);
   const [done, setDone] = useState(false);
+  const [sending, setSending] = useState(false);
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const submit = async () => {
+    if (!form.name.trim()) return;
+    setSending(true);
+    if (FORMSPREE) {
+      await fetch(FORMSPREE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ ...form, stayInTouch: touch, happyToBeFilmed: filmed }),
+      }).catch(() => null);
+    }
+    setSending(false);
+    setDone(true);
+  };
   const field: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 6 };
   const label: React.CSSProperties = { fontFamily: T.sans, fontSize: 13, fontWeight: 600, color: T.body };
   const input: React.CSSProperties = { display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", border: `1.5px solid ${T.border}`, borderRadius: 8, background: T.card, fontFamily: T.sans, fontSize: 16, color: T.ink, outline: "none" };
@@ -534,10 +551,11 @@ function MobileTell({ onNav }: { onNav: (t: Tab) => void }) {
             <MSwitch label="Happy to be filmed in the chair" checked={filmed} onChange={() => setFilmed((v) => !v)} />
           </div>
           <button
-            onClick={() => { if (form.name.trim()) setDone(true); }}
-            style={{ display: "block", width: "100%", padding: 15, border: 0, borderRadius: 8, background: T.yellow, color: T.ink, fontFamily: T.sans, fontSize: 16, fontWeight: 600, cursor: "pointer", marginTop: 4 }}
+            onClick={submit}
+            disabled={sending}
+            style={{ display: "block", width: "100%", padding: 15, border: 0, borderRadius: 8, background: T.yellow, color: T.ink, fontFamily: T.sans, fontSize: 16, fontWeight: 600, cursor: sending ? "wait" : "pointer", marginTop: 4, opacity: sending ? 0.7 : 1 }}
           >
-            Send it in
+            {sending ? "Sending…" : "Send it in"}
           </button>
           <p style={{ textAlign: "center", fontSize: 12, color: T.muted, margin: 0 }}>We read every one. No spam, ever.</p>
         </div>
