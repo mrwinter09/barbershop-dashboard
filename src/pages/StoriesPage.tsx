@@ -8,11 +8,13 @@ import { TARGET } from "../features/stories/api/seed";
 import ProgressCounter from "../features/stories/components/ProgressCounter";
 import StoryCard from "../features/stories/components/StoryCard";
 import NeighborhoodTag from "../features/stories/components/NeighborhoodTag";
+import { useLang } from "../i18n";
 
 export default function StoriesPage() {
   const { data: stories = [] } = useGetStories();
   const navigate = useNavigate();
   const [filter, setFilter] = useState("all");
+  const { t } = useLang();
 
   const published = stories.filter((s) => s.status === "published");
   const collected = published.length;
@@ -37,7 +39,7 @@ export default function StoriesPage() {
             color: "#9C8466",
           }}
         >
-          The archive · {collected} of {TARGET} collected
+          {t("stories_eyebrow", { count: collected })}
         </Text>
         <Text
           component="h1"
@@ -51,7 +53,7 @@ export default function StoriesPage() {
             margin: "10px 0 0",
           }}
         >
-          The Stories
+          {t("stories_title")}
         </Text>
         <Box mt={10} style={{ maxWidth: 560 }}>
           <ProgressCounter count={collected} total={TARGET} size="md" />
@@ -73,7 +75,7 @@ export default function StoriesPage() {
       >
         <Box style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
           <NeighborhoodTag
-            name="All of Rotterdam"
+            name={t("stories_all")}
             count={stories.length}
             active={filter === "all"}
             onClick={() => setFilter("all")}

@@ -2,16 +2,18 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { Button, Box, Text } from "@mantine/core";
-
-const NAV = [
-  { path: "/", label: "Home" },
-  { path: "/stories", label: "The Stories" },
-  { path: "/about", label: "The Chair" },
-  { path: "/recommend", label: "Recommend someone" },
-];
+import { useLang } from "../../i18n";
 
 export default function Navbar() {
   const { pathname } = useLocation();
+  const { t, lang, setLang } = useLang();
+
+  const NAV = [
+    { path: "/", label: t("nav_home") },
+    { path: "/stories", label: t("nav_stories") },
+    { path: "/about", label: t("nav_chair") },
+    { path: "/recommend", label: t("nav_recommend") },
+  ];
 
   return (
     <Box
@@ -78,8 +80,41 @@ export default function Navbar() {
           size="sm"
           styles={{ root: { color: "#211A12", fontWeight: 600 } }}
         >
-          Tell your story
+          {t("nav_tell")}
         </Button>
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            border: "1px solid #CBB994",
+            borderRadius: 6,
+            overflow: "hidden",
+            fontFamily: '"Space Mono", monospace',
+            fontSize: 12,
+          }}
+        >
+          {(["en", "nl"] as const).map((l) => (
+            <button
+              key={l}
+              onClick={() => setLang(l)}
+              style={{
+                padding: "4px 10px",
+                background: lang === l ? "#15454F" : "transparent",
+                color: lang === l ? "#FCF8F0" : "#6A5440",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: '"Space Mono", monospace',
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                transition: "background .15s, color .15s",
+              }}
+            >
+              {l}
+            </button>
+          ))}
+        </Box>
       </Box>
     </Box>
   );

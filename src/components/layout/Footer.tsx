@@ -2,6 +2,7 @@
 
 import { Link } from "react-router-dom";
 import { Box, Text } from "@mantine/core";
+import { useLang } from "../../i18n";
 
 const PAPER_TEXTURE =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E\")";
@@ -18,6 +19,8 @@ const linkStyle: React.CSSProperties = {
 };
 
 export default function Footer() {
+  const { t } = useLang();
+
   return (
     <footer
       style={{
@@ -54,8 +57,7 @@ export default function Footer() {
             mt={10}
             style={{ maxWidth: 360, lineHeight: 1.6, color: "#A9CACE", fontSize: 15 }}
           >
-            A travelling barber chair collecting fifty voices from Rotterdam, one
-            conversation, one haircut, one story at a time.
+            {t("footer_tagline")}
           </Text>
         </div>
 
@@ -70,12 +72,12 @@ export default function Footer() {
               marginBottom: 12,
             }}
           >
-            The project
+            {t("footer_project")}
           </Text>
-          <Link to="/stories" style={linkStyle}>The Stories</Link>
-          <Link to="/about" style={linkStyle}>The Chair</Link>
-          <Link to="/submit" style={linkStyle}>Tell your story</Link>
-          <Link to="/recommend" style={linkStyle}>Recommend someone</Link>
+          <Link to="/stories" style={linkStyle}>{t("nav_stories")}</Link>
+          <Link to="/about" style={linkStyle}>{t("nav_chair")}</Link>
+          <Link to="/submit" style={linkStyle}>{t("nav_tell")}</Link>
+          <Link to="/recommend" style={linkStyle}>{t("nav_recommend")}</Link>
         </div>
 
         <div>
@@ -121,7 +123,7 @@ export default function Footer() {
         }}
       >
         <span>ClipperTakes Studio · Rotterdam · 2026</span>
-        <Link to="/admin" style={{ ...linkStyle, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#5E9099" }}>Studio admin</Link>
+        <Link to="/admin" style={{ ...linkStyle, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#5E9099" }}>{t("footer_admin")}</Link>
       </Box>
     </footer>
   );

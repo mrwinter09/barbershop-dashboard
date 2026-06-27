@@ -4,10 +4,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Container, Box, Text, TextInput, Textarea, Button } from "@mantine/core";
 import { loadRecommendations, saveRecommendations } from "../features/stories/api/stories.storage";
+import { useLang } from "../i18n";
 
 export default function RecommendPage() {
   const [form, setForm] = useState({ who: "", how: "", why: "", from: "" });
   const [done, setDone] = useState(false);
+  const { t } = useLang();
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -58,14 +60,13 @@ export default function RecommendPage() {
               margin: "0 0 16px",
             }}
           >
-            Noted, thank you.
+            {t("recommend_thanks")}
           </Text>
           <Text style={{ color: "#3F2D20", lineHeight: 1.6, maxWidth: "44ch", margin: "12px auto 0" }}>
-            We'll look into <strong>{form.who.trim()}</strong>. Rotterdam helps decide who sits
-            in the chair next, and that's exactly how it should be.
+            {t("recommend_thanks_body", { name: form.who.trim() })}
           </Text>
           <Button component={Link} to="/stories" color="petrol" variant="outline" mt={28}>
-            Back to the archive →
+            {t("recommend_back")}
           </Button>
         </Box>
       </Container>
@@ -84,7 +85,7 @@ export default function RecommendPage() {
             color: "#C26B4A",
           }}
         >
-          Help us decide who's next
+          {t("recommend_title")}
         </Text>
         <Text
           component="h1"
@@ -98,50 +99,49 @@ export default function RecommendPage() {
             margin: "12px 0 0",
           }}
         >
-          Point us toward someone.
+          {t("recommend_who")}
         </Text>
         <Text
           mt={16}
           mb={30}
           style={{ fontSize: "clamp(16px, 1.8vw, 19px)", lineHeight: 1.6, color: "#3F2D20" }}
         >
-          Know a Rotterdammer whose story deserves the chair? Tell us about them. This is how
-          the archive stays the city's, not ours.
+          {t("recommend_sub")}
         </Text>
 
         <Box component="form" onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           <TextInput
-            label="Who should we speak to?"
-            placeholder="Their name"
+            label={t("recommend_who")}
+            placeholder={t("recommend_name")}
             value={form.who}
             onChange={set("who")}
             required
           />
           <TextInput
-            label="How do you know them?"
-            placeholder="Neighbour, colleague, the baker on your corner…"
+            label={t("recommend_how")}
+            placeholder={t("recommend_how_ph")}
             value={form.how}
             onChange={set("how")}
           />
           <Textarea
-            label="Why does their story matter?"
-            placeholder="One or two sentences is plenty."
+            label={t("recommend_why")}
+            placeholder={t("recommend_why_hint")}
             value={form.why}
             onChange={set("why")}
             rows={3}
             required
           />
           <TextInput
-            label="Your name (optional)"
-            placeholder="So we can thank you"
+            label={t("recommend_your_name")}
+            placeholder={t("recommend_your_name_hint")}
             value={form.from}
             onChange={set("from")}
           />
           <Box style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 8 }}>
             <Button type="submit" color="petrol" variant="filled" size="lg">
-              Send recommendation
+              {t("recommend_send")}
             </Button>
-            <Text size="sm" c="dimmed">Goes to us privately, nothing is published automatically.</Text>
+            <Text size="sm" c="dimmed">{t("recommend_private")}</Text>
           </Box>
         </Box>
       </Box>

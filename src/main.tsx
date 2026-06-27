@@ -9,12 +9,15 @@ import "./styles/global.css";
 import App from "./App.tsx";
 import { queryClient } from "./lib/queryClient";
 import { mantineProviderProps } from "./lib/mantine";
+import { LangProvider } from "./i18n";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <MantineProvider {...mantineProviderProps}>
       <QueryClientProvider client={queryClient}>
-        <App />
+        <LangProvider>
+          <App />
+        </LangProvider>
       </QueryClientProvider>
     </MantineProvider>
   </StrictMode>
