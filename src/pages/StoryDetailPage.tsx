@@ -16,6 +16,14 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
+function youtubeId(url: string): string | null {
+  // Handles: youtu.be/ID, youtube.com/watch?v=ID, youtube.com/shorts/ID, youtube.com/embed/ID
+  const m = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|v\/))([A-Za-z0-9_-]{11})/
+  );
+  return m ? m[1] : null;
+}
+
 export default function StoryDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -26,6 +34,9 @@ export default function StoryDetailPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const story = stories.find((s) => s.id === id);
+  const ytId = story?.video ? youtubeId(story.video) : null;
+  const isYoutube = !!ytId;
+  const isDirectVideo = !!story?.video && !isYoutube;
 
   const [reflections, setReflections] = useState<Reflection[]>(() => {
     if (!id) return [];
@@ -88,10 +99,10 @@ export default function StoryDetailPage() {
             overflow: "hidden",
             boxShadow: "0 6px 12px rgba(38,26,18,.08), 0 18px 40px rgba(12,42,48,.16)",
             background: "#0C2A30",
-            cursor: story.video ? "pointer" : "default",
+            cursor: isDirectVideo && !videoPlaying ? "pointer" : "default",
           }}
           onClick={() => {
-            if (!story.video) return;
+            if (!isDirectVideo) return;
             if (videoPlaying) {
               videoRef.current?.pause();
             } else {
@@ -100,8 +111,8 @@ export default function StoryDetailPage() {
             }
           }}
         >
-          {/* Always show image as poster until playing */}
-          {story.image && !videoPlaying && (
+          {/* Poster image — hidden when playing direct video or YouTube is open */}
+          {story.image && !videoPlaying && !isYoutube && (
             <img
               src={story.image}
               alt={`Portrait of ${story.name}`}
@@ -109,8 +120,25 @@ export default function StoryDetailPage() {
             />
           )}
 
-          {/* Video element (shown when playing) */}
-          {story.video && videoPlaying && (
+          {/* YouTube Shorts / video iframe — always mounted when YouTube link present */}
+          {isYoutube && (
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`}
+              title={story.name}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                border: 0,
+              }}
+            />
+          )}
+
+          {/* Direct MP4 video element */}
+          {isDirectVideo && videoPlaying && (
             <video
               ref={videoRef}
               src={story.video}
@@ -125,8 +153,8 @@ export default function StoryDetailPage() {
             />
           )}
 
-          {/* Play button overlay (shown when video exists and not playing) */}
-          {story.video && !videoPlaying && (
+          {/* Play button overlay — shown when there's a direct video not yet playing */}
+          {isDirectVideo && !videoPlaying && (
             <Box
               style={{
                 position: "absolute",
@@ -148,7 +176,6 @@ export default function StoryDetailPage() {
                   alignItems: "center",
                   justifyContent: "center",
                   border: "2px solid rgba(255,255,255,.55)",
-                  transition: "transform .15s",
                 }}
               >
                 <svg width="22" height="26" viewBox="0 0 22 26" fill="white">
@@ -158,18 +185,10 @@ export default function StoryDetailPage() {
             </Box>
           )}
 
-          {/* Mute / pause controls while video plays */}
-          {story.video && videoPlaying && (
+          {/* Mute/unmute for direct video only */}
+          {isDirectVideo && videoPlaying && (
             <Box
-              style={{
-                position: "absolute",
-                bottom: 56,
-                right: 14,
-                display: "flex",
-                flexDirection: "column",
-                gap: 10,
-                zIndex: 4,
-              }}
+              style={{ position: "absolute", bottom: 56, right: 14, zIndex: 4 }}
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -193,7 +212,6 @@ export default function StoryDetailPage() {
                   justifyContent: "center",
                   fontSize: 18,
                 }}
-                title={muted ? "Unmute" : "Mute"}
               >
                 {muted ? "🔇" : "🔊"}
               </button>

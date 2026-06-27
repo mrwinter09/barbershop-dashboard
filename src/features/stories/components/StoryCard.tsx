@@ -14,6 +14,10 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
+function hasVideo(url?: string) {
+  return !!url;
+}
+
 export default function StoryCard({ story, total, onClick }: Props) {
   const teaser =
     story.status === "published" && story.answer
@@ -68,7 +72,7 @@ export default function StoryCard({ story, total, onClick }: Props) {
         ) : (
           <Box style={{ width: "100%", height: "100%", background: "#CBB994" }} />
         )}
-        {story.video && (
+        {hasVideo(story.video) && (
           <Box
             style={{
               position: "absolute",
