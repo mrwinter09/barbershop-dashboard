@@ -17,11 +17,29 @@ function pad(n: number) {
 }
 
 function youtubeId(url: string): string | null {
-  // Handles: youtu.be/ID, youtube.com/watch?v=ID, youtube.com/shorts/ID, youtube.com/embed/ID
   const m = url.match(
     /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|v\/))([A-Za-z0-9_-]{11})/
   );
   return m ? m[1] : null;
+}
+
+function tiktokId(url: string): string | null {
+  // https://www.tiktok.com/@user/video/7234567890123456789
+  // https://vm.tiktok.com/ZMxxxxxx/ (short links — can't resolve without a fetch, so unsupported)
+  const m = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+  return m ? m[1] : null;
+}
+
+type EmbedType = "youtube" | "tiktok" | "direct" | null;
+
+function detectEmbed(url?: string): { type: EmbedType; id: string | null } {
+  if (!url) return { type: null, id: null };
+  const yt = youtubeId(url);
+  if (yt) return { type: "youtube", id: yt };
+  const tt = tiktokId(url);
+  if (tt) return { type: "tiktok", id: tt };
+  // Treat anything else as a direct video file
+  return { type: "direct", id: null };
 }
 
 export default function StoryDetailPage() {
@@ -34,9 +52,10 @@ export default function StoryDetailPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const story = stories.find((s) => s.id === id);
-  const ytId = story?.video ? youtubeId(story.video) : null;
-  const isYoutube = !!ytId;
-  const isDirectVideo = !!story?.video && !isYoutube;
+  const { type: embedType, id: embedId } = detectEmbed(story?.video);
+  const isYoutube = embedType === "youtube";
+  const isTiktok = embedType === "tiktok";
+  const isDirectVideo = embedType === "direct";
 
   const [reflections, setReflections] = useState<Reflection[]>(() => {
     if (!id) return [];
@@ -103,6 +122,7 @@ export default function StoryDetailPage() {
           }}
           onClick={() => {
             if (!isDirectVideo) return;
+
             if (videoPlaying) {
               videoRef.current?.pause();
             } else {
@@ -111,8 +131,8 @@ export default function StoryDetailPage() {
             }
           }}
         >
-          {/* Poster image — hidden when playing direct video or YouTube is open */}
-          {story.image && !videoPlaying && !isYoutube && (
+          {/* Poster image — hidden when playing direct video or an embed is active */}
+          {story.image && !videoPlaying && !isYoutube && !isTiktok && (
             <img
               src={story.image}
               alt={`Portrait of ${story.name}`}
@@ -120,20 +140,25 @@ export default function StoryDetailPage() {
             />
           )}
 
-          {/* YouTube Shorts / video iframe — always mounted when YouTube link present */}
+          {/* YouTube iframe */}
           {isYoutube && (
             <iframe
-              src={`https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`}
+              src={`https://www.youtube-nocookie.com/embed/${embedId}?autoplay=1&rel=0&modestbranding=1`}
               title={story.name}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-                border: 0,
-              }}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
+            />
+          )}
+
+          {/* TikTok iframe */}
+          {isTiktok && (
+            <iframe
+              src={`https://www.tiktok.com/embed/v2/${embedId}`}
+              title={story.name}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
             />
           )}
 
@@ -153,7 +178,7 @@ export default function StoryDetailPage() {
             />
           )}
 
-          {/* Play button overlay — shown when there's a direct video not yet playing */}
+          {/* Play button overlay — only for direct video files, not embeds */}
           {isDirectVideo && !videoPlaying && (
             <Box
               style={{
