@@ -9,7 +9,7 @@ import StoryStatusTag from "../features/stories/components/StoryStatusTag";
 import ReflectionItem from "../features/stories/components/ReflectionItem";
 import ReflectionForm from "../features/stories/components/ReflectionForm";
 import type { Reflection } from "../features/stories/types/Story";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useLang } from "../i18n";
 
 function pad(n: number) {
@@ -21,6 +21,9 @@ export default function StoryDetailPage() {
   const navigate = useNavigate();
   const { data: stories = [], isLoading } = useGetStories();
   const { t } = useLang();
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const story = stories.find((s) => s.id === id);
 
@@ -76,7 +79,7 @@ export default function StoryDetailPage() {
         }}
         className="ct-detail-hero"
       >
-        {/* Portrait */}
+        {/* Portrait / Video */}
         <Box
           style={{
             position: "relative",
@@ -84,15 +87,120 @@ export default function StoryDetailPage() {
             borderRadius: 16,
             overflow: "hidden",
             boxShadow: "0 6px 12px rgba(38,26,18,.08), 0 18px 40px rgba(12,42,48,.16)",
+            background: "#0C2A30",
+            cursor: story.video ? "pointer" : "default",
+          }}
+          onClick={() => {
+            if (!story.video) return;
+            if (videoPlaying) {
+              videoRef.current?.pause();
+            } else {
+              setVideoPlaying(true);
+              setTimeout(() => videoRef.current?.play(), 0);
+            }
           }}
         >
-          {story.image && (
+          {/* Always show image as poster until playing */}
+          {story.image && !videoPlaying && (
             <img
               src={story.image}
               alt={`Portrait of ${story.name}`}
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
           )}
+
+          {/* Video element (shown when playing) */}
+          {story.video && videoPlaying && (
+            <video
+              ref={videoRef}
+              src={story.video}
+              poster={story.image}
+              autoPlay
+              playsInline
+              muted={muted}
+              onPlay={() => setVideoPlaying(true)}
+              onPause={() => setVideoPlaying(false)}
+              onEnded={() => setVideoPlaying(false)}
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          )}
+
+          {/* Play button overlay (shown when video exists and not playing) */}
+          {story.video && !videoPlaying && (
+            <Box
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(12,42,48,.28)",
+              }}
+            >
+              <Box
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,.18)",
+                  backdropFilter: "blur(8px)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "2px solid rgba(255,255,255,.55)",
+                  transition: "transform .15s",
+                }}
+              >
+                <svg width="22" height="26" viewBox="0 0 22 26" fill="white">
+                  <path d="M2 2l18 11L2 24V2z" />
+                </svg>
+              </Box>
+            </Box>
+          )}
+
+          {/* Mute / pause controls while video plays */}
+          {story.video && videoPlaying && (
+            <Box
+              style={{
+                position: "absolute",
+                bottom: 56,
+                right: 14,
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+                zIndex: 4,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => {
+                  const v = videoRef.current;
+                  if (!v) return;
+                  v.muted = !v.muted;
+                  setMuted(v.muted);
+                }}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  border: 0,
+                  background: "rgba(255,255,255,.18)",
+                  backdropFilter: "blur(6px)",
+                  color: "#fff",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 18,
+                }}
+                title={muted ? "Unmute" : "Mute"}
+              >
+                {muted ? "🔇" : "🔊"}
+              </button>
+            </Box>
+          )}
+
+          {/* Story number badge */}
           <Box
             style={{
               position: "absolute",
@@ -107,6 +215,7 @@ export default function StoryDetailPage() {
               textTransform: "uppercase",
               padding: "5px 10px",
               borderRadius: 3,
+              zIndex: 5,
             }}
           >
             Story {pad(story.number)} / {TARGET}

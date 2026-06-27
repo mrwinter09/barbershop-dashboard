@@ -68,6 +68,36 @@ export default function StoryCard({ story, total, onClick }: Props) {
         ) : (
           <Box style={{ width: "100%", height: "100%", background: "#CBB994" }} />
         )}
+        {story.video && (
+          <Box
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(12,42,48,.22)",
+            }}
+          >
+            <Box
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,.2)",
+                backdropFilter: "blur(6px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "1.5px solid rgba(255,255,255,.5)",
+              }}
+            >
+              <svg width="14" height="17" viewBox="0 0 14 17" fill="white">
+                <path d="M1 1.5l12 7-12 7V1.5z" />
+              </svg>
+            </Box>
+          </Box>
+        )}
         <Box
           style={{
             position: "absolute",
