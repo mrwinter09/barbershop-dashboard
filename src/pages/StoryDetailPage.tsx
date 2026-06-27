@@ -9,11 +9,37 @@ import StoryStatusTag from "../features/stories/components/StoryStatusTag";
 import ReflectionItem from "../features/stories/components/ReflectionItem";
 import ReflectionForm from "../features/stories/components/ReflectionForm";
 import type { Reflection } from "../features/stories/types/Story";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useLang } from "../i18n";
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
+}
+
+function youtubeId(url: string): string | null {
+  const m = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|v\/))([A-Za-z0-9_-]{11})/
+  );
+  return m ? m[1] : null;
+}
+
+function tiktokId(url: string): string | null {
+  // https://www.tiktok.com/@user/video/7234567890123456789
+  // https://vm.tiktok.com/ZMxxxxxx/ (short links — can't resolve without a fetch, so unsupported)
+  const m = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+  return m ? m[1] : null;
+}
+
+type EmbedType = "youtube" | "tiktok" | "direct" | null;
+
+function detectEmbed(url?: string): { type: EmbedType; id: string | null } {
+  if (!url) return { type: null, id: null };
+  const yt = youtubeId(url);
+  if (yt) return { type: "youtube", id: yt };
+  const tt = tiktokId(url);
+  if (tt) return { type: "tiktok", id: tt };
+  // Treat anything else as a direct video file
+  return { type: "direct", id: null };
 }
 
 export default function StoryDetailPage() {
@@ -21,8 +47,15 @@ export default function StoryDetailPage() {
   const navigate = useNavigate();
   const { data: stories = [], isLoading } = useGetStories();
   const { t } = useLang();
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const story = stories.find((s) => s.id === id);
+  const { type: embedType, id: embedId } = detectEmbed(story?.video);
+  const isYoutube = embedType === "youtube";
+  const isTiktok = embedType === "tiktok";
+  const isDirectVideo = embedType === "direct";
 
   const [reflections, setReflections] = useState<Reflection[]>(() => {
     if (!id) return [];
@@ -76,7 +109,7 @@ export default function StoryDetailPage() {
         }}
         className="ct-detail-hero"
       >
-        {/* Portrait */}
+        {/* Portrait / Video */}
         <Box
           style={{
             position: "relative",
@@ -84,15 +117,133 @@ export default function StoryDetailPage() {
             borderRadius: 16,
             overflow: "hidden",
             boxShadow: "0 6px 12px rgba(38,26,18,.08), 0 18px 40px rgba(12,42,48,.16)",
+            background: "#0C2A30",
+            cursor: isDirectVideo && !videoPlaying ? "pointer" : "default",
+          }}
+          onClick={() => {
+            if (!isDirectVideo) return;
+
+            if (videoPlaying) {
+              videoRef.current?.pause();
+            } else {
+              setVideoPlaying(true);
+              setTimeout(() => videoRef.current?.play(), 0);
+            }
           }}
         >
-          {story.image && (
+          {/* Poster image — hidden when playing direct video or an embed is active */}
+          {story.image && !videoPlaying && !isYoutube && !isTiktok && (
             <img
               src={story.image}
               alt={`Portrait of ${story.name}`}
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
           )}
+
+          {/* YouTube iframe */}
+          {isYoutube && (
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${embedId}?autoplay=1&rel=0&modestbranding=1`}
+              title={story.name}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
+            />
+          )}
+
+          {/* TikTok iframe */}
+          {isTiktok && (
+            <iframe
+              src={`https://www.tiktok.com/embed/v2/${embedId}`}
+              title={story.name}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
+            />
+          )}
+
+          {/* Direct MP4 video element */}
+          {isDirectVideo && videoPlaying && (
+            <video
+              ref={videoRef}
+              src={story.video}
+              poster={story.image}
+              autoPlay
+              playsInline
+              muted={muted}
+              onPlay={() => setVideoPlaying(true)}
+              onPause={() => setVideoPlaying(false)}
+              onEnded={() => setVideoPlaying(false)}
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          )}
+
+          {/* Play button overlay — only for direct video files, not embeds */}
+          {isDirectVideo && !videoPlaying && (
+            <Box
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(12,42,48,.28)",
+              }}
+            >
+              <Box
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,.18)",
+                  backdropFilter: "blur(8px)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "2px solid rgba(255,255,255,.55)",
+                }}
+              >
+                <svg width="22" height="26" viewBox="0 0 22 26" fill="white">
+                  <path d="M2 2l18 11L2 24V2z" />
+                </svg>
+              </Box>
+            </Box>
+          )}
+
+          {/* Mute/unmute for direct video only */}
+          {isDirectVideo && videoPlaying && (
+            <Box
+              style={{ position: "absolute", bottom: 56, right: 14, zIndex: 4 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => {
+                  const v = videoRef.current;
+                  if (!v) return;
+                  v.muted = !v.muted;
+                  setMuted(v.muted);
+                }}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  border: 0,
+                  background: "rgba(255,255,255,.18)",
+                  backdropFilter: "blur(6px)",
+                  color: "#fff",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 18,
+                }}
+              >
+                {muted ? "🔇" : "🔊"}
+              </button>
+            </Box>
+          )}
+
+          {/* Story number badge */}
           <Box
             style={{
               position: "absolute",
@@ -107,6 +258,7 @@ export default function StoryDetailPage() {
               textTransform: "uppercase",
               padding: "5px 10px",
               borderRadius: 3,
+              zIndex: 5,
             }}
           >
             Story {pad(story.number)} / {TARGET}
