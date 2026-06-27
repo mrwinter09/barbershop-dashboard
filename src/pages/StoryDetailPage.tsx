@@ -10,6 +10,7 @@ import ReflectionItem from "../features/stories/components/ReflectionItem";
 import ReflectionForm from "../features/stories/components/ReflectionForm";
 import type { Reflection } from "../features/stories/types/Story";
 import { useState } from "react";
+import { useLang } from "../i18n";
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -19,6 +20,7 @@ export default function StoryDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: stories = [], isLoading } = useGetStories();
+  const { t } = useLang();
 
   const story = stories.find((s) => s.id === id);
 
@@ -42,9 +44,9 @@ export default function StoryDetailPage() {
   if (!story) {
     return (
       <Container size="lg" py="xl">
-        <Text>Story not found.</Text>
+        <Text>{t("story_not_found")}</Text>
         <Button mt="md" component={Link} to="/stories" color="petrol" variant="outline">
-          Back to the stories
+          {t("story_back")}
         </Button>
       </Container>
     );
@@ -60,7 +62,7 @@ export default function StoryDetailPage() {
         onClick={() => navigate("/stories")}
         styles={{ root: { fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 14, color: "#9C8466" } }}
       >
-        ← Back to the stories
+        {t("story_back_arrow")}
       </Button>
 
       {/* Detail hero */}
@@ -194,11 +196,10 @@ export default function StoryDetailPage() {
             marginBottom: 6,
           }}
         >
-          Reflections
+          {t("story_reflections")}
         </Text>
         <Text c="dimmed" mb={18} style={{ lineHeight: 1.6 }}>
-          Read this story? Leave a short response, a sentence is plenty. Like a word
-          dropped in the barbershop on your way out.
+          {t("story_reflection_placeholder")}
         </Text>
 
         <Box mb={26}>
@@ -212,7 +213,7 @@ export default function StoryDetailPage() {
                 padding: "14px 0 26px",
               }}
             >
-              No reflections yet. Be the first to respond.
+              {t("story_no_reflections")}
             </Text>
           ) : (
             reflections.map((r, i) => (
@@ -230,7 +231,7 @@ export default function StoryDetailPage() {
             color="petrol"
             variant="outline"
           >
-            Know who should sit in the chair next? →
+            {t("story_recommend_cta")}
           </Button>
         </Box>
       </Box>

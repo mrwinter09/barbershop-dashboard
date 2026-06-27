@@ -9,28 +9,18 @@ import img1 from "../assets/interior-1.jpg";
 import img2 from "../assets/hero.jpg";
 import img3 from "../assets/interior-3.jpg";
 import img4 from "../assets/shop-2.jpg";
-
-const STEPS = [
-  {
-    n: "01",
-    title: "The chair arrives",
-    body: "It travels to a neighbourhood, a market square, a festival, a quiet street corner, and sets up where people already are.",
-  },
-  {
-    n: "02",
-    title: "One question",
-    body: "You sit down for a real haircut. While the clippers run, there's one question, and time to actually answer it.",
-  },
-  {
-    n: "03",
-    title: "A portrait is kept",
-    body: "The conversation becomes a short film, numbered and added to the archive of fifty, for the city to keep and come back to.",
-  },
-];
+import { useLang } from "../i18n";
 
 export default function AboutPage() {
   const { data: stories = [] } = useGetStories();
   const collected = stories.filter((s) => s.status === "published").length;
+  const { t } = useLang();
+
+  const STEPS = [
+    { n: "01", title: t("about_step1_title"), body: t("about_step1_body") },
+    { n: "02", title: t("about_step2_title"), body: t("about_step2_body") },
+    { n: "03", title: t("about_step3_title"), body: t("about_step3_body") },
+  ];
 
   return (
     <div>
@@ -55,7 +45,7 @@ export default function AboutPage() {
                 color: "#9C8466",
               }}
             >
-              The chair · The format · The maker
+              {t("about_eyebrow")}
             </Text>
             <Text
               component="h1"
@@ -70,28 +60,23 @@ export default function AboutPage() {
                 margin: "14px 0 0",
               }}
             >
-              A barbershop is where a neighbourhood talks to itself.
+              {t("about_hero")}
             </Text>
             <Text
               mt={20}
               style={{ fontSize: "clamp(16px, 1.8vw, 19px)", lineHeight: 1.65, color: "#3F2D20" }}
             >
-              ClipperTakes takes that idea on the road. Ivan Winter, a barber and theatre
-              maker, brings a travelling chair to Rotterdam's streets, markets and festivals.
-              You sit down for a haircut. While the clippers run, he asks one question. The
-              conversation becomes a two-to-three minute portrait.
+              {t("about_body1")}
             </Text>
             <Text mt={16} style={{ lineHeight: 1.65, color: "#3F2D20" }}>
-              Fifty portraits, numbered one to fifty, building a public archive of the city's
-              ordinary, extraordinary voices, neighbours, makers, organisers. Not influencers.
-              Not celebrities. People you'd recognise before you'd follow.
+              {t("about_body2")}
             </Text>
             <Box mt={26} style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Button component={Link} to="/submit" color="petrol" variant="filled">
-                Tell your story
+                {t("about_tell")}
               </Button>
               <Button component={Link} to="/stories" color="petrol" variant="subtle">
-                See the archive →
+                {t("about_archive")}
               </Button>
             </Box>
           </div>
@@ -187,11 +172,10 @@ export default function AboutPage() {
                     margin: "0 0 8px",
                   }}
                 >
-                  The archive is {collected} of {TARGET}, and growing.
+                  {t("about_count", { count: collected })}
                 </Text>
                 <Text style={{ color: "#6A5440", lineHeight: 1.6 }}>
-                  Every session adds a voice. Want to be one of them, or point us toward
-                  someone who should be?
+                  {t("about_count_sub")}
                 </Text>
               </div>
               <Box style={{ minWidth: 240, flex: 1 }}>

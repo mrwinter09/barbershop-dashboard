@@ -8,6 +8,7 @@ import ProgressCounter from "../features/stories/components/ProgressCounter";
 import StoryCard from "../features/stories/components/StoryCard";
 import NeighborhoodTag from "../features/stories/components/NeighborhoodTag";
 import heroImg from "../assets/hero.jpg";
+import { useLang } from "../i18n";
 
 const PAPER_TEXTURE =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E\")";
@@ -15,6 +16,7 @@ const PAPER_TEXTURE =
 export default function HomePage() {
   const { data: stories = [] } = useGetStories();
   const navigate = useNavigate();
+  const { t } = useLang();
 
   const published = stories.filter((s) => s.status === "published");
   const collected = published.length;
@@ -50,7 +52,7 @@ export default function HomePage() {
                 color: "#9C8466",
               }}
             >
-              Rotterdam · A living archive · 2026
+              {t("home_eyebrow")}
             </Text>
             <Text
               component="h1"
@@ -65,7 +67,7 @@ export default function HomePage() {
                 margin: "14px 0 0",
               }}
             >
-              50 Conversations.<br />One City.
+              {t("home_hero")}
             </Text>
             <Text
               mt={22}
@@ -76,16 +78,14 @@ export default function HomePage() {
                 maxWidth: "46ch",
               }}
             >
-              A barber chair travels through Rotterdam. People sit down, the clippers
-              start, and we ask one question. The conversation becomes a short portrait —
-              a voice from the neighbourhood, kept for everyone.
+              {t("home_sub")}
             </Text>
             <Box mt={28} style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
               <Button component={Link} to="/stories" color="petrol" variant="filled" size="lg">
-                Explore the stories
+                {t("home_cta")}
               </Button>
               <Button component={Link} to="/about" color="petrol" variant="outline" size="lg">
-                About the chair
+                {t("home_about_btn")}
               </Button>
             </Box>
           </div>
@@ -101,7 +101,7 @@ export default function HomePage() {
           >
             <img
               src={lead?.image ?? heroImg}
-              alt="In the chair"
+              alt={t("home_in_chair")}
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
             <Box
@@ -153,8 +153,7 @@ export default function HomePage() {
                 fontSize: 16,
               }}
             >
-              Every story published brings the archive closer to fifty. This is the count a
-              funder, a neighbour, or a future participant sees first.
+              {t("home_counter_body")}
             </Text>
           </Box>
         </Container>
@@ -183,7 +182,7 @@ export default function HomePage() {
                   color: "#9C8466",
                 }}
               >
-                Recently in the chair
+                {t("home_recent")}
               </Text>
               <Text
                 component="h2"
@@ -197,11 +196,11 @@ export default function HomePage() {
                   margin: "8px 0 0",
                 }}
               >
-                Voices from the neighbourhood
+                {t("home_voices")}
               </Text>
             </div>
             <Button component={Link} to="/stories" color="petrol" variant="subtle">
-              See all stories →
+              {t("home_see_all")}
             </Button>
           </Box>
 
@@ -229,7 +228,7 @@ export default function HomePage() {
                 color: "#9C8466",
               }}
             >
-              Where the chair has been
+              {t("home_where")}
             </Text>
             <Text
               component="h2"
@@ -243,10 +242,10 @@ export default function HomePage() {
                 margin: "8px 0 4px",
               }}
             >
-              Rotterdam, neighbourhood by neighbourhood
+              {t("home_where_sub")}
             </Text>
             <Text c="dimmed" style={{ maxWidth: "52ch", lineHeight: 1.6 }}>
-              The chair moves on. Each neighbourhood adds its own accent to the archive.
+              {t("home_moves")}
             </Text>
           </Box>
           <Box style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
