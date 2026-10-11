@@ -103,25 +103,22 @@ export default function TourPage() {
           <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3D2020", marginBottom: 32 }}>All Shows — Most Recent First</p>
 
           {/* Column headers */}
-          <div style={{ display: "grid", gridTemplateColumns: "130px 1fr 200px 140px", gap: 16, padding: "0 0 12px", borderBottom: "1px solid #1E0E0E", marginBottom: 4 }}>
-            {["Date", "Event", "Venue", "City"].map(h => (
-              <span key={h} style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3D2020" }}>{h}</span>
+          <div className="ds-tour-head" style={{ marginBottom: 4 }}>
+            {["Date", "Event", "Venue", "City"].map((h, i) => (
+              <span key={h} className={i === 2 ? "ds-tour-venue" : i === 3 ? "ds-tour-city" : ""} style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3D2020" }}>{h}</span>
             ))}
           </div>
 
           {ALL_SHOWS.map((s, i) => (
-            <div key={i} style={{
-              display: "grid", gridTemplateColumns: "130px 1fr 200px 140px", gap: 16, alignItems: "center",
-              padding: "16px 0", borderBottom: "1px solid #1E0E0E",
-              transition: "background 0.15s", cursor: "default",
-            }}
+            <div key={i} className="ds-tour-row"
+              style={{ transition: "background 0.15s", cursor: "default" }}
               onMouseEnter={e => (e.currentTarget.style.background = "#110808")}
               onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
             >
               <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.08em", color: "#9B1D20", whiteSpace: "nowrap" }}>{s.date}</span>
               <span style={{ fontSize: 14, fontWeight: 500, color: "#EAD5C8" }}>{s.event}</span>
-              <span style={{ fontSize: 13, color: "#5A3A32" }}>{s.venue}</span>
-              <span style={{ fontSize: 13, color: "#3D2020" }}>{s.city}</span>
+              <span className="ds-tour-venue" style={{ fontSize: 13, color: "#5A3A32" }}>{s.venue}</span>
+              <span className="ds-tour-city" style={{ fontSize: 13, color: "#3D2020" }}>{s.city}</span>
             </div>
           ))}
         </div>

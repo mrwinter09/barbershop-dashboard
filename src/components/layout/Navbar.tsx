@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 const NAV = [
   { path: "/video", label: "Video" },
   { path: "/tour", label: "Tour" },
-  { path: "/press", label: "Press" },
+  { path: "/press", label: "Bio" },
 ];
 
 export default function Navbar() {

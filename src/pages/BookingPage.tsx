@@ -39,7 +39,7 @@ export default function BookingPage() {
         <p style={{ fontSize: 16, color: "#666", maxWidth: 560, lineHeight: 1.8, margin: 0 }}>Available for club residencies, festival headliners, private events and brand activations worldwide. Fill in the form and management will respond within 48 hours.</p>
       </section>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px clamp(20px,5vw,64px)", display: "grid", gridTemplateColumns: "2fr 1fr", gap: 80, alignItems: "start" }}>
+      <div className="ds-booking-layout" style={{ maxWidth: 1200, margin: "0 auto", padding: "80px clamp(20px,5vw,64px)" }}>
         {/* Form */}
         <div>
           {submitted ? (

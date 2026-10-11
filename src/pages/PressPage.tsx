@@ -27,7 +27,7 @@ export default function PressPage() {
 
       {/* Bio */}
       <section style={{ padding: "80px clamp(20px,5vw,64px)", borderBottom: "1px solid #1E0E0E" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+        <div className="ds-bio-grid" style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div>
             <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3D2020", marginBottom: 24 }}>Short Bio (100 words)</p>
             <p style={{ fontSize: 15, lineHeight: 1.85, color: "#7A5A52" }}>{BIO_SHORT}</p>

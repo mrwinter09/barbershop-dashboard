@@ -58,10 +58,6 @@ export default function HomePage() {
               fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
               color: "#EAD5C8", background: "#9B1D20", textDecoration: "none", padding: "16px 36px",
             }}>Book Donn Stone</Link>
-            <Link to="/press" style={{
-              fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
-              color: "#EAD5C8", textDecoration: "none", border: "1px solid rgba(234,213,200,0.35)", padding: "16px 36px",
-            }}>Download EPK</Link>
           </div>
         </div>
       </section>
@@ -77,7 +73,7 @@ export default function HomePage() {
 
       {/* ── Bio ── */}
       <section style={{ padding: "clamp(64px,10vw,120px) clamp(20px,5vw,64px)" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
+        <div className="ds-home-bio" style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div>
             <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 24 }}>About</p>
             <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 24px", lineHeight: 1.1 }}>Rotterdam's Voice of Amapiano</h2>
@@ -90,9 +86,9 @@ export default function HomePage() {
             <Link to="/press" style={{
               fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
               color: "#9B1D20", textDecoration: "none", borderBottom: "1px solid #9B1D20", paddingBottom: 4,
-            }}>Full Bio &amp; EPK</Link>
+            }}>Full Bio</Link>
           </div>
-          <div style={{ aspectRatio: "3/4", background: "#110808", border: "1px solid #1E0E0E", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div className="ds-home-bio-photo" style={{ aspectRatio: "3/4", background: "#110808", border: "1px solid #1E0E0E", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 56, color: "#1E0E0E", fontWeight: 700 }}>DS</span>
           </div>
         </div>
@@ -104,16 +100,13 @@ export default function HomePage() {
           <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 48 }}>Select Shows</p>
           <div style={{ display: "flex", flexDirection: "column" }}>
             {SHOWS.map((s, i) => (
-              <div key={i} style={{
-                display: "grid", gridTemplateColumns: "80px 1fr 1fr", gap: 24, alignItems: "center",
-                padding: "24px 0", borderBottom: "1px solid #1E0E0E",
-              }}>
+              <div key={i} className="ds-shows-row">
                 <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 12, color: "#9B1D20" }}>{s.year}</span>
                 <div>
                   <span style={{ fontSize: 17, fontWeight: 600, color: "#EAD5C8", marginRight: 12 }}>{s.venue}</span>
                   <span style={{ fontSize: 14, color: "#5A3A32" }}>{s.city}</span>
                 </div>
-                <span style={{ fontSize: 13, color: "#3D2020", fontStyle: "italic" }}>{s.note}</span>
+                <span className="ds-shows-row-note" style={{ fontSize: 13, color: "#3D2020", fontStyle: "italic" }}>{s.note}</span>
               </div>
             ))}
           </div>
