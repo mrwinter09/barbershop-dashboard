@@ -3,14 +3,14 @@
 import { useState } from "react";
 
 const VIDEOS = [
-  { id: "KJiH8x8cAeM", title: "Donn Stone | 3 Step Afro House | BAIRRO | MAR 28 2026", venue: "Bairro", year: "2026" },
-  { id: "jgG7z-1uxj8", title: "Objektives Tv Presents Donn Stone",                     venue: "Objektives Tv",  year: "" },
-  { id: "nvPEU_9iboA", title: "Donn Stone | BSMNT | Live Mix",                          venue: "BSMNT",          year: "" },
-  { id: "3US8qZb2cP8", title: "DJ Set Donn Stone - KAZ - La Rotonde",                   venue: "KAZ",            year: "" },
-  { id: "qLkOGAb2omU", title: "Donn Stone | Operator 18.02.2025",                       venue: "Operator Radio", year: "2025" },
-  { id: "dudLs9Ueru4", title: "My Living Room Ep 1 [Donn Stone]",                       venue: "Living Room",    year: "" },
+  { id: "ZBYdlg3qv40", title: "Donn Stone | Afro House | BAIRRO | Juli 2026",           venue: "Bairro",               year: "2026" },
+  { id: "KJiH8x8cAeM", title: "Donn Stone | 3 Step Afro House | BAIRRO | Mar 2026",    venue: "Bairro",               year: "2026" },
+  { id: "jgG7z-1uxj8", title: "Objektives Tv Presents Donn Stone",                      venue: "Objektives Tv",        year: "" },
+  { id: "nvPEU_9iboA", title: "Donn Stone | BSMNT | Live Mix",                          venue: "BSMNT",                year: "" },
+  { id: "3US8qZb2cP8", title: "DJ Set Donn Stone - KAZ - La Rotonde",                   venue: "KAZ",                  year: "" },
+  { id: "qLkOGAb2omU", title: "Donn Stone | Operator 18.02.2025",                       venue: "Operator Radio",       year: "2025" },
+  { id: "dudLs9Ueru4", title: "My Living Room Ep 1 [Donn Stone]",                       venue: "Living Room",          year: "" },
   { id: "QN3_M4wJx2Q", title: "LATINVILLAGE presents DONN STONE",                       venue: "LatinVillage Festival", year: "" },
-  { id: "ZBYdlg3qv40", title: "Donn Stone | Afro House | BAIRRO",                       venue: "Bairro",         year: "" },
 ];
 
 export default function VideoPage() {
