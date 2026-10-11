@@ -7,7 +7,6 @@ const NAV = [
   { path: "/video", label: "Video" },
   { path: "/tour", label: "Tour" },
   { path: "/press", label: "Bio" },
-  { path: "/experience", label: "Experience" },
 ];
 
 export default function Navbar() {
