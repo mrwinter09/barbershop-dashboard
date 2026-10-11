@@ -1,8 +1,16 @@
 /** @format */
 
-type Show = { date: string; event: string; venue: string; city: string };
+type Show = { date: string; event: string; venue: string; city: string; tickets?: string };
+
+// ── ADD NEW UPCOMING SHOWS HERE ──────────────────────────────────────────────
+const UPCOMING_SHOWS: Show[] = [
+  // Example:
+  // { date: "DD Mon YYYY", event: "Event Name", venue: "Venue Name", city: "City", tickets: "https://..." },
+];
+// ─────────────────────────────────────────────────────────────────────────────
 
 const ALL_SHOWS: Show[] = [
+  { date: "19 Sep 2026", event: "Bairro Summer Closing",                     venue: "Kunstfabriek",             city: "Rotterdam" },
   { date: "25 Jul 2026", event: "ConstantMo · Summer Edition",              venue: "The Other Side",           city: "Amsterdam" },
   { date: "23 May 2026", event: "Toffler",                                   venue: "Toffler",                  city: "Rotterdam" },
   { date: "22 Oct 2025", event: "VimADE",                                    venue: "Bitterzoet",               city: "Amsterdam" },
@@ -63,6 +71,31 @@ export default function TourPage() {
         <h1 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(36px,6vw,72px)", letterSpacing: "0.04em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 16px" }}>Tour Dates</h1>
         <p style={{ fontSize: 15, color: "#5A3A32", margin: 0 }}>{ALL_SHOWS.length} shows · 2018 – 2026</p>
       </section>
+
+      {/* Upcoming shows */}
+      {UPCOMING_SHOWS.length > 0 && (
+        <section style={{ padding: "64px clamp(20px,5vw,64px) 0", borderBottom: "1px solid #1E0E0E" }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 24 }}>Upcoming</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {UPCOMING_SHOWS.map((s, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "130px 1fr 200px 140px auto", gap: 16, alignItems: "center", padding: "22px 0", borderBottom: "1px solid #1E0E0E" }}>
+                  <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: "#9B1D20" }}>{s.date}</span>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: "#EAD5C8" }}>{s.event}</span>
+                  <span style={{ fontSize: 13, color: "#5A3A32" }}>{s.venue}</span>
+                  <span style={{ fontSize: 13, color: "#3D2020" }}>{s.city}</span>
+                  {s.tickets && (
+                    <a href={s.tickets} target="_blank" rel="noopener noreferrer" style={{
+                      fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase",
+                      color: "#EAD5C8", background: "#9B1D20", textDecoration: "none", padding: "10px 18px", whiteSpace: "nowrap",
+                    }}>Tickets</a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* All shows */}
       <section style={{ padding: "64px clamp(20px,5vw,64px) 80px" }}>
