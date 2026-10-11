@@ -10,6 +10,14 @@
   --text-muted:   #7A5A52;
   --text-dim:     #3D2020;
   --copper:       #C47A3A;
+
+  /* Light section palette */
+  --light-bg:     #FAF5F2;
+  --light-bg2:    #F0E8E3;
+  --light-border: #DDD0C8;
+  --light-text:   #1A0808;
+  --light-muted:  #5A3A3A;
+  --light-dim:    #9A7070;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,4 +51,94 @@ input, select, textarea, button { font-family: inherit; }
 @keyframes pulse-red {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.5; }
+}
+
+/* ── Mobile responsive helpers ── */
+
+/* Homepage: bio 2-col → 1-col */
+.ds-home-bio {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+@media (max-width: 720px) {
+  .ds-home-bio {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .ds-home-bio-photo { display: none; }
+}
+
+/* Homepage: shows grid — hide detail column on mobile */
+.ds-shows-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1px solid #DDD0C8;
+}
+@media (max-width: 600px) {
+  .ds-shows-row { grid-template-columns: 72px 1fr; }
+  .ds-shows-row-note { display: none; }
+}
+
+/* Tour: table columns collapse on mobile */
+.ds-tour-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 200px 140px;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #DDD0C8;
+}
+.ds-tour-head {
+  display: grid;
+  grid-template-columns: 130px 1fr 200px 140px;
+  gap: 16px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid #DDD0C8;
+  margin-bottom: 4px;
+}
+@media (max-width: 720px) {
+  .ds-tour-row  { grid-template-columns: 110px 1fr; }
+  .ds-tour-head { grid-template-columns: 110px 1fr; }
+  .ds-tour-venue, .ds-tour-city { display: none; }
+}
+
+/* Press/Bio: 2-col bio → 1-col */
+.ds-bio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .ds-bio-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
+/* Booking: form + sidebar → stacked */
+.ds-booking-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .ds-booking-layout { grid-template-columns: 1fr; gap: 48px; }
+}
+
+/* Tour upcoming row */
+.ds-upcoming-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 200px 140px auto;
+  gap: 16px;
+  align-items: center;
+  padding: 22px 0;
+  border-bottom: 1px solid #1E0E0E;
+}
+@media (max-width: 720px) {
+  .ds-upcoming-row { grid-template-columns: 1fr auto; }
+  .ds-upcoming-venue, .ds-upcoming-city { display: none; }
 }

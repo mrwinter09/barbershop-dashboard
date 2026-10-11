@@ -69,25 +69,25 @@ export default function TourPage() {
       <section style={{ padding: "140px clamp(20px,5vw,64px) 80px", borderBottom: "1px solid #1E0E0E" }}>
         <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16 }}>Live</p>
         <h1 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(36px,6vw,72px)", letterSpacing: "0.04em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 16px" }}>Tour Dates</h1>
-        <p style={{ fontSize: 15, color: "#5A3A32", margin: 0 }}>{ALL_SHOWS.length} shows · 2018 – 2026</p>
+        <p style={{ fontSize: 15, color: "#9A7070", margin: 0 }}>{ALL_SHOWS.length} shows · 2018 – 2026</p>
       </section>
 
       {/* Upcoming shows */}
       {UPCOMING_SHOWS.length > 0 && (
-        <section style={{ padding: "64px clamp(20px,5vw,64px) 0", borderBottom: "1px solid #1E0E0E" }}>
+        <section style={{ background: "#FAF5F2", padding: "64px clamp(20px,5vw,64px) 0", borderBottom: "1px solid #DDD0C8" }}>
           <div style={{ maxWidth: 1200, margin: "0 auto" }}>
             <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 24 }}>Upcoming</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {UPCOMING_SHOWS.map((s, i) => (
-                <div key={i} style={{ display: "grid", gridTemplateColumns: "130px 1fr 200px 140px auto", gap: 16, alignItems: "center", padding: "22px 0", borderBottom: "1px solid #1E0E0E" }}>
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "130px 1fr 200px 140px auto", gap: 16, alignItems: "center", padding: "22px 0", borderBottom: "1px solid #DDD0C8" }}>
                   <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: "#9B1D20" }}>{s.date}</span>
-                  <span style={{ fontSize: 15, fontWeight: 600, color: "#EAD5C8" }}>{s.event}</span>
-                  <span style={{ fontSize: 13, color: "#5A3A32" }}>{s.venue}</span>
-                  <span style={{ fontSize: 13, color: "#3D2020" }}>{s.city}</span>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: "#1A0808" }}>{s.event}</span>
+                  <span style={{ fontSize: 13, color: "#5A3A3A" }}>{s.venue}</span>
+                  <span style={{ fontSize: 13, color: "#9A7070" }}>{s.city}</span>
                   {s.tickets && (
                     <a href={s.tickets} target="_blank" rel="noopener noreferrer" style={{
                       fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase",
-                      color: "#EAD5C8", background: "#9B1D20", textDecoration: "none", padding: "10px 18px", whiteSpace: "nowrap",
+                      color: "#FAF5F2", background: "#9B1D20", textDecoration: "none", padding: "10px 18px", whiteSpace: "nowrap",
                     }}>Tickets</a>
                   )}
                 </div>
@@ -98,46 +98,43 @@ export default function TourPage() {
       )}
 
       {/* All shows */}
-      <section style={{ padding: "64px clamp(20px,5vw,64px) 80px" }}>
+      <section style={{ background: "#FAF5F2", padding: "64px clamp(20px,5vw,64px) 80px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3D2020", marginBottom: 32 }}>All Shows — Most Recent First</p>
+          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9A7070", marginBottom: 32 }}>All Shows — Most Recent First</p>
 
           {/* Column headers */}
-          <div style={{ display: "grid", gridTemplateColumns: "130px 1fr 200px 140px", gap: 16, padding: "0 0 12px", borderBottom: "1px solid #1E0E0E", marginBottom: 4 }}>
-            {["Date", "Event", "Venue", "City"].map(h => (
-              <span key={h} style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3D2020" }}>{h}</span>
+          <div className="ds-tour-head" style={{ marginBottom: 4 }}>
+            {["Date", "Event", "Venue", "City"].map((h, i) => (
+              <span key={h} className={i === 2 ? "ds-tour-venue" : i === 3 ? "ds-tour-city" : ""} style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9A7070" }}>{h}</span>
             ))}
           </div>
 
           {ALL_SHOWS.map((s, i) => (
-            <div key={i} style={{
-              display: "grid", gridTemplateColumns: "130px 1fr 200px 140px", gap: 16, alignItems: "center",
-              padding: "16px 0", borderBottom: "1px solid #1E0E0E",
-              transition: "background 0.15s", cursor: "default",
-            }}
-              onMouseEnter={e => (e.currentTarget.style.background = "#110808")}
+            <div key={i} className="ds-tour-row"
+              style={{ transition: "background 0.15s", cursor: "default" }}
+              onMouseEnter={e => (e.currentTarget.style.background = "#F0E8E3")}
               onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
             >
               <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.08em", color: "#9B1D20", whiteSpace: "nowrap" }}>{s.date}</span>
-              <span style={{ fontSize: 14, fontWeight: 500, color: "#EAD5C8" }}>{s.event}</span>
-              <span style={{ fontSize: 13, color: "#5A3A32" }}>{s.venue}</span>
-              <span style={{ fontSize: 13, color: "#3D2020" }}>{s.city}</span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: "#1A0808" }}>{s.event}</span>
+              <span className="ds-tour-venue" style={{ fontSize: 13, color: "#5A3A3A" }}>{s.venue}</span>
+              <span className="ds-tour-city" style={{ fontSize: 13, color: "#9A7070" }}>{s.city}</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* Booking CTA */}
-      <section style={{ padding: "80px clamp(20px,5vw,64px)", background: "#110808", borderTop: "1px solid #1E0E0E", textAlign: "center" }}>
-        <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16 }}>Book a Show</p>
-        <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 16px" }}>Bring Donn Stone To Your City</h2>
-        <p style={{ fontSize: 16, color: "#5A3A32", maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7 }}>Available for club nights, festivals, private events and label showcases worldwide.</p>
+      <section style={{ padding: "80px clamp(20px,5vw,64px)", background: "#9B1D20", textAlign: "center" }}>
+        <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(250,245,242,0.7)", marginBottom: 16 }}>Book a Show</p>
+        <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "0.06em", textTransform: "uppercase", color: "#FAF5F2", margin: "0 0 16px" }}>Bring Donn Stone To Your City</h2>
+        <p style={{ fontSize: 16, color: "rgba(250,245,242,0.75)", maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7 }}>Available for club nights, festivals, private events and label showcases worldwide.</p>
         <a href="/booking" style={{
           display: "inline-block", fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase",
-          color: "#EAD5C8", background: "#9B1D20", textDecoration: "none", padding: "16px 40px",
+          color: "#9B1D20", background: "#FAF5F2", textDecoration: "none", padding: "16px 40px",
         }}
-          onMouseEnter={e => (e.currentTarget.style.background = "#B5252A")}
-          onMouseLeave={e => (e.currentTarget.style.background = "#9B1D20")}
+          onMouseEnter={e => (e.currentTarget.style.background = "#EAD5C8")}
+          onMouseLeave={e => (e.currentTarget.style.background = "#FAF5F2")}
         >Send Booking Enquiry</a>
       </section>
     </div>

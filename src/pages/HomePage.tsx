@@ -58,81 +58,74 @@ export default function HomePage() {
               fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
               color: "#EAD5C8", background: "#9B1D20", textDecoration: "none", padding: "16px 36px",
             }}>Book Donn Stone</Link>
-            <Link to="/press" style={{
-              fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
-              color: "#EAD5C8", textDecoration: "none", border: "1px solid rgba(234,213,200,0.35)", padding: "16px 36px",
-            }}>Download EPK</Link>
           </div>
         </div>
       </section>
 
       {/* ── Cities strip ── */}
-      <section style={{ borderTop: "1px solid #1E0E0E", borderBottom: "1px solid #1E0E0E", padding: "20px clamp(20px,5vw,64px)" }}>
+      <section style={{ background: "#FAF5F2", borderTop: "1px solid #DDD0C8", borderBottom: "1px solid #DDD0C8", padding: "20px clamp(20px,5vw,64px)" }}>
         <div style={{ display: "flex", gap: 48, flexWrap: "wrap", justifyContent: "center" }}>
           {CITIES.map(c => (
-            <span key={c} style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#3D2020" }}>{c}</span>
+            <span key={c} style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#9A7070" }}>{c}</span>
           ))}
         </div>
       </section>
 
       {/* ── Bio ── */}
-      <section style={{ padding: "clamp(64px,10vw,120px) clamp(20px,5vw,64px)" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
+      <section style={{ background: "#FAF5F2", padding: "clamp(64px,10vw,120px) clamp(20px,5vw,64px)" }}>
+        <div className="ds-home-bio" style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div>
             <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 24 }}>About</p>
-            <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 24px", lineHeight: 1.1 }}>Rotterdam's Voice of Amapiano</h2>
-            <p style={{ fontSize: 16, lineHeight: 1.85, color: "#7A5A52", marginBottom: 16 }}>
+            <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "0.06em", textTransform: "uppercase", color: "#1A0808", margin: "0 0 24px", lineHeight: 1.1 }}>Rotterdam's Voice of Amapiano</h2>
+            <p style={{ fontSize: 16, lineHeight: 1.85, color: "#5A3A3A", marginBottom: 16 }}>
               Donn Stone is a Rotterdam-based DJ and producer specialising in Amapiano and Afro-electronic music. A journey to Cape Town, South Africa, opened the door to direct connections with local producers, sparking a deep commitment to bringing the sound back to Europe, and eventually the world.
             </p>
-            <p style={{ fontSize: 16, lineHeight: 1.85, color: "#7A5A52", marginBottom: 32 }}>
+            <p style={{ fontSize: 16, lineHeight: 1.85, color: "#5A3A3A", marginBottom: 32 }}>
               Described by Paradiso Amsterdam as "a major figure in the Amapiano scene," Stone books all-night solo sets at Rotterdam's Toffler and Amsterdam's Parallel stage, and has taken his sets to London, Paris, Helsinki, Johannesburg, Antwerp and beyond. In 2026 he gave summer crowds at Bairro the time of their lives.
             </p>
             <Link to="/press" style={{
               fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
               color: "#9B1D20", textDecoration: "none", borderBottom: "1px solid #9B1D20", paddingBottom: 4,
-            }}>Full Bio &amp; EPK</Link>
+            }}>Full Bio</Link>
           </div>
-          <div style={{ aspectRatio: "3/4", background: "#110808", border: "1px solid #1E0E0E", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 56, color: "#1E0E0E", fontWeight: 700 }}>DS</span>
+          <div className="ds-home-bio-photo" style={{ aspectRatio: "3/4", background: "#F0E8E3", border: "1px solid #DDD0C8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 56, color: "#DDD0C8", fontWeight: 700 }}>DS</span>
           </div>
         </div>
       </section>
 
       {/* ── Past shows ── */}
-      <section style={{ borderTop: "1px solid #1E0E0E", padding: "clamp(64px,10vw,120px) clamp(20px,5vw,64px)" }}>
+      <section style={{ background: "#FAF5F2", borderTop: "1px solid #DDD0C8", padding: "clamp(64px,10vw,120px) clamp(20px,5vw,64px)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 48 }}>Select Shows</p>
           <div style={{ display: "flex", flexDirection: "column" }}>
             {SHOWS.map((s, i) => (
-              <div key={i} style={{
-                display: "grid", gridTemplateColumns: "80px 1fr 1fr", gap: 24, alignItems: "center",
-                padding: "24px 0", borderBottom: "1px solid #1E0E0E",
-              }}>
+              <div key={i} className="ds-shows-row">
                 <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 12, color: "#9B1D20" }}>{s.year}</span>
                 <div>
-                  <span style={{ fontSize: 17, fontWeight: 600, color: "#EAD5C8", marginRight: 12 }}>{s.venue}</span>
-                  <span style={{ fontSize: 14, color: "#5A3A32" }}>{s.city}</span>
+                  <span style={{ fontSize: 17, fontWeight: 600, color: "#1A0808", marginRight: 12 }}>{s.venue}</span>
+                  <span style={{ fontSize: 14, color: "#5A3A3A" }}>{s.city}</span>
                 </div>
-                <span style={{ fontSize: 13, color: "#3D2020", fontStyle: "italic" }}>{s.note}</span>
+                <span className="ds-shows-row-note" style={{ fontSize: 13, color: "#9A7070", fontStyle: "italic" }}>{s.note}</span>
               </div>
             ))}
           </div>
           <div style={{ marginTop: 40 }}>
             <Link to="/tour" style={{
               fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
-              color: "#EAD5C8", textDecoration: "none", border: "1px solid #3D2020", padding: "12px 24px",
+              color: "#1A0808", textDecoration: "none", border: "1px solid #9A7070", padding: "12px 24px",
             }}>All Tour Dates</Link>
           </div>
         </div>
       </section>
 
       {/* ── Press logos strip ── */}
-      <section style={{ borderTop: "1px solid #1E0E0E", padding: "48px clamp(20px,5vw,64px)" }}>
+      <section style={{ background: "#F0E8E3", borderTop: "1px solid #DDD0C8", padding: "48px clamp(20px,5vw,64px)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3D2020", marginBottom: 32, textAlign: "center" }}>Supported by</p>
+          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9A7070", marginBottom: 32, textAlign: "center" }}>Supported by</p>
           <div style={{ display: "flex", gap: 40, flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
             {["Paradiso Amsterdam", "Toffler Rotterdam", "ADE", "Operator Radio", "ECR Radio"].map(p => (
-              <span key={p} style={{ fontFamily: '"Space Mono", monospace', fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#3D2020" }}>{p}</span>
+              <span key={p} style={{ fontFamily: '"Space Mono", monospace', fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#9A7070" }}>{p}</span>
             ))}
           </div>
         </div>
