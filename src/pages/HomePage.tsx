@@ -2,403 +2,151 @@
 
 import { Link } from "react-router-dom";
 
-const PRESS_LOGOS = ["OkayAfrica", "Mixmag", "Beatport", "Trax Magazine", "Music In Africa"];
+const HERO_VIDEO_ID = "ZBYdlg3qv40";
 
-const STATS = [
-  { value: "50+", label: "Countries Played" },
-  { value: "200+", label: "Shows Per Year" },
-  { value: "10M+", label: "Streams" },
-  { value: "5★", label: "Artist Rating" },
+const SHOWS = [
+  { year: "2026", venue: "Bairro", city: "Rotterdam", note: "Summer all-night residency" },
+  { year: "2026", venue: "Toffler", city: "Rotterdam", note: "All-night long" },
+  { year: "2024", venue: "Paradiso / Parallel", city: "Amsterdam", note: "Back-to-back with Wes Lee (WaxFiend)" },
+  { year: "2024", venue: "Paradiso / Parallel — WOZA", city: "Amsterdam", note: "With Drumetic Boyz" },
+  { year: "2024", venue: "Toffler", city: "Rotterdam", note: "All-night solo set" },
+  { year: "ADE", venue: "Amsterdam Dance Event", city: "Amsterdam", note: "Official ADE artist" },
 ];
 
-const PAST_SHOWS = [
-  { venue: "Fabric London", city: "London, UK", year: "2024" },
-  { venue: "Razzmatazz", city: "Barcelona, ES", year: "2024" },
-  { venue: "Hï Ibiza", city: "Ibiza, ES", year: "2024" },
-  { venue: "De School", city: "Amsterdam, NL", year: "2023" },
-  { venue: "Output", city: "New York, US", year: "2023" },
-  { venue: "Rex Club", city: "Paris, FR", year: "2023" },
-];
+const CITIES = ["Rotterdam", "Amsterdam", "London", "Paris", "Johannesburg", "Helsinki", "Antwerp", "Luxembourg"];
 
 export default function HomePage() {
   return (
-    <div style={{ background: "#0A0A0A", color: "#E8E8E8" }}>
+    <div style={{ background: "#0A0504", color: "#EAD5C8" }}>
 
-      {/* ─── Hero ─── */}
-      <section style={{
-        position: "relative",
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "flex-end",
-        overflow: "hidden",
-      }}>
-        {/* Dark gradient background — placeholder for real photo/video */}
-        <div style={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(135deg, #0A0A0A 0%, #1A1200 40%, #0A0A0A 100%)",
-        }} />
-        {/* Gold radial glow */}
-        <div style={{
-          position: "absolute", inset: 0,
-          background: "radial-gradient(ellipse 60% 50% at 70% 40%, rgba(242,194,0,0.12) 0%, transparent 70%)",
-        }} />
-        {/* Scanline texture */}
-        <div style={{
-          position: "absolute", inset: 0,
-          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px)",
-          pointerEvents: "none",
-        }} />
+      {/* ── Fullscreen video hero ── */}
+      <section style={{ position: "relative", height: "100vh", overflow: "hidden" }}>
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${HERO_VIDEO_ID}?autoplay=1&mute=1&loop=1&playlist=${HERO_VIDEO_ID}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1`}
+          allow="autoplay; encrypted-media"
+          style={{
+            position: "absolute", top: "50%", left: "50%",
+            width: "100vw", height: "56.25vw",
+            minHeight: "100vh", minWidth: "177.78vh",
+            transform: "translate(-50%, -50%)",
+            border: "none", pointerEvents: "none",
+          }}
+          title="Donn Stone live"
+        />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,5,4,0.5) 0%, rgba(10,5,4,0.25) 40%, rgba(10,5,4,0.88) 100%)" }} />
 
         <div style={{
-          position: "relative", zIndex: 2,
-          padding: "clamp(100px,14vw,160px) clamp(20px,6vw,80px) clamp(64px,8vw,100px)",
-          maxWidth: 1200, width: "100%", margin: "0 auto",
+          position: "relative", zIndex: 2, height: "100%",
+          display: "flex", flexDirection: "column", justifyContent: "flex-end",
+          padding: "0 clamp(20px,5vw,64px) clamp(48px,8vh,96px)",
         }}>
-          <p className="ds-fade-up" style={{
-            fontFamily: '"Space Mono", monospace',
-            fontSize: 11,
-            letterSpacing: "0.24em",
-            textTransform: "uppercase",
-            color: "#F2C200",
-            marginBottom: 20,
-          }}>Amapiano · DJ & Producer · South Africa</p>
-
-          <h1 className="ds-fade-up ds-fade-up-2" style={{
-            fontFamily: '"Space Mono", monospace',
-            fontWeight: 700,
-            fontSize: "clamp(52px, 9vw, 120px)",
-            lineHeight: 0.95,
-            letterSpacing: "-0.02em",
-            color: "#FFFFFF",
-            margin: "0 0 32px",
+          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.28em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16, animation: "fadeUp 0.8s ease both" }}>Rotterdam · Netherlands</p>
+          <h1 style={{
+            fontFamily: '"Space Mono", monospace', fontWeight: 700,
+            fontSize: "clamp(48px,10vw,120px)", lineHeight: 0.9, letterSpacing: "0.04em",
+            textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 8px",
+            animation: "fadeUp 0.9s ease 0.1s both",
           }}>
-            DONN<br />
-            <span style={{ color: "#F2C200" }}>STONE</span>
+            <span style={{ display: "block" }}>DONN</span>
+            <span style={{ display: "block", color: "#9B1D20" }}>STONE</span>
           </h1>
-
-          <p className="ds-fade-up ds-fade-up-3" style={{
-            fontSize: "clamp(16px, 1.8vw, 20px)",
-            lineHeight: 1.65,
-            color: "#888888",
-            maxWidth: "44ch",
-            marginBottom: 40,
-          }}>
-            Shaping the global sound of Amapiano. From Johannesburg to the world's biggest stages — one beat at a time.
+          <p style={{ fontSize: "clamp(14px,2vw,18px)", color: "rgba(234,213,200,0.65)", marginBottom: 40, letterSpacing: "0.06em", animation: "fadeUp 1s ease 0.2s both" }}>
+            Amapiano DJ &amp; Producer
           </p>
-
-          <div className="ds-fade-up ds-fade-up-3" style={{ display: "flex", flexWrap: "wrap", gap: 14 }}>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", animation: "fadeUp 1s ease 0.3s both" }}>
             <Link to="/booking" style={{
-              textDecoration: "none",
-              background: "#F2C200",
-              color: "#0A0A0A",
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              padding: "16px 32px",
-              display: "inline-block",
-              transition: "background 0.2s",
+              fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
+              color: "#EAD5C8", background: "#9B1D20", textDecoration: "none", padding: "16px 36px",
             }}>Book Donn Stone</Link>
             <Link to="/press" style={{
-              textDecoration: "none",
-              background: "transparent",
-              color: "#E8E8E8",
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 12,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              padding: "16px 32px",
-              border: "1px solid #333333",
-              display: "inline-block",
-              transition: "border-color 0.2s, color 0.2s",
+              fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
+              color: "#EAD5C8", textDecoration: "none", border: "1px solid rgba(234,213,200,0.35)", padding: "16px 36px",
             }}>Download EPK</Link>
           </div>
         </div>
-
-        {/* Scroll hint */}
-        <div style={{
-          position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 8, zIndex: 2,
-        }}>
-          <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: "0.2em", color: "#444444", textTransform: "uppercase" }}>Scroll</span>
-          <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom, #444444, transparent)" }} />
-        </div>
       </section>
 
-      {/* ─── Stats strip ─── */}
-      <section style={{
-        background: "#111111",
-        borderTop: "1px solid #1A1A1A",
-        borderBottom: "1px solid #1A1A1A",
-        padding: "clamp(32px,5vw,48px) clamp(20px,6vw,80px)",
-      }}>
-        <div style={{
-          maxWidth: 1200, margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-          gap: 32,
-        }}>
-          {STATS.map(s => (
-            <div key={s.label} style={{ textAlign: "center" }}>
-              <div style={{
-                fontFamily: '"Space Mono", monospace',
-                fontSize: "clamp(28px, 4vw, 42px)",
-                fontWeight: 700,
-                color: "#F2C200",
-                lineHeight: 1,
-              }}>{s.value}</div>
-              <div style={{
-                marginTop: 8,
-                fontFamily: '"Space Mono", monospace',
-                fontSize: 10,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "#555555",
-              }}>{s.label}</div>
-            </div>
+      {/* ── Cities strip ── */}
+      <section style={{ borderTop: "1px solid #1E0E0E", borderBottom: "1px solid #1E0E0E", padding: "20px clamp(20px,5vw,64px)" }}>
+        <div style={{ display: "flex", gap: 48, flexWrap: "wrap", justifyContent: "center" }}>
+          {CITIES.map(c => (
+            <span key={c} style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#3D2020" }}>{c}</span>
           ))}
         </div>
       </section>
 
-      {/* ─── About / Bio ─── */}
-      <section className="ds-section" style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "clamp(40px, 6vw, 80px)",
-          alignItems: "center",
-        }} className="ds-about-grid">
-          {/* Photo placeholder */}
-          <div style={{
-            aspectRatio: "3/4",
-            background: "linear-gradient(160deg, #1A1200, #0A0A0A)",
-            border: "1px solid #1A1A1A",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-            overflow: "hidden",
-          }}>
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "radial-gradient(ellipse 80% 60% at 50% 80%, rgba(242,194,0,0.08), transparent)",
-            }} />
-            <span style={{
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase",
-              color: "#333333",
-            }}>Artist Photo</span>
-          </div>
-
+      {/* ── Bio ── */}
+      <section style={{ padding: "clamp(64px,10vw,120px) clamp(20px,5vw,64px)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
           <div>
-            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: "#F2C200", marginBottom: 20 }}>
-              The Artist
+            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 24 }}>About</p>
+            <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 24px", lineHeight: 1.1 }}>Rotterdam's Voice of Amapiano</h2>
+            <p style={{ fontSize: 16, lineHeight: 1.85, color: "#7A5A52", marginBottom: 16 }}>
+              Donn Stone is a Rotterdam-based DJ and producer specialising in Amapiano and Afro-electronic music. A journey to Cape Town, South Africa, opened the door to direct connections with local producers, sparking a deep commitment to bringing the sound back to Europe, and eventually the world.
             </p>
-            <h2 style={{
-              fontFamily: '"Space Mono", monospace',
-              fontWeight: 700,
-              fontSize: "clamp(28px, 3.5vw, 44px)",
-              lineHeight: 1.1,
-              color: "#FFFFFF",
-              marginBottom: 24,
-            }}>
-              The sound that moves<br />a generation.
-            </h2>
-            <p style={{ fontSize: 16, lineHeight: 1.8, color: "#888888", marginBottom: 18 }}>
-              Donn Stone is an internationally acclaimed Amapiano DJ and producer whose music bridges the vibrant streets of South Africa with the world's most prestigious stages. With a sound rooted in deep log drum rhythms, soulful piano lines and infectious grooves, Donn has become one of the most sought-after acts in the global Amapiano movement.
-            </p>
-            <p style={{ fontSize: 16, lineHeight: 1.8, color: "#888888", marginBottom: 32 }}>
-              From headline sets at Fabric London and Hï Ibiza to packed dance floors across Europe, the Americas and the African continent, Donn Stone delivers an experience that transcends language and borders.
+            <p style={{ fontSize: 16, lineHeight: 1.85, color: "#7A5A52", marginBottom: 32 }}>
+              Described by Paradiso Amsterdam as "a major figure in the Amapiano scene," Stone books all-night solo sets at Rotterdam's Toffler and Amsterdam's Parallel stage, and has taken his sets to London, Paris, Helsinki, Johannesburg, Antwerp and beyond. In 2026 he gave summer crowds at Bairro the time of their lives.
             </p>
             <Link to="/press" style={{
-              textDecoration: "none",
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 11,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "#F2C200",
-              borderBottom: "1px solid #F2C200",
-              paddingBottom: 2,
-            }}>Full bio & press kit →</Link>
+              fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
+              color: "#9B1D20", textDecoration: "none", borderBottom: "1px solid #9B1D20", paddingBottom: 4,
+            }}>Full Bio &amp; EPK</Link>
+          </div>
+          <div style={{ aspectRatio: "3/4", background: "#110808", border: "1px solid #1E0E0E", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 56, color: "#1E0E0E", fontWeight: 700 }}>DS</span>
           </div>
         </div>
       </section>
 
-      {/* ─── Music / Mix embed ─── */}
-      <section style={{
-        background: "#0D0D0D",
-        borderTop: "1px solid #1A1A1A",
-        borderBottom: "1px solid #1A1A1A",
-        padding: "clamp(64px,8vw,96px) clamp(20px,6vw,80px)",
-      }}>
+      {/* ── Past shows ── */}
+      <section style={{ borderTop: "1px solid #1E0E0E", padding: "clamp(64px,10vw,120px) clamp(20px,5vw,64px)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 20, marginBottom: 40 }}>
-            <div>
-              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: "#F2C200", marginBottom: 12 }}>Latest Mix</p>
-              <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px, 3vw, 36px)", color: "#FFFFFF" }}>
-                Hear the Sound
-              </h2>
-            </div>
-            <Link to="/music" style={{
-              textDecoration: "none",
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 10,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "#666666",
-              borderBottom: "1px solid #333333",
-              paddingBottom: 2,
-            }}>All releases →</Link>
-          </div>
-
-          {/* SoundCloud embed placeholder */}
-          <div style={{
-            background: "#111111",
-            border: "1px solid #1A1A1A",
-            padding: 32,
-            display: "flex", alignItems: "center", gap: 24,
-            flexWrap: "wrap",
-          }}>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "#F2C200", marginBottom: 8 }}>
-                Donn Stone — Amapiano Mix 2025
-              </p>
-              <p style={{ fontSize: 13, color: "#555555" }}>Add your SoundCloud or Mixcloud link in the admin panel to embed your latest mix here.</p>
-            </div>
-            <a href="https://soundcloud.com" target="_blank" rel="noopener noreferrer" style={{
-              textDecoration: "none",
-              background: "#F2C200",
-              color: "#0A0A0A",
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              padding: "12px 24px",
-              whiteSpace: "nowrap",
-            }}>Listen on SoundCloud</a>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Past shows ─── */}
-      <section className="ds-section" style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: "#F2C200", marginBottom: 12 }}>On Stage</p>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 20, marginBottom: 40 }}>
-          <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px, 3vw, 36px)", color: "#FFFFFF" }}>
-            Where the Music Has Been
-          </h2>
-          <Link to="/tour" style={{
-            textDecoration: "none",
-            fontFamily: '"Space Mono", monospace',
-            fontSize: 10,
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            color: "#666666",
-            borderBottom: "1px solid #333333",
-            paddingBottom: 2,
-          }}>Upcoming dates →</Link>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          {PAST_SHOWS.map((show, i) => (
-            <div key={i} style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "20px 0",
-              borderBottom: "1px solid #1A1A1A",
-              gap: 16,
-              flexWrap: "wrap",
-            }}>
-              <div>
-                <span style={{ fontSize: 16, fontWeight: 600, color: "#E8E8E8" }}>{show.venue}</span>
-                <span style={{ marginLeft: 16, fontSize: 14, color: "#555555" }}>{show.city}</span>
+          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 48 }}>Select Shows</p>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {SHOWS.map((s, i) => (
+              <div key={i} style={{
+                display: "grid", gridTemplateColumns: "80px 1fr 1fr", gap: 24, alignItems: "center",
+                padding: "24px 0", borderBottom: "1px solid #1E0E0E",
+              }}>
+                <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 12, color: "#9B1D20" }}>{s.year}</span>
+                <div>
+                  <span style={{ fontSize: 17, fontWeight: 600, color: "#EAD5C8", marginRight: 12 }}>{s.venue}</span>
+                  <span style={{ fontSize: 14, color: "#5A3A32" }}>{s.city}</span>
+                </div>
+                <span style={{ fontSize: 13, color: "#3D2020", fontStyle: "italic" }}>{s.note}</span>
               </div>
-              <span style={{
-                fontFamily: '"Space Mono", monospace',
-                fontSize: 11,
-                letterSpacing: "0.12em",
-                color: "#444444",
-              }}>{show.year}</span>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div style={{ marginTop: 40 }}>
+            <Link to="/tour" style={{
+              fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
+              color: "#EAD5C8", textDecoration: "none", border: "1px solid #3D2020", padding: "12px 24px",
+            }}>All Tour Dates</Link>
+          </div>
         </div>
       </section>
 
-      {/* ─── Press logos ─── */}
-      <section style={{
-        background: "#0D0D0D",
-        borderTop: "1px solid #1A1A1A",
-        padding: "clamp(40px,6vw,64px) clamp(20px,6vw,80px)",
-      }}>
+      {/* ── Press logos strip ── */}
+      <section style={{ borderTop: "1px solid #1E0E0E", padding: "48px clamp(20px,5vw,64px)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <p style={{
-            fontFamily: '"Space Mono", monospace', fontSize: 10,
-            letterSpacing: "0.24em", textTransform: "uppercase",
-            color: "#333333", textAlign: "center", marginBottom: 32,
-          }}>As Featured In</p>
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "clamp(24px,4vw,56px)" }}>
-            {PRESS_LOGOS.map(logo => (
-              <span key={logo} style={{
-                fontFamily: '"Space Mono", monospace',
-                fontSize: "clamp(11px,1.4vw,14px)",
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "#333333",
-                transition: "color 0.2s",
-              }}
-                onMouseEnter={e => (e.currentTarget.style.color = "#666666")}
-                onMouseLeave={e => (e.currentTarget.style.color = "#333333")}
-              >{logo}</span>
+          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3D2020", marginBottom: 32, textAlign: "center" }}>Supported by</p>
+          <div style={{ display: "flex", gap: 40, flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
+            {["Paradiso Amsterdam", "Toffler Rotterdam", "ADE", "Operator Radio", "ECR Radio"].map(p => (
+              <span key={p} style={{ fontFamily: '"Space Mono", monospace', fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#3D2020" }}>{p}</span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── Booking CTA ─── */}
-      <section style={{
-        padding: "clamp(80px,10vw,120px) clamp(20px,6vw,80px)",
-        textAlign: "center",
-        background: "linear-gradient(to bottom, #0A0A0A, #0D0800)",
-      }}>
-        <div style={{ maxWidth: 640, margin: "0 auto" }}>
-          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: "#F2C200", marginBottom: 20 }}>
-            Available Worldwide
-          </p>
-          <h2 style={{
-            fontFamily: '"Space Mono", monospace',
-            fontWeight: 700,
-            fontSize: "clamp(28px, 4vw, 52px)",
-            color: "#FFFFFF",
-            lineHeight: 1.1,
-            marginBottom: 20,
-          }}>
-            Ready to book<br />Donn Stone?
-          </h2>
-          <p style={{ fontSize: 16, color: "#555555", lineHeight: 1.7, marginBottom: 40 }}>
-            For festival bookings, club nights, private events and international tours — reach out to the management team directly.
-          </p>
-          <Link to="/booking" style={{
-            textDecoration: "none",
-            background: "#F2C200",
-            color: "#0A0A0A",
-            fontFamily: '"Space Mono", monospace',
-            fontSize: 12,
-            fontWeight: 700,
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            padding: "18px 40px",
-            display: "inline-block",
-          }}>Send Booking Enquiry</Link>
-        </div>
+      {/* ── Booking CTA ── */}
+      <section style={{ background: "#9B1D20", padding: "clamp(64px,10vw,120px) clamp(20px,5vw,64px)", textAlign: "center" }}>
+        <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(234,213,200,0.55)", marginBottom: 16 }}>Worldwide Bookings</p>
+        <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px,5vw,56px)", letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 32px" }}>Book Donn Stone</h2>
+        <Link to="/booking" style={{
+          fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
+          color: "#9B1D20", background: "#EAD5C8", textDecoration: "none", padding: "18px 48px",
+        }}>Send Enquiry</Link>
       </section>
-
-      <style>{`
-        @media (max-width: 860px) {
-          .ds-about-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }
