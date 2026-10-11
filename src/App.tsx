@@ -8,6 +8,7 @@ import VideoPage from "./pages/VideoPage";
 import TourPage from "./pages/TourPage";
 import PressPage from "./pages/PressPage";
 import BookingPage from "./pages/BookingPage";
+import ExperiencePage from "./pages/ExperiencePage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function Layout() {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
       { path: "/tour", element: <TourPage /> },
       { path: "/press", element: <PressPage /> },
       { path: "/booking", element: <BookingPage /> },
+      { path: "/experience", element: <ExperiencePage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },
