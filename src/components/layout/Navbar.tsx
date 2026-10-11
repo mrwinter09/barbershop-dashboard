@@ -33,7 +33,7 @@ export default function Navbar() {
           return (
             <Link key={n.path} to={n.path} style={{
               textDecoration: "none", fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase",
-              color: active ? "#9B1D20" : "#7A5A52", transition: "color 0.2s",
+              color: active ? "#9B1D20" : "#BFA8A0", transition: "color 0.2s",
               borderBottom: active ? "1px solid #9B1D20" : "1px solid transparent", paddingBottom: 2,
             }}>{n.label}</Link>
           );
@@ -82,7 +82,7 @@ export default function Navbar() {
 
       <style>{`
         .ds-mobile-menu-btn { display: none; }
-        @media (max-width: 720px) {
+        @media (max-width: 1024px) {
           .ds-desktop-nav { display: none !important; }
           .ds-mobile-menu-btn { display: flex !important; }
         }
