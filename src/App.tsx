@@ -1,32 +1,40 @@
 /** @format */
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import AppShellLayout from "./components/layout/AppShellLayout";
+import { createBrowserRouter, RouterProvider, Outlet, ScrollRestoration } from "react-router-dom";
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
 import HomePage from "./pages/HomePage";
-import StoriesPage from "./pages/StoriesPage";
-import StoryDetailPage from "./pages/StoryDetailPage";
-import AboutPage from "./pages/AboutPage";
-import SubmitPage from "./pages/SubmitPage";
-import RecommendPage from "./pages/RecommendPage";
-import AdminPage from "./pages/AdminPage";
-import MobilePage from "./pages/MobilePage";
+import MusicPage from "./pages/MusicPage";
+import TourPage from "./pages/TourPage";
+import PressPage from "./pages/PressPage";
+import BookingPage from "./pages/BookingPage";
 import NotFoundPage from "./pages/NotFoundPage";
+
+function Layout() {
+  return (
+    <>
+      <ScrollRestoration />
+      <Navbar />
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+    </>
+  );
+}
 
 const router = createBrowserRouter([
   {
-    element: <AppShellLayout />,
+    element: <Layout />,
     children: [
       { path: "/", element: <HomePage /> },
-      { path: "/stories", element: <StoriesPage /> },
-      { path: "/stories/:id", element: <StoryDetailPage /> },
-      { path: "/about", element: <AboutPage /> },
-      { path: "/submit", element: <SubmitPage /> },
-      { path: "/recommend", element: <RecommendPage /> },
-      { path: "/admin", element: <AdminPage /> },
+      { path: "/music", element: <MusicPage /> },
+      { path: "/tour", element: <TourPage /> },
+      { path: "/press", element: <PressPage /> },
+      { path: "/booking", element: <BookingPage /> },
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
-  { path: "/mobile", element: <MobilePage /> },
-  { path: "*", element: <NotFoundPage /> },
 ]);
 
 export default function App() {

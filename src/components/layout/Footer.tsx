@@ -1,130 +1,75 @@
 /** @format */
 
 import { Link } from "react-router-dom";
-import { Box, Text } from "@mantine/core";
-import { useLang } from "../../i18n";
 
-const PAPER_TEXTURE =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E\")";
-
-const linkStyle: React.CSSProperties = {
-  display: "block",
-  background: "none",
-  border: 0,
-  color: "#A9CACE",
-  fontSize: 15,
-  fontFamily: '"Hanken Grotesk", sans-serif',
-  padding: "5px 0",
-  textDecoration: "none",
-};
+const SOCIALS = [
+  { label: "Instagram", href: "https://instagram.com" },
+  { label: "TikTok", href: "https://tiktok.com" },
+  { label: "YouTube", href: "https://youtube.com" },
+  { label: "Spotify", href: "https://spotify.com" },
+  { label: "SoundCloud", href: "https://soundcloud.com" },
+];
 
 export default function Footer() {
-  const { t } = useLang();
-
   return (
-    <footer
-      style={{
-        backgroundColor: "#0C2A30",
-        backgroundImage: PAPER_TEXTURE,
-        color: "#A9CACE",
-        padding: "clamp(40px, 6vw, 72px) clamp(20px, 5vw, 56px) 36px",
-      }}
-    >
-      <Box
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 40,
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          maxWidth: 1280,
-          margin: "0 auto",
-        }}
-      >
-        <div>
-          <Text
-            style={{
-              fontFamily: '"Newsreader", Georgia, serif',
-              fontWeight: 600,
-              fontSize: 30,
-              color: "#FCF8F0",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Clipper<em style={{ fontStyle: "italic", color: "#F2C200" }}>Takes</em>
-          </Text>
-          <Text
-            mt={10}
-            style={{ maxWidth: 360, lineHeight: 1.6, color: "#A9CACE", fontSize: 15 }}
-          >
-            {t("footer_tagline")}
-          </Text>
+    <footer style={{
+      background: "#050505",
+      borderTop: "1px solid #1A1A1A",
+      padding: "clamp(48px,7vw,80px) clamp(20px,5vw,64px) 32px",
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto",
+        display: "flex", flexWrap: "wrap", gap: 48,
+        justifyContent: "space-between", alignItems: "flex-start",
+      }}>
+        {/* Brand */}
+        <div style={{ maxWidth: 300 }}>
+          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 22, fontWeight: 700, letterSpacing: "0.1em" }}>
+            <span style={{ color: "#F2C200" }}>DONN</span>
+            <span style={{ color: "#E8E8E8" }}> STONE</span>
+          </div>
+          <p style={{ marginTop: 12, fontSize: 14, lineHeight: 1.7, color: "#666666" }}>
+            International Amapiano DJ & producer. Bringing the sound of South Africa to stages worldwide.
+          </p>
         </div>
 
-        <div>
-          <Text
-            style={{
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 11,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "#5E9099",
-              marginBottom: 12,
-            }}
-          >
-            {t("footer_project")}
-          </Text>
-          <Link to="/stories" style={linkStyle}>{t("nav_stories")}</Link>
-          <Link to="/about" style={linkStyle}>{t("nav_chair")}</Link>
-          <Link to="/submit" style={linkStyle}>{t("nav_tell")}</Link>
-          <Link to="/recommend" style={linkStyle}>{t("nav_recommend")}</Link>
+        {/* Links */}
+        <div style={{ display: "flex", gap: 64, flexWrap: "wrap" }}>
+          <div>
+            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "#444444", marginBottom: 16 }}>Navigate</p>
+            {[
+              { to: "/music", label: "Music" },
+              { to: "/tour", label: "Tour" },
+              { to: "/press", label: "Press & EPK" },
+              { to: "/booking", label: "Bookings" },
+            ].map(l => (
+              <Link key={l.to} to={l.to} style={{ display: "block", textDecoration: "none", color: "#666666", fontSize: 14, marginBottom: 10, transition: "color 0.2s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#E8E8E8")}
+                onMouseLeave={e => (e.currentTarget.style.color = "#666666")}
+              >{l.label}</Link>
+            ))}
+          </div>
+          <div>
+            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "#444444", marginBottom: 16 }}>Follow</p>
+            {SOCIALS.map(s => (
+              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
+                style={{ display: "block", textDecoration: "none", color: "#666666", fontSize: 14, marginBottom: 10, transition: "color 0.2s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#F2C200")}
+                onMouseLeave={e => (e.currentTarget.style.color = "#666666")}
+              >{s.label}</a>
+            ))}
+          </div>
         </div>
+      </div>
 
-        <div>
-          <Text
-            style={{
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 11,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "#5E9099",
-              marginBottom: 12,
-            }}
-          >
-            Rotterdam
-          </Text>
-          <Link to="/stories" style={linkStyle}>Afrikaanderwijk</Link>
-          <Link to="/stories" style={linkStyle}>Delfshaven</Link>
-          <Link to="/stories" style={linkStyle}>Nieuwe Binnenweg</Link>
-          <Link to="/stories" style={linkStyle}>Noord</Link>
-        </div>
-      </Box>
-
-      <Box
-        style={{
-          borderTop: "1px solid rgba(255,255,255,0.12)",
-          margin: "36px auto 18px",
-          maxWidth: 1280,
-        }}
-      />
-      <Box
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px 18px",
-          justifyContent: "space-between",
-          fontFamily: '"Space Mono", monospace',
-          fontSize: 11,
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
-          color: "#5E9099",
-          maxWidth: 1280,
-          margin: "0 auto",
-        }}
-      >
-        <span>ClipperTakes Studio · Rotterdam · 2026</span>
-        <Link to="/admin" style={{ ...linkStyle, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#5E9099" }}>{t("footer_admin")}</Link>
-      </Box>
+      <div style={{ maxWidth: 1200, margin: "40px auto 0", borderTop: "1px solid #1A1A1A", paddingTop: 24, display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 12 }}>
+        <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.12em", color: "#333333", textTransform: "uppercase" }}>
+          © {new Date().getFullYear()} Donn Stone. All rights reserved.
+        </span>
+        <a href="mailto:booking@donnstone.com" style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.12em", color: "#F2C200", textTransform: "uppercase", textDecoration: "none" }}>
+          booking@donnstone.com
+        </a>
+      </div>
     </footer>
   );
 }
