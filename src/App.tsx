@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider, Outlet, ScrollRestoration } from "
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import HomePage from "./pages/HomePage";
-import MusicPage from "./pages/MusicPage";
+import VideoPage from "./pages/VideoPage";
 import TourPage from "./pages/TourPage";
 import PressPage from "./pages/PressPage";
 import BookingPage from "./pages/BookingPage";
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "/", element: <HomePage /> },
-      { path: "/music", element: <MusicPage /> },
+      { path: "/video", element: <VideoPage /> },
       { path: "/tour", element: <TourPage /> },
       { path: "/press", element: <PressPage /> },
       { path: "/booking", element: <BookingPage /> },
