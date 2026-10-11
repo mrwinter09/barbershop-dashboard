@@ -10,6 +10,14 @@
   --text-muted:   #7A5A52;
   --text-dim:     #3D2020;
   --copper:       #C47A3A;
+
+  /* Light section palette */
+  --light-bg:     #FAF5F2;
+  --light-bg2:    #F0E8E3;
+  --light-border: #DDD0C8;
+  --light-text:   #1A0808;
+  --light-muted:  #5A3A3A;
+  --light-dim:    #9A7070;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -69,7 +77,7 @@ input, select, textarea, button { font-family: inherit; }
   gap: 24px;
   align-items: center;
   padding: 24px 0;
-  border-bottom: 1px solid #1E0E0E;
+  border-bottom: 1px solid #DDD0C8;
 }
 @media (max-width: 600px) {
   .ds-shows-row { grid-template-columns: 72px 1fr; }
@@ -83,14 +91,14 @@ input, select, textarea, button { font-family: inherit; }
   gap: 16px;
   align-items: center;
   padding: 16px 0;
-  border-bottom: 1px solid #1E0E0E;
+  border-bottom: 1px solid #DDD0C8;
 }
 .ds-tour-head {
   display: grid;
   grid-template-columns: 130px 1fr 200px 140px;
   gap: 16px;
   padding: 0 0 12px;
-  border-bottom: 1px solid #1E0E0E;
+  border-bottom: 1px solid #DDD0C8;
   margin-bottom: 4px;
 }
 @media (max-width: 720px) {
