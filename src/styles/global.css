@@ -77,7 +77,7 @@ input, select, textarea, button { font-family: inherit; }
   gap: 24px;
   align-items: center;
   padding: 24px 0;
-  border-bottom: 1px solid #DDD0C8;
+  border-bottom: 1px solid #1E0E0E;
 }
 @media (max-width: 600px) {
   .ds-shows-row { grid-template-columns: 72px 1fr; }
@@ -91,14 +91,14 @@ input, select, textarea, button { font-family: inherit; }
   gap: 16px;
   align-items: center;
   padding: 16px 0;
-  border-bottom: 1px solid #DDD0C8;
+  border-bottom: 1px solid #1E0E0E;
 }
 .ds-tour-head {
   display: grid;
   grid-template-columns: 130px 1fr 200px 140px;
   gap: 16px;
   padding: 0 0 12px;
-  border-bottom: 1px solid #DDD0C8;
+  border-bottom: 1px solid #1E0E0E;
   margin-bottom: 4px;
 }
 @media (max-width: 720px) {

@@ -26,35 +26,35 @@ export default function PressPage() {
       </section>
 
       {/* Bio */}
-      <section style={{ background: "#FAF5F2", padding: "80px clamp(20px,5vw,64px)", borderBottom: "1px solid #DDD0C8" }}>
+      <section style={{ padding: "80px clamp(20px,5vw,64px)", borderBottom: "1px solid #1E0E0E" }}>
         <div className="ds-bio-grid" style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div>
-            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9A7070", marginBottom: 24 }}>Short Bio (100 words)</p>
-            <p style={{ fontSize: 15, lineHeight: 1.85, color: "#5A3A3A" }}>{BIO_SHORT}</p>
+            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#7A6060", marginBottom: 24 }}>Short Bio (100 words)</p>
+            <p style={{ fontSize: 15, lineHeight: 1.85, color: "#BFA8A0" }}>{BIO_SHORT}</p>
             <button style={{
               marginTop: 24, fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase",
-              color: "#1A0808", background: "transparent", border: "1px solid #9A7070", padding: "10px 20px", cursor: "pointer",
+              color: "#EAD5C8", background: "transparent", border: "1px solid #3D2020", padding: "10px 20px", cursor: "pointer",
             }}
               onClick={() => navigator.clipboard?.writeText(BIO_SHORT)}
             >Copy Text</button>
           </div>
           <div>
-            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9A7070", marginBottom: 24 }}>Long Bio (full)</p>
-            <p style={{ fontSize: 15, lineHeight: 1.85, color: "#5A3A3A", whiteSpace: "pre-line" }}>{BIO_LONG}</p>
+            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#7A6060", marginBottom: 24 }}>Long Bio (full)</p>
+            <p style={{ fontSize: 15, lineHeight: 1.85, color: "#BFA8A0", whiteSpace: "pre-line" }}>{BIO_LONG}</p>
           </div>
         </div>
       </section>
 
       {/* Press quotes */}
-      <section style={{ background: "#FAF5F2", padding: "80px clamp(20px,5vw,64px)", borderBottom: "1px solid #DDD0C8" }}>
+      <section style={{ padding: "80px clamp(20px,5vw,64px)", borderBottom: "1px solid #1E0E0E" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9A7070", marginBottom: 40 }}>What They Say</p>
+          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#7A6060", marginBottom: 40 }}>What They Say</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
             {QUOTES.map((q, i) => (
               <div key={i} style={{ borderLeft: "3px solid #9B1D20", paddingLeft: 32 }}>
-                <p style={{ fontSize: 18, lineHeight: 1.7, color: "#1A0808", fontStyle: "italic", margin: "0 0 16px" }}>"{q.quote}"</p>
+                <p style={{ fontSize: 18, lineHeight: 1.7, color: "#EAD5C8", fontStyle: "italic", margin: "0 0 16px" }}>"{q.quote}"</p>
                 <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#9B1D20" }}>{q.source}</span>
-                <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: "#9A7070", marginLeft: 16 }}>{q.date}</span>
+                <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: "#7A6060", marginLeft: 16 }}>{q.date}</span>
               </div>
             ))}
           </div>
@@ -62,19 +62,19 @@ export default function PressPage() {
       </section>
 
       {/* Contact */}
-      <section style={{ background: "#FAF5F2", padding: "80px clamp(20px,5vw,64px)" }}>
+      <section style={{ padding: "80px clamp(20px,5vw,64px)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9A7070", marginBottom: 40 }}>Media Contacts</p>
+          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#7A6060", marginBottom: 40 }}>Media Contacts</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 24 }}>
             {[
               { role: "International Booking", name: "Management", email: "booking@donnstone.com", territory: "Worldwide" },
               { role: "Press & PR", name: "Management", email: "press@donnstone.com", territory: "Global" },
               { role: "General", name: "Management", email: "mgmt@donnstone.com", territory: "All enquiries" },
             ].map(c => (
-              <div key={c.role} style={{ background: "#fff", border: "1px solid #DDD0C8", padding: 28 }}>
+              <div key={c.role} style={{ background: "#110808", border: "1px solid #1E0E0E", padding: 28 }}>
                 <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "#9B1D20", margin: "0 0 12px" }}>{c.role}</p>
-                <p style={{ fontSize: 16, fontWeight: 600, color: "#1A0808", margin: "0 0 4px" }}>{c.name}</p>
-                <p style={{ fontSize: 13, color: "#9A7070", margin: "0 0 16px" }}>{c.territory}</p>
+                <p style={{ fontSize: 16, fontWeight: 600, color: "#EAD5C8", margin: "0 0 4px" }}>{c.name}</p>
+                <p style={{ fontSize: 13, color: "#7A6060", margin: "0 0 16px" }}>{c.territory}</p>
                 <a href={`mailto:${c.email}`} style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: "#9B1D20", textDecoration: "none", letterSpacing: "0.1em" }}>{c.email}</a>
               </div>
             ))}
