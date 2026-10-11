@@ -1,43 +1,26 @@
 /** @format */
 
 import { Link } from "react-router-dom";
-import { Container, Box, Text, Button } from "@mantine/core";
-import { useLang } from "../i18n";
 
 export default function NotFoundPage() {
-  const { t } = useLang();
-
   return (
-    <Container size="lg" px="clamp(20px, 5vw, 56px)">
-      <Box style={{ maxWidth: 480, margin: "0 auto", padding: "clamp(80px, 12vw, 140px) 0", textAlign: "center" }}>
-        <Text
-          style={{
-            fontFamily: '"Space Mono", monospace',
-            fontSize: 11,
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            color: "#C26B4A",
-            marginBottom: 16,
-          }}
-        >
-          {t("not_found_title")}
-        </Text>
-        <Text
-          component="h1"
-          style={{
-            fontFamily: '"Newsreader", Georgia, serif',
-            fontWeight: 600,
-            fontSize: "clamp(32px, 6vw, 56px)",
-            color: "#211A12",
-            margin: "0 0 16px",
-          }}
-        >
-          {t("not_found_body")}
-        </Text>
-        <Button component={Link} to="/" color="petrol" variant="filled" size="lg" mt={8}>
-          {t("not_found_home")}
-        </Button>
-      </Box>
-    </Container>
+    <div style={{
+      background: "#0A0A0A", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+      flexDirection: "column", textAlign: "center", padding: "0 clamp(20px,5vw,64px)",
+    }}>
+      <p style={{ fontFamily: '"Space Mono", monospace', fontSize: "clamp(80px,15vw,160px)", fontWeight: 700, color: "#111", margin: 0, lineHeight: 1 }}>404</p>
+      <h1 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(20px,3vw,32px)", letterSpacing: "0.08em", textTransform: "uppercase", color: "#E8E8E8", margin: "0 0 16px" }}>Page Not Found</h1>
+      <p style={{ fontSize: 15, color: "#555", maxWidth: 360, lineHeight: 1.7, margin: "0 0 40px" }}>The page you're looking for doesn't exist. Head back to the homepage or check the tour dates.</p>
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+        <Link to="/" style={{
+          fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase",
+          color: "#0A0A0A", background: "#F2C200", textDecoration: "none", padding: "14px 32px",
+        }}>Go Home</Link>
+        <Link to="/tour" style={{
+          fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase",
+          color: "#E8E8E8", textDecoration: "none", border: "1px solid #333", padding: "14px 32px",
+        }}>Tour Dates</Link>
+      </div>
+    </div>
   );
 }
