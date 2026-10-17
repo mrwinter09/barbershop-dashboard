@@ -52,7 +52,7 @@ const MIXES = [
   },
   {
     title: "Boiler Room Amsterdam",
-    desc: "Amapiano takeover. 90-minute set, recorded 2023.",
+    desc: "Afro-electronic takeover. 90-minute set, recorded 2023.",
     youtubeId: null,
     soundcloud: "https://soundcloud.com/",
   },

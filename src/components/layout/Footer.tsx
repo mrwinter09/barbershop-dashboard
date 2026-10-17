@@ -18,7 +18,7 @@ export default function Footer() {
             <span style={{ color: "#EAD5C8" }}> STONE</span>
           </div>
           <p style={{ marginTop: 12, fontSize: 14, lineHeight: 1.7, color: "#5A3A32" }}>
-            Rotterdam-based Amapiano DJ and producer. Bringing South African sound to stages across Europe and beyond.
+            Electronic powerhouse DJ from Rotterdam. Bringing a culturally rich Afro-electronic sound to stages across 50+ countries worldwide.
           </p>
         </div>
 
