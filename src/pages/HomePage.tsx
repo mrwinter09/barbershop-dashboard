@@ -1,6 +1,7 @@
 /** @format */
 
 import { Link } from "react-router-dom";
+import donnPhoto from "../assets/IMG_6043.JPG";
 
 const HERO_VIDEO_ID = "ZBYdlg3qv40";
 
@@ -88,8 +89,8 @@ export default function HomePage() {
               color: "#9B1D20", textDecoration: "none", borderBottom: "1px solid #9B1D20", paddingBottom: 4,
             }}>Full Bio</Link>
           </div>
-          <div className="ds-home-bio-photo" style={{ aspectRatio: "3/4", background: "#110808", border: "1px solid #1E0E0E", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 56, color: "#1E0E0E", fontWeight: 700 }}>DS</span>
+          <div className="ds-home-bio-photo" style={{ aspectRatio: "3/4", overflow: "hidden" }}>
+            <img src={donnPhoto} alt="Donn Stone" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
         </div>
       </section>
