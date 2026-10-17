@@ -51,7 +51,7 @@ export default function HomePage() {
             <span style={{ display: "block", color: "#9B1D20" }}>STONE</span>
           </h1>
           <p style={{ fontSize: "clamp(14px,2vw,18px)", color: "rgba(234,213,200,0.65)", marginBottom: 40, letterSpacing: "0.06em", animation: "fadeUp 1s ease 0.2s both" }}>
-            Amapiano DJ &amp; Producer
+            Electronic Powerhouse &amp; DJ
           </p>
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap", animation: "fadeUp 1s ease 0.3s both" }}>
             <Link to="/booking" style={{
@@ -76,12 +76,12 @@ export default function HomePage() {
         <div className="ds-home-bio" style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div>
             <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 24 }}>About</p>
-            <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 24px", lineHeight: 1.1 }}>Rotterdam's Voice of Amapiano</h2>
+            <h2 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 24px", lineHeight: 1.1 }}>Electronic Powerhouse from Rotterdam</h2>
             <p style={{ fontSize: 16, lineHeight: 1.85, color: "#BFA8A0", marginBottom: 16 }}>
-              Donn Stone is a Rotterdam-based DJ and producer specialising in Amapiano and Afro-electronic music. A journey to Cape Town, South Africa, opened the door to direct connections with local producers, sparking a deep commitment to bringing the sound back to Europe, and eventually the world.
+              Donn Stone is an Electronic powerhouse from Rotterdam. Known for his expensive musical taste and undeniable dancefloor energy. His unique style has resonated with audiences worldwide.
             </p>
             <p style={{ fontSize: 16, lineHeight: 1.85, color: "#BFA8A0", marginBottom: 32 }}>
-              Described by Paradiso Amsterdam as "a major figure in the Amapiano scene," Stone books all-night solo sets at Rotterdam's Toffler and Amsterdam's Parallel stage, and has taken his sets to London, Paris, Helsinki, Johannesburg, Antwerp and beyond. In 2026 he gave summer crowds at Bairro the time of their lives.
+              Bringing a masterful fusion of rhythmic, melodic and uplifting electronic selections with an energetic and culturally rich vibe to every set. From Rotterdam's Toffler and Amsterdam's Paradiso to stages across 50+ countries worldwide.
             </p>
             <Link to="/press" style={{
               fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",

@@ -1,20 +1,20 @@
 /** @format */
 
 const QUOTES = [
-  { quote: "A major figure in the Amapiano scene.", source: "Paradiso Amsterdam", date: "2024" },
-  { quote: "International DJ based in Rotterdam, he's been ruling the Amapiano for a while now.", source: "Operator Radio", date: "2024" },
-  { quote: "South African amapiano making it overseas — Netherlands.", source: "ECR Radio", date: "2024" },
+  { quote: "A major figure in the Afro-Electronic dance music scene.", source: "Paradiso Amsterdam", date: "2024" },
+  { quote: "International DJ based in Rotterdam, he's been ruling the Afro-electronic scene for a while now.", source: "Operator Radio", date: "2024" },
+  { quote: "South African Afro-electronic music making it overseas — Netherlands.", source: "ECR Radio", date: "2024" },
 ];
 
-const BIO_SHORT = `Donn Stone is a Rotterdam-based DJ and producer specialising in Amapiano and Afro-electronic music. After a formative trip to Cape Town, South Africa, he built direct connections with local producers and began bringing the sound to Europe. Described by Paradiso Amsterdam as "a major figure in the Amapiano scene," Stone headlines all-night sets at Toffler (Rotterdam) and Paradiso's Parallel stage (Amsterdam), and tours across the UK, France, Finland, Belgium and South Africa.`;
+const BIO_SHORT = `Donn Stone is an Electronic powerhouse from Rotterdam. Known for his expensive musical taste and undeniable dancefloor energy, his unique style has resonated with audiences worldwide. Bringing a masterful fusion of rhythmic, melodic and uplifting electronic selections with an energetic and culturally rich vibe to every set. Described by Paradiso Amsterdam as "a major figure in the Afro-Electronic dance music scene," Stone headlines all-night sets at Toffler (Rotterdam) and Paradiso's Parallel stage (Amsterdam), and tours across the UK, France, Finland, Belgium and South Africa.`;
 
-const BIO_LONG = `${BIO_SHORT}
+const BIO_LONG = `Donn Stone is an Electronic powerhouse from Rotterdam. Known for his expensive musical taste and undeniable dancefloor energy. His unique style has resonated with audiences worldwide. Bringing a masterful fusion of rhythmic/melodic and uplifting electronic selections with an energetic and culturally rich vibe to every set.
 
-Stone discovered Amapiano around 2020. A trip to Cape Town deepened his relationship with the genre, leading to direct collaborations with South African producers and the recording of his first amapiano EP. South African media, including ECR Radio and Briefly.co.za, have featured him as an example of Amapiano spreading internationally through a Dutch DJ.
+Stone's journey into Afro-electronic music was sparked by a formative trip to Cape Town, South Africa, where he built direct connections with local producers and immersed himself in the roots of the sound. This experience led to direct collaborations with South African producers and a deep commitment to bringing this culturally rich music to Europe and beyond. South African media, including ECR Radio and Briefly.co.za, have featured him as an example of Afro-electronic music spreading internationally through a Dutch artist.
 
-Back in Rotterdam, he built a reputation for marathon all-night sets, a mark of status in the Dutch club circuit. His residency at Bairro in 2026 became one of Rotterdam's most talked-about summer series, while Toffler and Paradiso's Parallel stage remain his regular Amsterdam home. His Operator Radio session further cemented his position as one of the Netherlands' leading Amapiano voices.
+Back in Rotterdam, he built a reputation for marathon all-night sets, a mark of status in the Dutch club circuit. His residency at Bairro in 2026 became one of Rotterdam's most talked-about summer series, while Toffler and Paradiso's Parallel stage remain his regular Amsterdam home. His Operator Radio session further cemented his position as one of the Netherlands' leading electronic music voices.
 
-Stone is also an official Amsterdam Dance Event (ADE) artist, placing him among the recognised names in the global electronic music calendar.`;
+Stone is also an official Amsterdam Dance Event (ADE) artist, placing him among the recognised names in the global electronic music calendar. With performances across 50+ countries and 200+ shows per year, Donn Stone continues to push the boundaries of Afro-electronic music on the world stage.`;
 
 export default function PressPage() {
   return (
