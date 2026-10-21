@@ -316,7 +316,7 @@ function VideoEditor() {
               onChange={(e) => update(v.id, "title", e.target.value)}
             />
           </Field>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div className="admin-grid-2col">
             <Field label="YouTube ID">
               <input
                 {...fi}
@@ -449,7 +449,7 @@ function TourEditor() {
               Remove
             </button>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 16 }}>
+          <div className="admin-grid-4col">
             <Field label="Date">
               <input {...fi} type="date" value={t.date} onChange={(e) => update(t.id, "date", e.target.value)} />
             </Field>
@@ -1038,6 +1038,7 @@ export default function AdminDashboardPage() {
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Menu"
+            className="admin-hamburger"
             style={{
               display: "flex", flexDirection: "column", gap: 5,
               background: "none", border: "none", cursor: "pointer",
@@ -1098,7 +1099,7 @@ export default function AdminDashboardPage() {
         </nav>
 
         {/* Desktop sidebar */}
-        <div style={{ display: "flex", flex: 1 }}>
+        <div className="admin-flex-row" style={{ flex: 1 }}>
           <nav style={{
             width: 200, background: "#0D0707",
             borderRight: "1px solid #1E0E0E",
@@ -1112,7 +1113,7 @@ export default function AdminDashboardPage() {
           </nav>
 
           {/* Main content */}
-          <main className="admin-main" style={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
+          <main className="admin-main">
             <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16 }}>
               Section
             </p>
@@ -1129,24 +1130,50 @@ export default function AdminDashboardPage() {
       </div>
 
       <style>{`
-        @media (min-width: 768px) {
-          .admin-sidebar-desktop { display: flex !important; }
-          .admin-logout-desktop { display: block !important; }
-          .admin-main { padding: 48px 48px !important; }
+        html, body { overflow-x: hidden; max-width: 100%; }
+        .admin-root { overflow-x: hidden; width: 100%; max-width: 100vw; box-sizing: border-box; }
+        .admin-flex-row { display: flex; flex: 1; overflow: hidden; }
+        .admin-main {
+          flex: 1;
+          min-width: 0;
+          overflow-x: hidden;
+          width: 0;
+          box-sizing: border-box;
         }
-        @media (max-width: 767px) {
-          .admin-sidebar-desktop { display: none !important; }
-          .admin-logout-desktop { display: none !important; }
-          .admin-video-card-top { flex-wrap: wrap !important; gap: 8px !important; }
-          .admin-tour-card-top { flex-wrap: wrap !important; gap: 8px !important; }
-          .admin-main { padding: 24px 16px !important; max-width: 100% !important; }
-        }
-        .admin-root { overflow-x: hidden; max-width: 100vw; }
-        .admin-body { overflow-x: hidden; }
+        .admin-main * { box-sizing: border-box; }
         .admin-main input, .admin-main textarea, .admin-main select {
           max-width: 100% !important;
           width: 100% !important;
           box-sizing: border-box !important;
+          min-width: 0 !important;
+        }
+        .admin-grid-2col {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+        }
+        .admin-grid-4col {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 16px;
+        }
+        @media (min-width: 768px) {
+          .admin-sidebar-desktop { display: flex !important; }
+          .admin-logout-desktop { display: block !important; }
+          .admin-hamburger { display: none !important; }
+          .admin-main { padding: 48px 48px; }
+        }
+        @media (max-width: 767px) {
+          .admin-sidebar-desktop { display: none !important; }
+          .admin-logout-desktop { display: none !important; }
+          .admin-main { padding: 24px 16px; }
+          .admin-video-card-top { flex-wrap: wrap !important; gap: 8px !important; }
+          .admin-tour-card-top { flex-wrap: wrap !important; gap: 8px !important; }
+          .admin-grid-2col { grid-template-columns: 1fr !important; }
+          .admin-grid-4col { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 480px) {
+          .admin-grid-4col { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </AdminGuard>
