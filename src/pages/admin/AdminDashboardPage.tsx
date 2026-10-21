@@ -788,6 +788,7 @@ function BookingsSection({ onCountChange }: { onCountChange?: (n: number) => voi
     <div>
       {bookings.map((b) => {
         const status = getStatus(b);
+        const templateOpen = showTemplate === b.number;
         return (
           <div
             key={b.number}
@@ -798,55 +799,57 @@ function BookingsSection({ onCountChange }: { onCountChange?: (n: number) => voi
               marginBottom: 12,
             }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
-              <div>
-                <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, color: "#EAD5C8", margin: "0 0 4px", fontWeight: 700 }}>
-                  {parseName(b.title)}
-                </p>
-                <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", margin: 0, letterSpacing: "0.1em" }}>
-                  {parseDate(b.title)} &nbsp;·&nbsp; {new Date(b.created_at).toLocaleDateString("nl-NL")}
-                </p>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span
-                  style={{
-                    fontFamily: '"Space Mono", monospace',
-                    fontSize: 9,
-                    fontWeight: 700,
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color: "#EAD5C8",
-                    background: STATUS_COLORS[status] || "#3D2020",
-                    padding: "4px 10px",
-                  }}
-                >
-                  {status}
-                </span>
-                <select
-                  disabled={updating === b.number}
-                  onChange={(e) => changeStatus(b.number, e.target.value)}
-                  defaultValue=""
-                  style={{
-                    ...S.input,
-                    width: "auto",
-                    fontSize: 10,
-                    padding: "6px 10px",
-                    cursor: "pointer",
-                  }}
-                >
-                  <option value="" disabled>
-                    Change status…
-                  </option>
-                  {["new", "in discussion", "confirmed", "completed", "declined"].map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {/* Top row: name + date */}
+            <div style={{ marginBottom: 16 }}>
+              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, color: "#EAD5C8", margin: "0 0 4px", fontWeight: 700 }}>
+                {parseName(b.title)}
+              </p>
+              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", margin: 0, letterSpacing: "0.1em" }}>
+                {parseDate(b.title)} &nbsp;·&nbsp; {new Date(b.created_at).toLocaleDateString("nl-NL")}
+              </p>
             </div>
+
+            {/* Status row: badge + dropdown stacked on mobile */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+              <span
+                style={{
+                  fontFamily: '"Space Mono", monospace',
+                  fontSize: 9,
+                  fontWeight: 700,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "#EAD5C8",
+                  background: STATUS_COLORS[status] || "#3D2020",
+                  padding: "6px 12px",
+                  display: "inline-block",
+                  alignSelf: "flex-start",
+                }}
+              >
+                {status}
+              </span>
+              <select
+                disabled={updating === b.number}
+                onChange={(e) => changeStatus(b.number, e.target.value)}
+                defaultValue=""
+                style={{
+                  ...S.input,
+                  width: "100%",
+                  maxWidth: 260,
+                  fontSize: 11,
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                }}
+              >
+                <option value="" disabled>Change status…</option>
+                {["new", "in discussion", "confirmed", "completed", "declined"].map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Details */}
             {b.body && (
-              <details style={{ marginTop: 16 }}>
+              <details style={{ marginBottom: 12 }}>
                 <summary style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", cursor: "pointer", letterSpacing: "0.12em", textTransform: "uppercase" }}>
                   View details
                 </summary>
@@ -861,47 +864,49 @@ function BookingsSection({ onCountChange }: { onCountChange?: (n: number) => voi
                     marginTop: 12,
                     whiteSpace: "pre-wrap",
                     wordBreak: "break-word",
+                    overflowX: "auto",
                   }}
                 >
                   {b.body}
                 </pre>
               </details>
             )}
-            <div style={{ marginTop: 12 }}>
-              <button
-                style={{ ...S.btnGhost, fontSize: 9 }}
-                onClick={() => setShowTemplate(showTemplate === b.number ? null : b.number)}
-              >
-                {showTemplate === b.number ? "Hide email template" : "Email template →"}
-              </button>
-              {showTemplate === b.number && (
-                <div style={{ marginTop: 12 }}>
-                  <pre style={{
-                    fontFamily: '"Space Mono", monospace',
-                    fontSize: 11,
-                    color: "#BFA8A0",
-                    background: "#0A0504",
-                    border: "1px solid #1E0E0E",
-                    padding: 16,
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                    marginBottom: 8,
-                  }}>
-                    {emailTemplate(status, b)}
-                  </pre>
-                  <button
-                    style={{ ...S.btn, fontSize: 9 }}
-                    onClick={() => {
-                      navigator.clipboard.writeText(emailTemplate(status, b));
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }}
-                  >
-                    {copied ? "Copied!" : "Copy to clipboard"}
-                  </button>
-                </div>
-              )}
-            </div>
+
+            {/* Email template */}
+            <button
+              style={{ ...S.btnGhost, fontSize: 9, marginBottom: templateOpen ? 12 : 0 }}
+              onClick={() => setShowTemplate(templateOpen ? null : b.number)}
+            >
+              {templateOpen ? "▲ Hide email template" : "▼ Email template"}
+            </button>
+            {templateOpen && (
+              <div>
+                <pre style={{
+                  fontFamily: '"Space Mono", monospace',
+                  fontSize: 11,
+                  color: "#BFA8A0",
+                  background: "#0A0504",
+                  border: "1px solid #9B1D20",
+                  padding: 16,
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  overflowX: "auto",
+                  marginBottom: 10,
+                }}>
+                  {emailTemplate(status, b)}
+                </pre>
+                <button
+                  style={{ ...S.btn, fontSize: 9, width: "100%", maxWidth: 200 }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(emailTemplate(status, b));
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                >
+                  {copied ? "✓ Copied!" : "Copy to clipboard"}
+                </button>
+              </div>
+            )}
           </div>
         );
       })}
