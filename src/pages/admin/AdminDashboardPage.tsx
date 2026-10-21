@@ -92,6 +92,7 @@ function useFocus(base: React.CSSProperties) {
 
 interface HomeData {
   heroSubtitle: string;
+  heroPhotoPath: string;
   heroVideoId: string;
   heroUseVideo: boolean;
   bioHeading: string;
@@ -145,6 +146,14 @@ function HomeEditor() {
           {...fi}
           value={data.heroSubtitle}
           onChange={(e) => setData({ ...data, heroSubtitle: e.target.value })}
+        />
+      </Field>
+      <Field label="Hero photo path (put photo in public/photos/ on GitHub)">
+        <input
+          {...fi}
+          value={data.heroPhotoPath ?? ""}
+          onChange={(e) => setData({ ...data, heroPhotoPath: e.target.value })}
+          placeholder="/photos/donnstone.jpg"
         />
       </Field>
       <Field label="Use video as hero background">
@@ -634,6 +643,80 @@ const STATUS_COLORS: Record<string, string> = {
   declined: "#3D2020",
 };
 
+function emailTemplate(status: string, booking: Booking): string {
+  const name = parseName(booking.title);
+  const date = parseDate(booking.title);
+  const templates: Record<string, string> = {
+    new: `Subject: Booking Request Received – Donn Stone
+
+Hi ${name},
+
+Thank you for reaching out regarding a booking for ${date}.
+
+We have received your request and will review it shortly. You can expect to hear back from us within 2–3 business days.
+
+Best regards,
+Donn Stone Management`,
+
+    "in discussion": `Subject: Re: Booking Inquiry – Donn Stone | ${date}
+
+Hi ${name},
+
+Thank you for your patience. We've reviewed your booking request for ${date} and we're interested in exploring this further.
+
+Could you share more details about:
+- The full event lineup / context
+- Hospitality and technical rider requirements
+- Any specific timing preferences
+
+Looking forward to your response.
+
+Best regards,
+Donn Stone Management`,
+
+    confirmed: `Subject: Booking Confirmed – Donn Stone | ${date}
+
+Hi ${name},
+
+We're pleased to confirm Donn Stone's performance on ${date}.
+
+Please find below the next steps:
+- We will send over the full rider and contract within the next few days
+- Please confirm the agreed fee and payment terms
+- Technical requirements will follow separately
+
+Looking forward to a great show.
+
+Best regards,
+Donn Stone Management`,
+
+    completed: `Subject: Thank You – Donn Stone | ${date}
+
+Hi ${name},
+
+Thank you for having Donn Stone at your event on ${date}. It was a pleasure working with you.
+
+We hope the crowd enjoyed the set as much as we did. We'd love to work together again in the future — feel free to reach out whenever you have something coming up.
+
+Best regards,
+Donn Stone Management`,
+
+    declined: `Subject: Re: Booking Inquiry – Donn Stone | ${date}
+
+Hi ${name},
+
+Thank you for considering Donn Stone for your event on ${date}.
+
+After careful consideration, we regret to inform you that we are unable to confirm this booking at this time. This may be due to scheduling conflicts or the event not being the right fit for this period.
+
+We appreciate your interest and hope to find an opportunity to work together in the future.
+
+Best regards,
+Donn Stone Management`,
+  };
+  return templates[status] || "";
+}
+
 function getStatus(booking: Booking): string {
   const label = booking.labels.find((l) => l.name.startsWith("status:"));
   return label ? label.name.replace("status: ", "") : "new";
@@ -649,21 +732,26 @@ function parseDate(title: string): string {
   return m ? m[1] : "";
 }
 
-function BookingsSection() {
+function BookingsSection({ onCountChange }: { onCountChange?: (n: number) => void }) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<number | null>(null);
+  const [showTemplate, setShowTemplate] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
     fetch("/api/booking")
       .then((r) => r.json())
       .then((j) => {
-        setBookings(j.bookings || []);
+        const list = j.bookings || [];
+        setBookings(list);
         setLoading(false);
+        const newCount = list.filter((b: Booking) => getStatus(b) === "new").length;
+        onCountChange?.(newCount);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [onCountChange]);
 
   useEffect(() => {
     load();
@@ -700,6 +788,7 @@ function BookingsSection() {
     <div>
       {bookings.map((b) => {
         const status = getStatus(b);
+        const templateOpen = showTemplate === b.number;
         return (
           <div
             key={b.number}
@@ -710,55 +799,57 @@ function BookingsSection() {
               marginBottom: 12,
             }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
-              <div>
-                <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, color: "#EAD5C8", margin: "0 0 4px", fontWeight: 700 }}>
-                  {parseName(b.title)}
-                </p>
-                <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", margin: 0, letterSpacing: "0.1em" }}>
-                  {parseDate(b.title)} &nbsp;·&nbsp; {new Date(b.created_at).toLocaleDateString("nl-NL")}
-                </p>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span
-                  style={{
-                    fontFamily: '"Space Mono", monospace',
-                    fontSize: 9,
-                    fontWeight: 700,
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color: "#EAD5C8",
-                    background: STATUS_COLORS[status] || "#3D2020",
-                    padding: "4px 10px",
-                  }}
-                >
-                  {status}
-                </span>
-                <select
-                  disabled={updating === b.number}
-                  onChange={(e) => changeStatus(b.number, e.target.value)}
-                  defaultValue=""
-                  style={{
-                    ...S.input,
-                    width: "auto",
-                    fontSize: 10,
-                    padding: "6px 10px",
-                    cursor: "pointer",
-                  }}
-                >
-                  <option value="" disabled>
-                    Change status…
-                  </option>
-                  {["new", "in discussion", "confirmed", "completed", "declined"].map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {/* Top row: name + date */}
+            <div style={{ marginBottom: 16 }}>
+              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, color: "#EAD5C8", margin: "0 0 4px", fontWeight: 700 }}>
+                {parseName(b.title)}
+              </p>
+              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", margin: 0, letterSpacing: "0.1em" }}>
+                {parseDate(b.title)} &nbsp;·&nbsp; {new Date(b.created_at).toLocaleDateString("nl-NL")}
+              </p>
             </div>
+
+            {/* Status row: badge + dropdown stacked on mobile */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+              <span
+                style={{
+                  fontFamily: '"Space Mono", monospace',
+                  fontSize: 9,
+                  fontWeight: 700,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "#EAD5C8",
+                  background: STATUS_COLORS[status] || "#3D2020",
+                  padding: "6px 12px",
+                  display: "inline-block",
+                  alignSelf: "flex-start",
+                }}
+              >
+                {status}
+              </span>
+              <select
+                disabled={updating === b.number}
+                onChange={(e) => changeStatus(b.number, e.target.value)}
+                defaultValue=""
+                style={{
+                  ...S.input,
+                  width: "100%",
+                  maxWidth: 260,
+                  fontSize: 11,
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                }}
+              >
+                <option value="" disabled>Change status…</option>
+                {["new", "in discussion", "confirmed", "completed", "declined"].map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Details */}
             {b.body && (
-              <details style={{ marginTop: 16 }}>
+              <details style={{ marginBottom: 12 }}>
                 <summary style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", cursor: "pointer", letterSpacing: "0.12em", textTransform: "uppercase" }}>
                   View details
                 </summary>
@@ -773,11 +864,48 @@ function BookingsSection() {
                     marginTop: 12,
                     whiteSpace: "pre-wrap",
                     wordBreak: "break-word",
+                    overflowX: "auto",
                   }}
                 >
                   {b.body}
                 </pre>
               </details>
+            )}
+
+            {/* Email template */}
+            <button
+              style={{ ...S.btnGhost, fontSize: 9, marginBottom: templateOpen ? 12 : 0 }}
+              onClick={() => setShowTemplate(templateOpen ? null : b.number)}
+            >
+              {templateOpen ? "▲ Hide email template" : "▼ Email template"}
+            </button>
+            {templateOpen && (
+              <div>
+                <pre style={{
+                  fontFamily: '"Space Mono", monospace',
+                  fontSize: 11,
+                  color: "#BFA8A0",
+                  background: "#0A0504",
+                  border: "1px solid #9B1D20",
+                  padding: 16,
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  overflowX: "auto",
+                  marginBottom: 10,
+                }}>
+                  {emailTemplate(status, b)}
+                </pre>
+                <button
+                  style={{ ...S.btn, fontSize: 9, width: "100%", maxWidth: 200 }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(emailTemplate(status, b));
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                >
+                  {copied ? "✓ Copied!" : "Copy to clipboard"}
+                </button>
+              </div>
             )}
           </div>
         );
@@ -790,6 +918,7 @@ function BookingsSection() {
 
 export default function AdminDashboardPage() {
   const [active, setActive] = useState<Section>("Home");
+  const [newBookingCount, setNewBookingCount] = useState(0);
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -871,7 +1000,9 @@ export default function AdminDashboardPage() {
                 key={s}
                 onClick={() => setActive(s)}
                 style={{
-                  display: "block",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                   width: "100%",
                   textAlign: "left",
                   fontFamily: '"Space Mono", monospace',
@@ -886,6 +1017,7 @@ export default function AdminDashboardPage() {
                   padding: "14px 24px",
                   cursor: "pointer",
                   transition: "all 0.15s",
+                  boxSizing: "border-box",
                 }}
                 onMouseEnter={(e) => {
                   if (active !== s) e.currentTarget.style.color = "#7A6060";
@@ -895,6 +1027,21 @@ export default function AdminDashboardPage() {
                 }}
               >
                 {s}
+                {s === "Bookings" && newBookingCount > 0 && (
+                  <span style={{
+                    background: "#9B1D20",
+                    color: "#EAD5C8",
+                    fontFamily: '"Space Mono", monospace',
+                    fontSize: 9,
+                    fontWeight: 700,
+                    padding: "2px 6px",
+                    borderRadius: 2,
+                    minWidth: 18,
+                    textAlign: "center",
+                  }}>
+                    {newBookingCount}
+                  </span>
+                )}
               </button>
             ))}
           </nav>
@@ -931,7 +1078,7 @@ export default function AdminDashboardPage() {
             {active === "Video" && <VideoEditor />}
             {active === "Tour" && <TourEditor />}
             {active === "Bio" && <BioEditor />}
-            {active === "Bookings" && <BookingsSection />}
+            {active === "Bookings" && <BookingsSection onCountChange={setNewBookingCount} />}
           </main>
         </div>
       </div>
