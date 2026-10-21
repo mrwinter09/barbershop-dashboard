@@ -10,6 +10,8 @@ import PressPage from "./pages/PressPage";
 import BookingPage from "./pages/BookingPage";
 import ExperiencePage from "./pages/ExperiencePage";
 import NotFoundPage from "./pages/NotFoundPage";
+import AdminLoginPage from "./pages/admin/AdminLoginPage";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 
 function Layout() {
   return (
@@ -37,6 +39,8 @@ const router = createBrowserRouter([
       { path: "*", element: <NotFoundPage /> },
     ],
   },
+  { path: "/admin", element: <AdminLoginPage /> },
+  { path: "/admin/dashboard", element: <AdminDashboardPage /> },
 ]);
 
 export default function App() {
