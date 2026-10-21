@@ -1025,7 +1025,7 @@ export default function AdminDashboardPage() {
 
   return (
     <AdminGuard>
-      <div style={{ background: "#0A0504", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <div className="admin-root" style={{ background: "#0A0504", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
 
         {/* Top bar */}
         <header style={{
@@ -1112,7 +1112,7 @@ export default function AdminDashboardPage() {
           </nav>
 
           {/* Main content */}
-          <main style={{ flex: 1, padding: "32px 16px", maxWidth: 800, minWidth: 0, width: "100%", overflowX: "hidden" }}>
+          <main className="admin-main" style={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
             <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16 }}>
               Section
             </p>
@@ -1132,15 +1132,22 @@ export default function AdminDashboardPage() {
         @media (min-width: 768px) {
           .admin-sidebar-desktop { display: flex !important; }
           .admin-logout-desktop { display: block !important; }
+          .admin-main { padding: 48px 48px !important; }
         }
         @media (max-width: 767px) {
           .admin-sidebar-desktop { display: none !important; }
           .admin-logout-desktop { display: none !important; }
           .admin-video-card-top { flex-wrap: wrap !important; gap: 8px !important; }
           .admin-tour-card-top { flex-wrap: wrap !important; gap: 8px !important; }
+          .admin-main { padding: 24px 16px !important; max-width: 100% !important; }
         }
-        * { box-sizing: border-box; }
-        body { overflow-x: hidden; }
+        .admin-root { overflow-x: hidden; max-width: 100vw; }
+        .admin-body { overflow-x: hidden; }
+        .admin-main input, .admin-main textarea, .admin-main select {
+          max-width: 100% !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
       `}</style>
     </AdminGuard>
   );
