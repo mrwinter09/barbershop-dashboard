@@ -92,6 +92,7 @@ function useFocus(base: React.CSSProperties) {
 
 interface HomeData {
   heroSubtitle: string;
+  heroPhotoPath: string;
   heroVideoId: string;
   heroUseVideo: boolean;
   bioHeading: string;
@@ -145,6 +146,14 @@ function HomeEditor() {
           {...fi}
           value={data.heroSubtitle}
           onChange={(e) => setData({ ...data, heroSubtitle: e.target.value })}
+        />
+      </Field>
+      <Field label="Hero photo path (put photo in public/photos/ on GitHub)">
+        <input
+          {...fi}
+          value={data.heroPhotoPath ?? ""}
+          onChange={(e) => setData({ ...data, heroPhotoPath: e.target.value })}
+          placeholder="/photos/donnstone.jpg"
         />
       </Field>
       <Field label="Use video as hero background">
