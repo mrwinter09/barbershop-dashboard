@@ -955,6 +955,7 @@ function BookingsSection({ onCountChange }: { onCountChange?: (n: number) => voi
 export default function AdminDashboardPage() {
   const [active, setActive] = useState<Section>("Home");
   const [newBookingCount, setNewBookingCount] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -962,56 +963,112 @@ export default function AdminDashboardPage() {
     navigate("/admin");
   }
 
-  return (
-    <AdminGuard>
-      <div style={{ background: "#0A0504", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-        {/* Top bar */}
-        <header
+  function navTo(s: Section) {
+    setActive(s);
+    setMenuOpen(false);
+  }
+
+  const sidebarContent = (
+    <>
+      {SECTIONS.map((s) => (
+        <button
+          key={s}
+          onClick={() => navTo(s)}
           style={{
-            background: "#110808",
-            borderBottom: "1px solid #1E0E0E",
-            padding: "0 clamp(20px,4vw,48px)",
-            height: 56,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            width: "100%",
+            textAlign: "left",
+            fontFamily: '"Space Mono", monospace',
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            color: active === s ? "#EAD5C8" : "#3D2020",
+            background: active === s ? "#1E0E0E" : "none",
+            border: "none",
+            borderLeft: active === s ? "3px solid #9B1D20" : "3px solid transparent",
+            padding: "14px 24px",
+            cursor: "pointer",
+            transition: "all 0.15s",
+            boxSizing: "border-box",
+          }}
+          onMouseEnter={(e) => { if (active !== s) e.currentTarget.style.color = "#7A6060"; }}
+          onMouseLeave={(e) => { if (active !== s) e.currentTarget.style.color = "#3D2020"; }}
+        >
+          {s}
+          {s === "Bookings" && newBookingCount > 0 && (
+            <span style={{
+              background: "#9B1D20", color: "#EAD5C8",
+              fontFamily: '"Space Mono", monospace',
+              fontSize: 9, fontWeight: 700,
+              padding: "2px 6px", borderRadius: 2, minWidth: 18, textAlign: "center",
+            }}>
+              {newBookingCount}
+            </span>
+          )}
+        </button>
+      ))}
+      {/* Logout inside mobile menu */}
+      <div style={{ padding: "24px 24px 0", borderTop: "1px solid #1E0E0E", marginTop: 16 }}>
+        <button
+          onClick={handleLogout}
+          style={{
+            fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700,
+            letterSpacing: "0.14em", textTransform: "uppercase",
+            color: "#9B1D20", background: "none", border: "1px solid #3D1010",
+            padding: "10px 16px", cursor: "pointer", width: "100%",
           }}
         >
-          <div
+          Log out
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <AdminGuard>
+      <div style={{ background: "#0A0504", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+
+        {/* Top bar */}
+        <header style={{
+          background: "#110808", borderBottom: "1px solid #1E0E0E",
+          padding: "0 20px", height: 56,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          position: "sticky", top: 0, zIndex: 100,
+        }}>
+          {/* Hamburger (mobile) */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Menu"
             style={{
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
+              display: "flex", flexDirection: "column", gap: 5,
+              background: "none", border: "none", cursor: "pointer",
+              padding: "4px 0", flexShrink: 0,
             }}
           >
+            <span style={{ display: "block", width: 22, height: 2, background: menuOpen ? "#9B1D20" : "#7A6060", transition: "background 0.2s" }} />
+            <span style={{ display: "block", width: 22, height: 2, background: menuOpen ? "#9B1D20" : "#7A6060", transition: "background 0.2s" }} />
+            <span style={{ display: "block", width: 22, height: 2, background: menuOpen ? "#9B1D20" : "#7A6060", transition: "background 0.2s" }} />
+          </button>
+
+          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 14, fontWeight: 700, letterSpacing: "0.1em" }}>
             <span style={{ color: "#9B1D20" }}>DONN</span>
             <span style={{ color: "#EAD5C8" }}> STONE</span>
-            <span
-              style={{
-                color: "#3D2020",
-                fontSize: 10,
-                marginLeft: 12,
-                letterSpacing: "0.16em",
-                textTransform: "uppercase",
-              }}
-            >
+            <span style={{ color: "#3D2020", fontSize: 10, marginLeft: 12, letterSpacing: "0.16em", textTransform: "uppercase" }}>
               Admin
             </span>
           </div>
+
+          {/* Log out — desktop only */}
           <button
             onClick={handleLogout}
             style={{
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#7A6060",
-              background: "none",
-              border: "1px solid #2A1414",
-              padding: "8px 16px",
-              cursor: "pointer",
+              fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700,
+              letterSpacing: "0.14em", textTransform: "uppercase",
+              color: "#7A6060", background: "none", border: "1px solid #2A1414",
+              padding: "8px 16px", cursor: "pointer",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "#EAD5C8")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "#7A6060")}
@@ -1020,96 +1077,51 @@ export default function AdminDashboardPage() {
           </button>
         </header>
 
-        <div style={{ display: "flex", flex: 1 }}>
-          {/* Sidebar */}
-          <nav
+        {/* Mobile drawer overlay */}
+        {menuOpen && (
+          <div
+            onClick={() => setMenuOpen(false)}
             style={{
-              width: 200,
-              background: "#0D0707",
-              borderRight: "1px solid #1E0E0E",
-              padding: "32px 0",
-              flexShrink: 0,
+              position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)",
+              zIndex: 90, top: 56,
             }}
+          />
+        )}
+
+        {/* Mobile drawer */}
+        <nav style={{
+          position: "fixed", top: 56, left: 0, bottom: 0,
+          width: 240, background: "#0D0707", borderRight: "1px solid #1E0E0E",
+          zIndex: 95, padding: "24px 0",
+          transform: menuOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.25s ease",
+          overflowY: "auto",
+        }}>
+          {sidebarContent}
+        </nav>
+
+        {/* Desktop sidebar */}
+        <div style={{ display: "flex", flex: 1 }}>
+          <nav style={{
+            width: 200, background: "#0D0707",
+            borderRight: "1px solid #1E0E0E",
+            padding: "32px 0", flexShrink: 0,
+            // hide on small screens via a media-query-like trick using minWidth
+            display: "flex", flexDirection: "column",
+          }}
+            className="admin-sidebar-desktop"
           >
-            {SECTIONS.map((s) => (
-              <button
-                key={s}
-                onClick={() => setActive(s)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  textAlign: "left",
-                  fontFamily: '"Space Mono", monospace',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  color: active === s ? "#EAD5C8" : "#3D2020",
-                  background: active === s ? "#1E0E0E" : "none",
-                  border: "none",
-                  borderLeft: active === s ? "3px solid #9B1D20" : "3px solid transparent",
-                  padding: "14px 24px",
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                  boxSizing: "border-box",
-                }}
-                onMouseEnter={(e) => {
-                  if (active !== s) e.currentTarget.style.color = "#7A6060";
-                }}
-                onMouseLeave={(e) => {
-                  if (active !== s) e.currentTarget.style.color = "#3D2020";
-                }}
-              >
-                {s}
-                {s === "Bookings" && newBookingCount > 0 && (
-                  <span style={{
-                    background: "#9B1D20",
-                    color: "#EAD5C8",
-                    fontFamily: '"Space Mono", monospace',
-                    fontSize: 9,
-                    fontWeight: 700,
-                    padding: "2px 6px",
-                    borderRadius: 2,
-                    minWidth: 18,
-                    textAlign: "center",
-                  }}>
-                    {newBookingCount}
-                  </span>
-                )}
-              </button>
-            ))}
+            {sidebarContent}
           </nav>
 
           {/* Main content */}
-          <main style={{ flex: 1, padding: "48px clamp(20px,4vw,48px)", maxWidth: 800 }}>
-            <p
-              style={{
-                fontFamily: '"Space Mono", monospace',
-                fontSize: 10,
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "#9B1D20",
-                marginBottom: 16,
-              }}
-            >
+          <main style={{ flex: 1, padding: "48px clamp(20px,4vw,48px)", maxWidth: 800, minWidth: 0 }}>
+            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16 }}>
               Section
             </p>
-            <h1
-              style={{
-                fontFamily: '"Space Mono", monospace',
-                fontWeight: 700,
-                fontSize: 28,
-                letterSpacing: "0.06em",
-                textTransform: "uppercase",
-                color: "#EAD5C8",
-                margin: "0 0 40px",
-              }}
-            >
+            <h1 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: 28, letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 40px" }}>
               {active}
             </h1>
-
             {active === "Home" && <HomeEditor />}
             {active === "Video" && <VideoEditor />}
             {active === "Tour" && <TourEditor />}
@@ -1118,6 +1130,15 @@ export default function AdminDashboardPage() {
           </main>
         </div>
       </div>
+
+      <style>{`
+        @media (min-width: 768px) {
+          .admin-sidebar-desktop { display: flex !important; }
+        }
+        @media (max-width: 767px) {
+          .admin-sidebar-desktop { display: none !important; }
+        }
+      `}</style>
     </AdminGuard>
   );
 }
