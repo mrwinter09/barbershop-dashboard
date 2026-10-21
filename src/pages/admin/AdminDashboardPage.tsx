@@ -297,14 +297,10 @@ function VideoEditor() {
             marginBottom: 16,
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+          <div className="admin-video-card-top" style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", gap: 8 }}>
-              <button style={S.btnGhost} onClick={() => moveUp(i)} title="Move up">
-                ↑
-              </button>
-              <button style={S.btnGhost} onClick={() => moveDown(i)} title="Move down">
-                ↓
-              </button>
+              <button style={S.btnGhost} onClick={() => moveUp(i)} title="Move up">↑</button>
+              <button style={S.btnGhost} onClick={() => moveDown(i)} title="Move down">↓</button>
             </div>
             <button
               style={{ ...S.btnGhost, color: "#9B1D20", borderColor: "#3D1010" }}
@@ -434,7 +430,7 @@ function TourEditor() {
             marginBottom: 16,
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <div className="admin-tour-card-top" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
               <input
                 type="checkbox"
@@ -658,7 +654,9 @@ We have received your request and will review it shortly. You can expect to hear
 Best regards,
 Donn Stone Management`,
 
-    "in discussion": `Subject: Re: Booking Inquiry – Donn Stone | ${date}
+    "in discussion": `── TEMPLATE 1 · FIRST REPLY ──────────────────────────
+
+Subject: Re: Booking Inquiry – Donn Stone | ${date}
 
 Hi ${name},
 
@@ -670,6 +668,29 @@ Could you share more details about:
 - Any specific timing preferences
 
 Looking forward to your response.
+
+Best regards,
+Donn Stone Management
+
+── TEMPLATE 2 · FEE PROPOSAL ─────────────────────────
+
+Subject: Booking Proposal – Donn Stone | ${date}
+
+Hi ${name},
+
+Thank you for the additional details. Based on the event profile, here is our proposal:
+
+Performance: Donn Stone
+Date: ${date}
+Set time: [e.g. 02:00 – 04:00]
+Set length: [e.g. 2 hours]
+Fee: € [AMOUNT] (excl. VAT)
+
+Included in the fee:
+- Artist travel and accommodation (to be arranged by management)
+- Full technical rider to be shared upon confirmation
+
+Please let us know if this works for you, or if you'd like to discuss further.
 
 Best regards,
 Donn Stone Management`,
@@ -694,9 +715,20 @@ Donn Stone Management`,
 
 Hi ${name},
 
-Thank you for having Donn Stone at your event on ${date}. It was a pleasure working with you.
+Thank you for having Donn Stone at your event on ${date}. It was a pleasure working with you and the team.
 
-We hope the crowd enjoyed the set as much as we did. We'd love to work together again in the future — feel free to reach out whenever you have something coming up.
+We hope the crowd felt the energy as much as we did — those are the nights that stay with you.
+
+One small ask: if you have a moment, we'd love a short quote from you about the experience. Even just two or three sentences about the performance, the atmosphere, or the collaboration. We use these for our press kit and website, and a word from a promoter carries a lot.
+
+Something along the lines of:
+- How the set landed with the crowd
+- What the energy in the room was like
+- What it was like working with Donn Stone and the team
+
+No pressure — but it would mean a lot to us.
+
+We'd love to work together again. Feel free to reach out whenever you have something coming up.
 
 Best regards,
 Donn Stone Management`,
@@ -919,6 +951,7 @@ function BookingsSection({ onCountChange }: { onCountChange?: (n: number) => voi
 export default function AdminDashboardPage() {
   const [active, setActive] = useState<Section>("Home");
   const [newBookingCount, setNewBookingCount] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -926,56 +959,113 @@ export default function AdminDashboardPage() {
     navigate("/admin");
   }
 
-  return (
-    <AdminGuard>
-      <div style={{ background: "#0A0504", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-        {/* Top bar */}
-        <header
+  function navTo(s: Section) {
+    setActive(s);
+    setMenuOpen(false);
+  }
+
+  const sidebarContent = (
+    <>
+      {SECTIONS.map((s) => (
+        <button
+          key={s}
+          onClick={() => navTo(s)}
           style={{
-            background: "#110808",
-            borderBottom: "1px solid #1E0E0E",
-            padding: "0 clamp(20px,4vw,48px)",
-            height: 56,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            width: "100%",
+            textAlign: "left",
+            fontFamily: '"Space Mono", monospace',
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            color: active === s ? "#EAD5C8" : "#3D2020",
+            background: active === s ? "#1E0E0E" : "none",
+            border: "none",
+            borderLeft: active === s ? "3px solid #9B1D20" : "3px solid transparent",
+            padding: "14px 24px",
+            cursor: "pointer",
+            transition: "all 0.15s",
+            boxSizing: "border-box",
+          }}
+          onMouseEnter={(e) => { if (active !== s) e.currentTarget.style.color = "#7A6060"; }}
+          onMouseLeave={(e) => { if (active !== s) e.currentTarget.style.color = "#3D2020"; }}
+        >
+          {s}
+          {s === "Bookings" && newBookingCount > 0 && (
+            <span style={{
+              background: "#9B1D20", color: "#EAD5C8",
+              fontFamily: '"Space Mono", monospace',
+              fontSize: 9, fontWeight: 700,
+              padding: "2px 6px", borderRadius: 2, minWidth: 18, textAlign: "center",
+            }}>
+              {newBookingCount}
+            </span>
+          )}
+        </button>
+      ))}
+      {/* Logout inside mobile menu */}
+      <div style={{ padding: "24px 24px 0", borderTop: "1px solid #1E0E0E", marginTop: 16 }}>
+        <button
+          onClick={handleLogout}
+          style={{
+            fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700,
+            letterSpacing: "0.14em", textTransform: "uppercase",
+            color: "#9B1D20", background: "none", border: "1px solid #3D1010",
+            padding: "10px 16px", cursor: "pointer", width: "100%",
           }}
         >
-          <div
+          Log out
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <AdminGuard>
+      <div className="admin-root" style={{ background: "#0A0504", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+
+        {/* Top bar */}
+        <header style={{
+          background: "#110808", borderBottom: "1px solid #1E0E0E",
+          padding: "0 20px", height: 56,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          position: "sticky", top: 0, zIndex: 100,
+        }}>
+          {/* Hamburger (mobile) */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Menu"
             style={{
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
+              display: "flex", flexDirection: "column", gap: 5,
+              background: "none", border: "none", cursor: "pointer",
+              padding: "4px 0", flexShrink: 0,
             }}
           >
+            <span style={{ display: "block", width: 22, height: 2, background: menuOpen ? "#9B1D20" : "#7A6060", transition: "background 0.2s" }} />
+            <span style={{ display: "block", width: 22, height: 2, background: menuOpen ? "#9B1D20" : "#7A6060", transition: "background 0.2s" }} />
+            <span style={{ display: "block", width: 22, height: 2, background: menuOpen ? "#9B1D20" : "#7A6060", transition: "background 0.2s" }} />
+          </button>
+
+          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 14, fontWeight: 700, letterSpacing: "0.1em" }}>
             <span style={{ color: "#9B1D20" }}>DONN</span>
             <span style={{ color: "#EAD5C8" }}> STONE</span>
-            <span
-              style={{
-                color: "#3D2020",
-                fontSize: 10,
-                marginLeft: 12,
-                letterSpacing: "0.16em",
-                textTransform: "uppercase",
-              }}
-            >
+            <span style={{ color: "#3D2020", fontSize: 10, marginLeft: 12, letterSpacing: "0.16em", textTransform: "uppercase" }}>
               Admin
             </span>
           </div>
+
+          {/* Log out — desktop only */}
           <button
             onClick={handleLogout}
+            className="admin-logout-desktop"
             style={{
-              fontFamily: '"Space Mono", monospace',
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#7A6060",
-              background: "none",
-              border: "1px solid #2A1414",
-              padding: "8px 16px",
-              cursor: "pointer",
+              fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700,
+              letterSpacing: "0.14em", textTransform: "uppercase",
+              color: "#7A6060", background: "none", border: "1px solid #2A1414",
+              padding: "8px 16px", cursor: "pointer",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "#EAD5C8")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "#7A6060")}
@@ -984,96 +1074,51 @@ export default function AdminDashboardPage() {
           </button>
         </header>
 
-        <div style={{ display: "flex", flex: 1 }}>
-          {/* Sidebar */}
-          <nav
+        {/* Mobile drawer overlay */}
+        {menuOpen && (
+          <div
+            onClick={() => setMenuOpen(false)}
             style={{
-              width: 200,
-              background: "#0D0707",
-              borderRight: "1px solid #1E0E0E",
-              padding: "32px 0",
-              flexShrink: 0,
+              position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)",
+              zIndex: 90, top: 56,
             }}
+          />
+        )}
+
+        {/* Mobile drawer */}
+        <nav style={{
+          position: "fixed", top: 56, left: 0, bottom: 0,
+          width: 240, background: "#0D0707", borderRight: "1px solid #1E0E0E",
+          zIndex: 95, padding: "24px 0",
+          transform: menuOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.25s ease",
+          overflowY: "auto",
+        }}>
+          {sidebarContent}
+        </nav>
+
+        {/* Desktop sidebar */}
+        <div style={{ display: "flex", flex: 1 }}>
+          <nav style={{
+            width: 200, background: "#0D0707",
+            borderRight: "1px solid #1E0E0E",
+            padding: "32px 0", flexShrink: 0,
+            // hide on small screens via a media-query-like trick using minWidth
+            display: "flex", flexDirection: "column",
+          }}
+            className="admin-sidebar-desktop"
           >
-            {SECTIONS.map((s) => (
-              <button
-                key={s}
-                onClick={() => setActive(s)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  textAlign: "left",
-                  fontFamily: '"Space Mono", monospace',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  color: active === s ? "#EAD5C8" : "#3D2020",
-                  background: active === s ? "#1E0E0E" : "none",
-                  border: "none",
-                  borderLeft: active === s ? "3px solid #9B1D20" : "3px solid transparent",
-                  padding: "14px 24px",
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                  boxSizing: "border-box",
-                }}
-                onMouseEnter={(e) => {
-                  if (active !== s) e.currentTarget.style.color = "#7A6060";
-                }}
-                onMouseLeave={(e) => {
-                  if (active !== s) e.currentTarget.style.color = "#3D2020";
-                }}
-              >
-                {s}
-                {s === "Bookings" && newBookingCount > 0 && (
-                  <span style={{
-                    background: "#9B1D20",
-                    color: "#EAD5C8",
-                    fontFamily: '"Space Mono", monospace',
-                    fontSize: 9,
-                    fontWeight: 700,
-                    padding: "2px 6px",
-                    borderRadius: 2,
-                    minWidth: 18,
-                    textAlign: "center",
-                  }}>
-                    {newBookingCount}
-                  </span>
-                )}
-              </button>
-            ))}
+            {sidebarContent}
           </nav>
 
           {/* Main content */}
-          <main style={{ flex: 1, padding: "48px clamp(20px,4vw,48px)", maxWidth: 800 }}>
-            <p
-              style={{
-                fontFamily: '"Space Mono", monospace',
-                fontSize: 10,
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "#9B1D20",
-                marginBottom: 16,
-              }}
-            >
+          <main className="admin-main" style={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
+            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16 }}>
               Section
             </p>
-            <h1
-              style={{
-                fontFamily: '"Space Mono", monospace',
-                fontWeight: 700,
-                fontSize: 28,
-                letterSpacing: "0.06em",
-                textTransform: "uppercase",
-                color: "#EAD5C8",
-                margin: "0 0 40px",
-              }}
-            >
+            <h1 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: 28, letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 40px" }}>
               {active}
             </h1>
-
             {active === "Home" && <HomeEditor />}
             {active === "Video" && <VideoEditor />}
             {active === "Tour" && <TourEditor />}
@@ -1082,6 +1127,28 @@ export default function AdminDashboardPage() {
           </main>
         </div>
       </div>
+
+      <style>{`
+        @media (min-width: 768px) {
+          .admin-sidebar-desktop { display: flex !important; }
+          .admin-logout-desktop { display: block !important; }
+          .admin-main { padding: 48px 48px !important; }
+        }
+        @media (max-width: 767px) {
+          .admin-sidebar-desktop { display: none !important; }
+          .admin-logout-desktop { display: none !important; }
+          .admin-video-card-top { flex-wrap: wrap !important; gap: 8px !important; }
+          .admin-tour-card-top { flex-wrap: wrap !important; gap: 8px !important; }
+          .admin-main { padding: 24px 16px !important; max-width: 100% !important; }
+        }
+        .admin-root { overflow-x: hidden; max-width: 100vw; }
+        .admin-body { overflow-x: hidden; }
+        .admin-main input, .admin-main textarea, .admin-main select {
+          max-width: 100% !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
+      `}</style>
     </AdminGuard>
   );
 }
