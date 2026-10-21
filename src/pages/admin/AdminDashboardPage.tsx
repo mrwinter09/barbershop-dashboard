@@ -658,7 +658,9 @@ We have received your request and will review it shortly. You can expect to hear
 Best regards,
 Donn Stone Management`,
 
-    "in discussion": `Subject: Re: Booking Inquiry – Donn Stone | ${date}
+    "in discussion": `── TEMPLATE 1 · FIRST REPLY ──────────────────────────
+
+Subject: Re: Booking Inquiry – Donn Stone | ${date}
 
 Hi ${name},
 
@@ -670,6 +672,29 @@ Could you share more details about:
 - Any specific timing preferences
 
 Looking forward to your response.
+
+Best regards,
+Donn Stone Management
+
+── TEMPLATE 2 · FEE PROPOSAL ─────────────────────────
+
+Subject: Booking Proposal – Donn Stone | ${date}
+
+Hi ${name},
+
+Thank you for the additional details. Based on the event profile, here is our proposal:
+
+Performance: Donn Stone
+Date: ${date}
+Set time: [e.g. 02:00 – 04:00]
+Set length: [e.g. 2 hours]
+Fee: € [AMOUNT] (excl. VAT)
+
+Included in the fee:
+- Artist travel and accommodation (to be arranged by management)
+- Full technical rider to be shared upon confirmation
+
+Please let us know if this works for you, or if you'd like to discuss further.
 
 Best regards,
 Donn Stone Management`,
@@ -694,9 +719,20 @@ Donn Stone Management`,
 
 Hi ${name},
 
-Thank you for having Donn Stone at your event on ${date}. It was a pleasure working with you.
+Thank you for having Donn Stone at your event on ${date}. It was a pleasure working with you and the team.
 
-We hope the crowd enjoyed the set as much as we did. We'd love to work together again in the future — feel free to reach out whenever you have something coming up.
+We hope the crowd felt the energy as much as we did — those are the nights that stay with you.
+
+One small ask: if you have a moment, we'd love a short quote from you about the experience. Even just two or three sentences about the performance, the atmosphere, or the collaboration. We use these for our press kit and website, and a word from a promoter carries a lot.
+
+Something along the lines of:
+- How the set landed with the crowd
+- What the energy in the room was like
+- What it was like working with Donn Stone and the team
+
+No pressure — but it would mean a lot to us.
+
+We'd love to work together again. Feel free to reach out whenever you have something coming up.
 
 Best regards,
 Donn Stone Management`,
