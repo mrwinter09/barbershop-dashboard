@@ -297,14 +297,10 @@ function VideoEditor() {
             marginBottom: 16,
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+          <div className="admin-video-card-top" style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", gap: 8 }}>
-              <button style={S.btnGhost} onClick={() => moveUp(i)} title="Move up">
-                ↑
-              </button>
-              <button style={S.btnGhost} onClick={() => moveDown(i)} title="Move down">
-                ↓
-              </button>
+              <button style={S.btnGhost} onClick={() => moveUp(i)} title="Move up">↑</button>
+              <button style={S.btnGhost} onClick={() => moveDown(i)} title="Move down">↓</button>
             </div>
             <button
               style={{ ...S.btnGhost, color: "#9B1D20", borderColor: "#3D1010" }}
@@ -434,7 +430,7 @@ function TourEditor() {
             marginBottom: 16,
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <div className="admin-tour-card-top" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
               <input
                 type="checkbox"
@@ -1064,6 +1060,7 @@ export default function AdminDashboardPage() {
           {/* Log out — desktop only */}
           <button
             onClick={handleLogout}
+            className="admin-logout-desktop"
             style={{
               fontFamily: '"Space Mono", monospace', fontSize: 10, fontWeight: 700,
               letterSpacing: "0.14em", textTransform: "uppercase",
@@ -1115,7 +1112,7 @@ export default function AdminDashboardPage() {
           </nav>
 
           {/* Main content */}
-          <main style={{ flex: 1, padding: "48px clamp(20px,4vw,48px)", maxWidth: 800, minWidth: 0 }}>
+          <main style={{ flex: 1, padding: "32px 16px", maxWidth: 800, minWidth: 0, width: "100%", overflowX: "hidden" }}>
             <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16 }}>
               Section
             </p>
@@ -1134,10 +1131,16 @@ export default function AdminDashboardPage() {
       <style>{`
         @media (min-width: 768px) {
           .admin-sidebar-desktop { display: flex !important; }
+          .admin-logout-desktop { display: block !important; }
         }
         @media (max-width: 767px) {
           .admin-sidebar-desktop { display: none !important; }
+          .admin-logout-desktop { display: none !important; }
+          .admin-video-card-top { flex-wrap: wrap !important; gap: 8px !important; }
+          .admin-tour-card-top { flex-wrap: wrap !important; gap: 8px !important; }
         }
+        * { box-sizing: border-box; }
+        body { overflow-x: hidden; }
       `}</style>
     </AdminGuard>
   );
