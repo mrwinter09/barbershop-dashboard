@@ -643,6 +643,80 @@ const STATUS_COLORS: Record<string, string> = {
   declined: "#3D2020",
 };
 
+function emailTemplate(status: string, booking: Booking): string {
+  const name = parseName(booking.title);
+  const date = parseDate(booking.title);
+  const templates: Record<string, string> = {
+    new: `Subject: Booking Request Received – Donn Stone
+
+Hi ${name},
+
+Thank you for reaching out regarding a booking for ${date}.
+
+We have received your request and will review it shortly. You can expect to hear back from us within 2–3 business days.
+
+Best regards,
+Donn Stone Management`,
+
+    "in discussion": `Subject: Re: Booking Inquiry – Donn Stone | ${date}
+
+Hi ${name},
+
+Thank you for your patience. We've reviewed your booking request for ${date} and we're interested in exploring this further.
+
+Could you share more details about:
+- The full event lineup / context
+- Hospitality and technical rider requirements
+- Any specific timing preferences
+
+Looking forward to your response.
+
+Best regards,
+Donn Stone Management`,
+
+    confirmed: `Subject: Booking Confirmed – Donn Stone | ${date}
+
+Hi ${name},
+
+We're pleased to confirm Donn Stone's performance on ${date}.
+
+Please find below the next steps:
+- We will send over the full rider and contract within the next few days
+- Please confirm the agreed fee and payment terms
+- Technical requirements will follow separately
+
+Looking forward to a great show.
+
+Best regards,
+Donn Stone Management`,
+
+    completed: `Subject: Thank You – Donn Stone | ${date}
+
+Hi ${name},
+
+Thank you for having Donn Stone at your event on ${date}. It was a pleasure working with you.
+
+We hope the crowd enjoyed the set as much as we did. We'd love to work together again in the future — feel free to reach out whenever you have something coming up.
+
+Best regards,
+Donn Stone Management`,
+
+    declined: `Subject: Re: Booking Inquiry – Donn Stone | ${date}
+
+Hi ${name},
+
+Thank you for considering Donn Stone for your event on ${date}.
+
+After careful consideration, we regret to inform you that we are unable to confirm this booking at this time. This may be due to scheduling conflicts or the event not being the right fit for this period.
+
+We appreciate your interest and hope to find an opportunity to work together in the future.
+
+Best regards,
+Donn Stone Management`,
+  };
+  return templates[status] || "";
+}
+
 function getStatus(booking: Booking): string {
   const label = booking.labels.find((l) => l.name.startsWith("status:"));
   return label ? label.name.replace("status: ", "") : "new";
@@ -658,21 +732,26 @@ function parseDate(title: string): string {
   return m ? m[1] : "";
 }
 
-function BookingsSection() {
+function BookingsSection({ onCountChange }: { onCountChange?: (n: number) => void }) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<number | null>(null);
+  const [showTemplate, setShowTemplate] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
     fetch("/api/booking")
       .then((r) => r.json())
       .then((j) => {
-        setBookings(j.bookings || []);
+        const list = j.bookings || [];
+        setBookings(list);
         setLoading(false);
+        const newCount = list.filter((b: Booking) => getStatus(b) === "new").length;
+        onCountChange?.(newCount);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [onCountChange]);
 
   useEffect(() => {
     load();
@@ -788,6 +867,41 @@ function BookingsSection() {
                 </pre>
               </details>
             )}
+            <div style={{ marginTop: 12 }}>
+              <button
+                style={{ ...S.btnGhost, fontSize: 9 }}
+                onClick={() => setShowTemplate(showTemplate === b.number ? null : b.number)}
+              >
+                {showTemplate === b.number ? "Hide email template" : "Email template →"}
+              </button>
+              {showTemplate === b.number && (
+                <div style={{ marginTop: 12 }}>
+                  <pre style={{
+                    fontFamily: '"Space Mono", monospace',
+                    fontSize: 11,
+                    color: "#BFA8A0",
+                    background: "#0A0504",
+                    border: "1px solid #1E0E0E",
+                    padding: 16,
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    marginBottom: 8,
+                  }}>
+                    {emailTemplate(status, b)}
+                  </pre>
+                  <button
+                    style={{ ...S.btn, fontSize: 9 }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(emailTemplate(status, b));
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                  >
+                    {copied ? "Copied!" : "Copy to clipboard"}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         );
       })}
@@ -799,6 +913,7 @@ function BookingsSection() {
 
 export default function AdminDashboardPage() {
   const [active, setActive] = useState<Section>("Home");
+  const [newBookingCount, setNewBookingCount] = useState(0);
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -880,7 +995,9 @@ export default function AdminDashboardPage() {
                 key={s}
                 onClick={() => setActive(s)}
                 style={{
-                  display: "block",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                   width: "100%",
                   textAlign: "left",
                   fontFamily: '"Space Mono", monospace',
@@ -895,6 +1012,7 @@ export default function AdminDashboardPage() {
                   padding: "14px 24px",
                   cursor: "pointer",
                   transition: "all 0.15s",
+                  boxSizing: "border-box",
                 }}
                 onMouseEnter={(e) => {
                   if (active !== s) e.currentTarget.style.color = "#7A6060";
@@ -904,6 +1022,21 @@ export default function AdminDashboardPage() {
                 }}
               >
                 {s}
+                {s === "Bookings" && newBookingCount > 0 && (
+                  <span style={{
+                    background: "#9B1D20",
+                    color: "#EAD5C8",
+                    fontFamily: '"Space Mono", monospace',
+                    fontSize: 9,
+                    fontWeight: 700,
+                    padding: "2px 6px",
+                    borderRadius: 2,
+                    minWidth: 18,
+                    textAlign: "center",
+                  }}>
+                    {newBookingCount}
+                  </span>
+                )}
               </button>
             ))}
           </nav>
@@ -940,7 +1073,7 @@ export default function AdminDashboardPage() {
             {active === "Video" && <VideoEditor />}
             {active === "Tour" && <TourEditor />}
             {active === "Bio" && <BioEditor />}
-            {active === "Bookings" && <BookingsSection />}
+            {active === "Bookings" && <BookingsSection onCountChange={setNewBookingCount} />}
           </main>
         </div>
       </div>
