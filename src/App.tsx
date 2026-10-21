@@ -27,6 +27,8 @@ function Layout() {
 }
 
 const router = createBrowserRouter([
+  { path: "/admin", element: <AdminLoginPage /> },
+  { path: "/admin/dashboard", element: <AdminDashboardPage /> },
   {
     element: <Layout />,
     children: [
@@ -39,8 +41,6 @@ const router = createBrowserRouter([
       { path: "*", element: <NotFoundPage /> },
     ],
   },
-  { path: "/admin", element: <AdminLoginPage /> },
-  { path: "/admin/dashboard", element: <AdminDashboardPage /> },
 ]);
 
 export default function App() {
