@@ -10,7 +10,6 @@ const VIDEOS = [
   { id: "3US8qZb2cP8", title: "DJ Set Donn Stone - KAZ - La Rotonde",                   venue: "KAZ",                  year: "" },
   { id: "qLkOGAb2omU", title: "Donn Stone | Operator 18.02.2025",                       venue: "Operator Radio",       year: "2025" },
   { id: "dudLs9Ueru4", title: "My Living Room Ep 1 [Donn Stone]",                       venue: "Living Room",          year: "" },
-  { id: "QN3_M4wJx2Q", title: "LATINVILLAGE presents DONN STONE",                       venue: "LatinVillage Festival", year: "" },
 ];
 
 export default function VideoPage() {
