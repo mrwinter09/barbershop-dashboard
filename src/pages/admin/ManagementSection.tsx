@@ -1,511 +1,287 @@
 /** @format */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Festival {
-  id: string;
-  name: string;
-  city: string;
-  country: string;
-  region: string;
-  genre: string;
-  tier: string;
-  timing: string;
-  dates2027: string;
-  pitchBy: string;
-  entryRoute: string;
-  target: string;
-  status: string;
-  website: string;
-  contact: string;
-  lastContact: string;
-  nextAction: string;
-  notes: string;
-  pitchRoute: string;
+interface ChecklistItem {
+  id: number; phase: string; task: string; owner: string; due: string; done: boolean;
 }
-
+interface Showcase {
+  id: number; name: string; location: string; when: string; deadline: string;
+  type: string; fit: string; status: string; notes: string;
+}
+interface MarketingData {
+  pillars: { id: number; pillar: string; description: string; formats: string[]; frequency: string }[];
+  collabs: { id: number; target: string; type: string; platform: string; priority: string; status: string }[];
+  kpis: { id: number; metric: string; target: string; current: number; unit: string }[];
+}
+interface AgentGate {
+  threshold: number;
+  indicators: { id: number; label: string; description: string; met: boolean }[];
+}
 interface Agency {
-  name: string;
-  base: string;
-  what: string;
-  fit: string;
-  website: string;
-  when: string;
-  status: string;
+  name: string; base: string; what: string; fit: string; website: string; when: string; status: string;
+}
+interface Festival {
+  id: string; name: string; city: string; country: string; region: string; genre: string;
+  tier: string; timing: string; dates2027: string; pitchBy: string; entryRoute: string;
+  target: string; status: string; website: string; contact: string; lastContact: string;
+  nextAction: string; notes: string; pitchRoute: string;
 }
 
 // ─── Style tokens ─────────────────────────────────────────────────────────────
 
-const S = {
-  input: {
-    width: "100%", background: "#110808", border: "1px solid #2A1414",
-    color: "#EAD5C8", padding: "8px 12px",
-    fontFamily: '"Space Mono", monospace', fontSize: 12,
-    outline: "none", boxSizing: "border-box" as const,
-  },
-  label: {
-    fontFamily: '"Space Mono", monospace', fontSize: 9,
-    letterSpacing: "0.18em", textTransform: "uppercase" as const,
-    color: "#7A6060", display: "block", marginBottom: 4,
-  },
-  btn: {
-    fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700,
-    letterSpacing: "0.14em", textTransform: "uppercase" as const,
-    color: "#EAD5C8", background: "#9B1D20", border: "none",
-    padding: "8px 16px", cursor: "pointer",
-  },
-  btnGhost: {
-    fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700,
-    letterSpacing: "0.14em", textTransform: "uppercase" as const,
-    color: "#7A6060", background: "none", border: "1px solid #2A1414",
-    padding: "6px 12px", cursor: "pointer",
-  },
+const T = {
+  bg: "#0A0504", bg2: "#110808", border: "#1E0E0E", border2: "#2A1414",
+  accent: "#9B1D20", text: "#EAD5C8", muted: "#7A6060", font: '"Space Mono", monospace',
 };
 
-const STATUSES = ["Not started", "Researching", "Pitched", "Follow-up", "In talks", "Confirmed", "Declined", "Next year"];
-const TIER_COLORS: Record<string, string> = { A: "#9B1D20", B: "#7A4A10", C: "#3D2060", S: "#1A5C1A" };
-const STATUS_COLORS: Record<string, string> = {
-  "Not started": "#2A1414",
-  Researching: "#4A3010",
-  Pitched: "#1A3A5C",
-  "Follow-up": "#5C4A10",
-  "In talks": "#3A5C1A",
-  Confirmed: "#1A5C1A",
-  Declined: "#3D2020",
-  "Next year": "#2A1450",
+const card: React.CSSProperties = {
+  background: T.bg, border: `1px solid ${T.border}`, padding: "16px", marginBottom: "12px",
+};
+const label9: React.CSSProperties = {
+  fontFamily: T.font, fontSize: 9, letterSpacing: "0.18em",
+  textTransform: "uppercase", color: T.muted,
+};
+const inputStyle: React.CSSProperties = {
+  background: T.bg2, border: `1px solid ${T.border2}`, color: T.text,
+  padding: "6px 10px", fontFamily: T.font, fontSize: 12, outline: "none",
+};
+const btn: React.CSSProperties = {
+  background: T.accent, color: T.text, border: "none", padding: "8px 16px",
+  fontFamily: T.font, fontSize: 11, letterSpacing: "0.1em", cursor: "pointer",
+};
+const ghostBtn: React.CSSProperties = {
+  background: "transparent", color: T.accent, border: `1px solid ${T.accent}`,
+  padding: "6px 12px", fontFamily: T.font, fontSize: 11, cursor: "pointer",
 };
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Data hooks ───────────────────────────────────────────────────────────────
 
-function daysUntil(dateStr: string): number | null {
-  if (!dateStr) return null;
-  const diff = new Date(dateStr).getTime() - Date.now();
-  return Math.ceil(diff / 86400000);
-}
-
-function deadlineColor(days: number | null): string {
-  if (days === null) return "#7A6060";
-  if (days < 0) return "#9B1D20";
-  if (days <= 30) return "#B87A20";
-  return "#4A7A4A";
-}
-
-function copyToClipboard(text: string) {
-  navigator.clipboard.writeText(text).catch(() => {});
-}
-
-function cleanUrl(url: string): string {
-  if (!url || url === "Verify" || url === "—" || url.startsWith("Verify")) return "";
-  if (url.startsWith("http")) return url;
-  // strip annotation text after space/dash
-  const clean = url.split(" ")[0].split("—")[0].trim();
-  if (clean.includes(".")) return `https://${clean}`;
-  return "";
-}
-
-// ─── Sub-tab toggle ───────────────────────────────────────────────────────────
-
-type Tab = "pipeline" | "calculator" | "agencies";
-
-// ─── MAIN ─────────────────────────────────────────────────────────────────────
-
-export default function ManagementSection() {
-  const [tab, setTab] = useState<Tab>("pipeline");
-
-  return (
-    <div>
-      {/* Sub-tabs */}
-      <div style={{ display: "flex", borderBottom: "1px solid #1E0E0E", marginBottom: 36, gap: 0 }}>
-        {(["pipeline", "agencies", "calculator"] as Tab[]).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            style={{
-              fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700,
-              letterSpacing: "0.18em", textTransform: "uppercase",
-              color: tab === t ? "#EAD5C8" : "#3D2020",
-              background: "none", border: "none",
-              borderBottom: tab === t ? "2px solid #9B1D20" : "2px solid transparent",
-              padding: "0 0 14px", marginRight: 28, cursor: "pointer",
-            }}
-          >
-            {t === "pipeline" ? "Festival Pipeline" : t === "agencies" ? "Agents & Agencies" : "Deal Calculator"}
-          </button>
-        ))}
-      </div>
-
-      {tab === "pipeline" && <PipelineTab />}
-      {tab === "agencies" && <AgenciesTab />}
-      {tab === "calculator" && <CalculatorTab />}
-    </div>
-  );
-}
-
-// ─── PIPELINE TAB ─────────────────────────────────────────────────────────────
-
-function PipelineTab() {
-  const [festivals, setFestivals] = useState<Festival[]>([]);
+function useSection<T>(section: string) {
+  const [data, setData] = useState<T | null>(null);
   const [sha, setSha] = useState("");
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [search, setSearch] = useState("");
-  const [filterTier, setFilterTier] = useState("All");
-  const [filterRegion, setFilterRegion] = useState("All");
-  const [filterStatus, setFilterStatus] = useState("All");
-  const [expanded, setExpanded] = useState<string | null>(null);
-  const [editingContact, setEditingContact] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("/api/content?section=festivals")
-      .then((r) => r.json())
-      .then((j) => { setFestivals(j.data || []); setSha(j.sha || ""); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const load = useCallback(() => {
+    setLoading(true);
+    fetch(`/api/content?section=${section}`)
+      .then(r => r.json())
+      .then(({ data, sha }) => { setData(data); setSha(sha); })
+      .finally(() => setLoading(false));
+  }, [section]);
 
-  async function save(updated: Festival[]) {
-    setSaving(true);
-    const r = await fetch("/api/content?section=festivals", {
+  useEffect(() => { load(); }, [load]);
+
+  const save = useCallback(async (newData: T) => {
+    await fetch(`/api/content?section=${section}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data: updated, sha }),
+      body: JSON.stringify({ data: newData, sha }),
     });
-    if (r.ok) {
-      const j = await r.json();
-      setSha(j.sha || sha);
-    }
-    setSaving(false);
-  }
+    load();
+  }, [section, sha, load]);
 
-  function updateFestival(id: string, patch: Partial<Festival>) {
-    const updated = festivals.map((f) => f.id === id ? { ...f, ...patch } : f);
-    setFestivals(updated);
-    save(updated);
-  }
+  return { data, loading, save };
+}
 
-  const regions = useMemo(() => ["All", ...Array.from(new Set(festivals.map((f) => f.region).filter(Boolean)))], [festivals]);
+// ─── Progress bar ─────────────────────────────────────────────────────────────
 
-  const urgent = festivals.filter((f) => {
-    const d = daysUntil(f.pitchBy);
-    return d !== null && d <= 30 && f.status === "Not started";
-  });
+function ProgressBar({ value, max, color = T.accent }: { value: number; max: number; color?: string }) {
+  const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
+  return (
+    <div style={{ background: T.border, height: 6, borderRadius: 3, overflow: "hidden" }}>
+      <div style={{ width: `${pct}%`, height: "100%", background: color, transition: "width 0.3s" }} />
+    </div>
+  );
+}
 
-  const filtered = useMemo(() => festivals.filter((f) => {
-    if (filterTier !== "All" && f.tier !== filterTier) return false;
-    if (filterRegion !== "All" && f.region !== filterRegion) return false;
-    if (filterStatus !== "All" && f.status !== filterStatus) return false;
-    if (search) {
-      const q = search.toLowerCase();
-      return f.name.toLowerCase().includes(q) || f.city.toLowerCase().includes(q) || f.country.toLowerCase().includes(q) || f.genre.toLowerCase().includes(q);
-    }
-    return true;
-  }), [festivals, filterTier, filterRegion, filterStatus, search]);
+// ─── Fit badge ────────────────────────────────────────────────────────────────
 
-  // Group by status for kanban
-  const byStatus = useMemo(() => {
-    const map: Record<string, Festival[]> = {};
-    STATUSES.forEach((s) => { map[s] = []; });
-    filtered.forEach((f) => { (map[f.status] || (map["Not started"] = [])).push(f); });
-    return map;
-  }, [filtered]);
+function FitBadge({ fit }: { fit: string }) {
+  const f = fit.toLowerCase();
+  let bg = T.border2, color = T.muted;
+  if (f.includes("very high")) { bg = "#1a3a1a"; color = "#4CAF50"; }
+  else if (f.includes("high")) { bg = "#1a2a1a"; color = "#4CAF50"; }
+  else if (f.includes("medium")) { bg = "#3a3a1a"; color = "#FFD700"; }
+  else if (f.includes("aspirational")) { bg = "#2A1414"; color = T.muted; }
+  return (
+    <span style={{
+      background: bg, color, padding: "2px 8px", fontSize: 10,
+      fontFamily: T.font, letterSpacing: "0.1em", whiteSpace: "nowrap",
+    }}>{fit}</span>
+  );
+}
 
-  if (loading) return <p style={{ color: "#7A6060", fontFamily: '"Space Mono", monospace', fontSize: 12 }}>Loading pipeline...</p>;
+// ─── Dashboard view ───────────────────────────────────────────────────────────
+
+function DashboardView({ onNavigate }: { onNavigate: (view: string) => void }) {
+  const { data: checklist } = useSection<ChecklistItem[]>("checklist");
+  const { data: gate } = useSection<AgentGate>("agentgate");
+  const { data: festivals } = useSection<Festival[]>("festivals");
+
+  const done = checklist ? checklist.filter(t => t.done).length : 0;
+  const total = checklist ? checklist.length : 30;
+  const pitched = festivals ? festivals.filter(f => f.status !== "Not started").length : 0;
+  const gateMet = gate ? gate.indicators.filter(i => i.met).length : 0;
+
+  const stats = [
+    { label: "Checklist", value: `${done}/${total}`, sub: "tasks done", view: "Checklist", pct: done / total },
+    { label: "Festivals", value: `${pitched}`, sub: "in pipeline", view: "Festivals", pct: pitched / 70 },
+    { label: "Agent Gate", value: `${gateMet}/8`, sub: "indicators met", view: "Agencies", pct: gateMet / 8 },
+    { label: "Phase", value: "A", sub: "Brand Setup — Oct 2026", view: "Timeline", pct: 0.05 },
+  ];
 
   return (
     <div>
-      {/* Urgent alert */}
-      {urgent.length > 0 && (
-        <div style={{ background: "#3D1010", border: "1px solid #9B1D20", padding: "12px 16px", marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#9B1D20" }}>
-            ⚠ {urgent.length} deadline{urgent.length > 1 ? "s" : ""} within 30 days
-          </span>
-          <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#BFA8A0" }}>
-            {urgent.map((f) => `${f.name} (${daysUntil(f.pitchBy)}d)`).join(" · ")}
-          </span>
-        </div>
-      )}
-
-      {/* Filters */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
-        <input
-          value={search} onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search festivals..."
-          style={{ ...S.input, width: 200, padding: "8px 12px" }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "#9B1D20")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "#2A1414")}
-        />
-        {[
-          { label: "Tier", value: filterTier, setter: setFilterTier, opts: ["All", "A", "B", "C", "S"] },
-          { label: "Region", value: filterRegion, setter: setFilterRegion, opts: regions },
-          { label: "Status", value: filterStatus, setter: setFilterStatus, opts: ["All", ...STATUSES] },
-        ].map(({ label, value, setter, opts }) => (
-          <select key={label} value={value} onChange={(e) => setter(e.target.value)}
-            style={{ ...S.input, width: "auto", padding: "8px 12px", cursor: "pointer" }}>
-            {opts.map((o) => <option key={o} value={o}>{label}: {o}</option>)}
-          </select>
-        ))}
-        <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#7A6060", marginLeft: "auto" }}>
-          {filtered.length} / {festivals.length} festivals {saving ? "· saving..." : ""}
-        </span>
-      </div>
-
-      {/* Kanban columns */}
-      <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 16 }}>
-        {STATUSES.filter((s) => byStatus[s]?.length > 0 || filterStatus === "All").map((status) => (
-          <div key={status} style={{ minWidth: 260, flexShrink: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, padding: "0 4px" }}>
-              <span style={{
-                fontFamily: '"Space Mono", monospace', fontSize: 8, fontWeight: 700,
-                letterSpacing: "0.18em", textTransform: "uppercase",
-                color: "#EAD5C8", background: STATUS_COLORS[status] || "#2A1414",
-                padding: "4px 8px",
-              }}>{status}</span>
-              <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#7A6060" }}>
-                {byStatus[status]?.length || 0}
-              </span>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {(byStatus[status] || []).map((f) => (
-                <FestivalCard
-                  key={f.id}
-                  festival={f}
-                  expanded={expanded === f.id}
-                  editingContact={editingContact === f.id}
-                  onToggle={() => setExpanded(expanded === f.id ? null : f.id)}
-                  onEditContact={() => setEditingContact(editingContact === f.id ? null : f.id)}
-                  onUpdate={(patch) => { updateFestival(f.id, patch); if (patch.contact !== undefined) setEditingContact(null); }}
-                />
-              ))}
-            </div>
+      <p style={{ ...label9, marginBottom: 20 }}>Overview — Oct 2026</p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
+        {stats.map(s => (
+          <div key={s.label} style={{ ...card, cursor: "pointer", marginBottom: 0 }}
+            onClick={() => onNavigate(s.view)}>
+            <div style={{ ...label9, marginBottom: 6 }}>{s.label}</div>
+            <div style={{ fontFamily: T.font, fontSize: 24, color: T.accent, marginBottom: 4 }}>{s.value}</div>
+            <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginBottom: 10 }}>{s.sub}</div>
+            <ProgressBar value={s.pct * 100} max={100} />
           </div>
         ))}
+      </div>
+      <div style={{ ...card }}>
+        <div style={{ ...label9, marginBottom: 12 }}>Current Focus — Phase A</div>
+        <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.8 }}>
+          → Define brand identity + register all social handles<br />
+          → Produce 3–5 release-ready tracks<br />
+          → Build EPK and link-in-bio page<br />
+          → Research NL Afro/urban bookers & promoters<br />
+          → Secure first 3 paid gigs (local/regional)
+        </div>
       </div>
     </div>
   );
 }
 
-function FestivalCard({ festival: f, expanded, editingContact, onToggle, onEditContact, onUpdate }: {
-  festival: Festival;
-  expanded: boolean;
-  editingContact: boolean;
-  onToggle: () => void;
-  onEditContact: () => void;
-  onUpdate: (patch: Partial<Festival>) => void;
-}) {
-  const days = daysUntil(f.pitchBy);
-  const url = cleanUrl(f.website);
-  const [contactVal, setContactVal] = useState(f.contact);
-  const [nextActionVal, setNextActionVal] = useState(f.nextAction);
+// ─── Timeline view ────────────────────────────────────────────────────────────
+
+function TimelineView() {
+  const milestones = [
+    { date: "Oct 2026", label: "Brand Setup (Phase A start)", phase: "A", active: true },
+    { date: "Nov 2026", label: "First Tracks & EPK", phase: "A", active: false },
+    { date: "Dec 2026", label: "First Paid Gigs", phase: "A", active: false },
+    { date: "Jan 2027", label: "First Single Release", phase: "B", active: false },
+    { date: "Feb 2027", label: "NL Booking Push", phase: "B", active: false },
+    { date: "Mar 2027", label: "Festival Submissions", phase: "B", active: false },
+    { date: "Apr 2027", label: "Industry Showcases", phase: "B", active: false },
+    { date: "Jun 2027", label: "Summer Festival Season", phase: "B", active: false },
+    { date: "Jul 2027", label: "EP Release", phase: "C", active: false },
+    { date: "Sep 2027", label: "Post-summer Agency Pitch", phase: "C", active: false },
+    { date: "Oct 2027", label: "ADE 2027", phase: "C", active: false },
+    { date: "Dec 2027", label: "Management / Agency Deal", phase: "C", active: false },
+    { date: "Jan 2028", label: "EU Tour Planning (Phase C end)", phase: "C", active: false },
+  ];
+
+  const phaseColor: Record<string, string> = { A: "#4CAF50", B: "#FFD700", C: T.accent };
 
   return (
-    <div style={{ background: "#0D0606", border: "1px solid #1E0E0E", padding: 12 }}>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-            <span style={{
-              fontFamily: '"Space Mono", monospace', fontSize: 8, fontWeight: 700,
-              color: "#EAD5C8", background: TIER_COLORS[f.tier] || "#3D2020",
-              padding: "2px 6px", flexShrink: 0,
-            }}>T{f.tier}</span>
-            {f.contact && (
-              <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 8, color: "#4A7A4A" }}>●</span>
-            )}
-          </div>
-          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: "#EAD5C8", margin: "0 0 2px", fontWeight: 700, wordBreak: "break-word" }}>
-            {f.name}
-          </p>
-          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#7A6060", margin: 0 }}>
-            {f.city}, {f.country}
-          </p>
-        </div>
-        <button onClick={onToggle} style={{ ...S.btnGhost, padding: "4px 8px", fontSize: 9, flexShrink: 0 }}>
-          {expanded ? "▲" : "▼"}
-        </button>
-      </div>
-
-      {/* Deadline */}
-      {f.pitchBy && (
-        <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 8, color: deadlineColor(days), margin: "0 0 8px" }}>
-          Pitch by {f.pitchBy} {days !== null ? `(${days >= 0 ? `${days}d left` : `${Math.abs(days)}d ago`})` : ""}
-        </p>
-      )}
-
-      {/* Status dropdown */}
-      <select
-        value={f.status}
-        onChange={(e) => onUpdate({ status: e.target.value })}
-        style={{ ...S.input, fontSize: 10, padding: "6px 8px", marginBottom: 8, cursor: "pointer" }}
-      >
-        {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-      </select>
-
-      {/* Expanded details */}
-      {expanded && (
-        <div style={{ borderTop: "1px solid #1E0E0E", paddingTop: 12, marginTop: 4 }}>
-          {/* Genre / target */}
-          <p style={{ ...S.label, marginBottom: 4 }}>{f.genre}</p>
-          <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#BFA8A0", margin: "0 0 10px" }}>
-            Target: {f.target}
-          </p>
-
-          {/* Website */}
-          {url && (
-            <div style={{ marginBottom: 10 }}>
-              <a href={url} target="_blank" rel="noopener noreferrer"
-                style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#9B1D20", textDecoration: "none", wordBreak: "break-all" }}>
-                ↗ {url.replace("https://", "")}
-              </a>
-            </div>
-          )}
-
-          {/* Contact */}
-          <div style={{ marginBottom: 10 }}>
-            <label style={S.label}>Contact</label>
-            {editingContact ? (
-              <div style={{ display: "flex", gap: 6 }}>
-                <input
-                  value={contactVal}
-                  onChange={(e) => setContactVal(e.target.value)}
-                  placeholder="name / email"
-                  style={{ ...S.input, flex: 1, fontSize: 11 }}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "#9B1D20")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#2A1414")}
-                />
-                <button onClick={() => onUpdate({ contact: contactVal })} style={{ ...S.btn, padding: "6px 10px" }}>✓</button>
-              </div>
-            ) : (
-              <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: f.contact ? "#EAD5C8" : "#3D2020", flex: 1 }}>
-                  {f.contact || "— not set"}
-                </span>
-                {f.contact && f.contact.includes("@") && (
-                  <button onClick={() => copyToClipboard(f.contact)}
-                    style={{ ...S.btnGhost, padding: "4px 8px", fontSize: 8 }}>Copy</button>
+    <div>
+      <p style={{ ...label9, marginBottom: 20 }}>13-Month Plan</p>
+      <div style={{ position: "relative", paddingLeft: 32 }}>
+        <div style={{
+          position: "absolute", left: 8, top: 8, bottom: 8,
+          width: 2, background: T.border2,
+        }} />
+        {milestones.map((m, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: 20, position: "relative" }}>
+            <div style={{
+              position: "absolute", left: -28, top: 4,
+              width: 12, height: 12, borderRadius: "50%",
+              background: m.active ? phaseColor[m.phase] : T.border2,
+              border: `2px solid ${phaseColor[m.phase]}`,
+              boxSizing: "border-box",
+            }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted, minWidth: 70 }}>{m.date}</span>
+                <span style={{ fontFamily: T.font, fontSize: 12, color: m.active ? T.text : T.muted }}>{m.label}</span>
+                <span style={{
+                  fontFamily: T.font, fontSize: 9, padding: "1px 6px",
+                  background: `${phaseColor[m.phase]}22`, color: phaseColor[m.phase],
+                  letterSpacing: "0.1em",
+                }}>Phase {m.phase}</span>
+                {m.active && (
+                  <span style={{ fontFamily: T.font, fontSize: 9, color: T.accent, letterSpacing: "0.12em" }}>◆ NOW</span>
                 )}
-                <button onClick={onEditContact} style={{ ...S.btnGhost, padding: "4px 8px", fontSize: 8 }}>Edit</button>
               </div>
-            )}
-          </div>
-
-          {/* Next action */}
-          <div style={{ marginBottom: 10 }}>
-            <label style={S.label}>Next action</label>
-            <textarea
-              value={nextActionVal}
-              onChange={(e) => setNextActionVal(e.target.value)}
-              onBlur={() => { if (nextActionVal !== f.nextAction) onUpdate({ nextAction: nextActionVal }); }}
-              rows={2}
-              placeholder="What's the next step?"
-              style={{ ...S.input, resize: "vertical", fontSize: 11 }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "#9B1D20")}
-            />
-          </div>
-
-          {/* Pitch route */}
-          {f.pitchRoute && (
-            <div style={{ background: "#0A0504", border: "1px solid #1E0E0E", padding: 10 }}>
-              <label style={{ ...S.label, marginBottom: 6 }}>How to pitch</label>
-              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#BFA8A0", margin: 0, lineHeight: 1.7 }}>
-                {f.pitchRoute}
-              </p>
             </div>
-          )}
-
-          {f.notes && (
-            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", margin: "10px 0 0", fontStyle: "italic" }}>
-              {f.notes}
-            </p>
-          )}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-// ─── AGENCIES TAB ─────────────────────────────────────────────────────────────
+// ─── Checklist view ───────────────────────────────────────────────────────────
 
-const AGENCY_STATUSES = ["Not started", "Researching", "Contacted", "In talks", "Signed", "Pass"];
-const FIT_COLORS: Record<string, string> = {
-  High: "#1A5C1A", "High (genre)": "#1A5C1A", "High (NL + genre)": "#1A5C1A",
-  "Medium–high": "#4A5C1A", Medium: "#5C4A10", "Medium (SA market)": "#5C4A10",
-  "Medium (promoter, not agency)": "#5C4A10", "Low–medium (house-leaning)": "#3D3010",
-  Aspirational: "#3D2060",
-};
+function ChecklistView() {
+  const { data, loading, save } = useSection<ChecklistItem[]>("checklist");
+  const [items, setItems] = useState<ChecklistItem[]>([]);
 
-function AgenciesTab() {
-  const [agencies, setAgencies] = useState<Agency[]>([]);
-  const [sha, setSha] = useState("");
-  const [loading, setLoading] = useState(true);
+  useEffect(() => { if (data) setItems(data); }, [data]);
 
-  useEffect(() => {
-    fetch("/api/content?section=agencies")
-      .then((r) => r.json())
-      .then((j) => { setAgencies(j.data || []); setSha(j.sha || ""); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const toggle = (id: number) => {
+    const updated = items.map(t => t.id === id ? { ...t, done: !t.done } : t);
+    setItems(updated);
+    save(updated);
+  };
 
-  async function updateAgency(idx: number, patch: Partial<Agency>) {
-    const updated = agencies.map((a, i) => i === idx ? { ...a, ...patch } : a);
-    setAgencies(updated);
-    await fetch("/api/content?section=agencies", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data: updated, sha }),
-    });
-  }
+  if (loading || !items.length) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
 
-  if (loading) return <p style={{ color: "#7A6060", fontFamily: '"Space Mono", monospace', fontSize: 12 }}>Loading agencies...</p>;
+  const phases = ["A", "B", "C"] as const;
+  const phaseLabel: Record<string, string> = { A: "Phase A — Foundation (Oct–Dec 2026)", B: "Phase B — Build (Jan–Jul 2027)", C: "Phase C — Pitch (Jul–Dec 2027)" };
+  const done = items.filter(t => t.done).length;
 
   return (
     <div>
-      <div style={{ background: "#110808", border: "1px solid #1E0E0E", padding: "12px 16px", marginBottom: 24 }}>
-        <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#7A6060", margin: 0, lineHeight: 1.6 }}>
-          Don't approach agencies cold. Build proof first: live video, rebook list, content numbers. Approach the specific agent (via roster → LinkedIn), never the company inbox.
-        </p>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <p style={{ ...label9, margin: 0 }}>Master Checklist</p>
+        <span style={{ fontFamily: T.font, fontSize: 11, color: T.accent }}>{done}/{items.length} done</span>
       </div>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {agencies.map((a, i) => {
-          const url = cleanUrl(a.website);
-          const fitColor = FIT_COLORS[a.fit] || "#3D2020";
+      <ProgressBar value={done} max={items.length} />
+      <div style={{ marginTop: 24 }}>
+        {phases.map(phase => {
+          const phaseItems = items.filter(t => t.phase === phase);
+          const phaseDone = phaseItems.filter(t => t.done).length;
           return (
-            <div key={a.name} style={{ background: "#0D0606", border: "1px solid #1E0E0E", padding: 16 }}>
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-                <div style={{ flex: 1, minWidth: 200 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-                    <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 12, color: "#EAD5C8", margin: 0, fontWeight: 700 }}>
-                      {a.name}
-                    </p>
-                    <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 8, color: "#EAD5C8", background: fitColor, padding: "2px 8px" }}>
-                      {a.fit}
-                    </span>
-                  </div>
-                  <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", margin: "0 0 4px" }}>
-                    {a.base} · {a.what}
-                  </p>
-                  <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#BFA8A0", margin: "0 0 8px", fontStyle: "italic" }}>
-                    When: {a.when}
-                  </p>
-                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                    {url && (
-                      <a href={url} target="_blank" rel="noopener noreferrer"
-                        style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#9B1D20", textDecoration: "none" }}>
-                        ↗ {url.replace("https://", "")}
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <select
-                  value={a.status}
-                  onChange={(e) => updateAgency(i, { status: e.target.value })}
-                  style={{ ...S.input, width: 160, fontSize: 10, padding: "6px 8px", cursor: "pointer", flexShrink: 0 }}
-                >
-                  {AGENCY_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
+            <div key={phase} style={{ marginBottom: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <span style={{ ...label9 }}>{phaseLabel[phase]}</span>
+                <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{phaseDone}/{phaseItems.length}</span>
               </div>
+              {phaseItems.map(item => (
+                <div key={item.id} style={{
+                  display: "flex", alignItems: "flex-start", gap: 12, padding: "8px 0",
+                  borderBottom: `1px solid ${T.border}`, cursor: "pointer",
+                  opacity: item.done ? 0.5 : 1,
+                }} onClick={() => toggle(item.id)}>
+                  <div style={{
+                    width: 14, height: 14, border: `1px solid ${item.done ? T.accent : T.border2}`,
+                    background: item.done ? T.accent : "transparent", flexShrink: 0, marginTop: 1,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    {item.done && <span style={{ color: T.text, fontSize: 10 }}>✓</span>}
+                  </div>
+                  <span style={{
+                    fontFamily: T.font, fontSize: 12, color: T.text, flex: 1,
+                    textDecoration: item.done ? "line-through" : "none",
+                  }}>{item.task}</span>
+                  <span style={{
+                    fontFamily: T.font, fontSize: 10,
+                    color: item.owner === "Donn" ? T.accent : T.muted,
+                    flexShrink: 0,
+                  }}>{item.owner}</span>
+                  <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted, flexShrink: 0 }}>{item.due}</span>
+                </div>
+              ))}
             </div>
           );
         })}
@@ -514,113 +290,655 @@ function AgenciesTab() {
   );
 }
 
-// ─── DEAL CALCULATOR TAB ──────────────────────────────────────────────────────
+// ─── Festivals view ───────────────────────────────────────────────────────────
 
-const MARKET_RATES = [
-  { market: "NL / Europe", type: "Club night", low: 800, high: 1500, currency: "EUR", note: "Year-round" },
-  { market: "NL / Europe", type: "Festival slot", low: 1500, high: 3000, currency: "EUR", note: "May–Sep" },
-  { market: "NL / Europe", type: "Residency (per night)", low: 600, high: 1200, currency: "EUR", note: "Year-round" },
-  { market: "Dubai", type: "Club night", low: 5000, high: 12000, currency: "AED", note: "Oct–Apr only" },
-  { market: "Dubai", type: "Private / brand", low: 8000, high: 20000, currency: "AED", note: "Oct–Apr only" },
-];
+function FestivalsView() {
+  const { data, loading, save } = useSection<Festival[]>("festivals");
+  const [items, setItems] = useState<Festival[]>([]);
+  const [filter, setFilter] = useState("");
 
-function CalculatorTab() {
-  const [gross, setGross] = useState(1500);
-  const [mgmtPct, setMgmtPct] = useState(15);
-  const [agentPct, setAgentPct] = useState(0);
-  const [costs, setCosts] = useState(0);
+  useEffect(() => { if (data) setItems(data); }, [data]);
 
-  const mgmtTake = Math.round(gross * mgmtPct / 100);
-  const agentTake = Math.round(gross * agentPct / 100);
-  const net = gross - mgmtTake - agentTake - costs;
-  const netPct = gross > 0 ? Math.round((net / gross) * 100) : 0;
+  const updateStatus = (id: string, status: string) => {
+    const updated = items.map(f => f.id === id ? { ...f, status } : f);
+    setItems(updated);
+    save(updated);
+  };
+
+  if (loading || !items.length) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
+
+  const statuses = ["Not started", "Pitched", "Confirmed", "Rejected", "On hold"];
+  const cols = statuses.slice(0, 4);
+  const filtered = filter
+    ? items.filter(f => f.name.toLowerCase().includes(filter.toLowerCase()) || f.country.toLowerCase().includes(filter.toLowerCase()))
+    : items;
 
   return (
-    <div style={{ maxWidth: 560 }}>
-      <div style={{ background: "#0D0606", border: "1px solid #1E0E0E", padding: 24, marginBottom: 24 }}>
-        <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "#9B1D20", margin: "0 0 20px" }}>
-          Deal Calculator
-        </p>
-
-        {[
-          { label: "Gross Fee (EUR)", value: gross, setter: setGross, min: 0, max: 50000, step: 50 },
-          { label: "Management commission %", value: mgmtPct, setter: setMgmtPct, min: 0, max: 25, step: 1 },
-          { label: "Booking agent commission %", value: agentPct, setter: setAgentPct, min: 0, max: 20, step: 1 },
-          { label: "Direct costs (travel, visa, gear) EUR", value: costs, setter: setCosts, min: 0, max: 10000, step: 50 },
-        ].map(({ label, value, setter, min, max, step }) => (
-          <div key={label} style={{ marginBottom: 16 }}>
-            <label style={S.label}>{label}</label>
-            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-              <input
-                type="range" min={min} max={max} step={step} value={value}
-                onChange={(e) => setter(Number(e.target.value))}
-                style={{ flex: 1, accentColor: "#9B1D20" }}
-              />
-              <input
-                type="number" value={value}
-                onChange={(e) => setter(Number(e.target.value))}
-                style={{ ...S.input, width: 90, textAlign: "right" }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = "#9B1D20")}
-                onBlur={(e) => (e.currentTarget.style.borderColor = "#2A1414")}
-              />
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <p style={{ ...label9, margin: 0 }}>Festival Pipeline ({items.length})</p>
+        <input
+          style={{ ...inputStyle, width: 180 }}
+          placeholder="Filter by name / country…"
+          value={filter}
+          onChange={e => setFilter(e.target.value)}
+        />
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+        {cols.map(col => {
+          const colItems = filtered.filter(f => f.status === col);
+          return (
+            <div key={col}>
+              <div style={{ ...label9, marginBottom: 8 }}>{col} ({colItems.length})</div>
+              {colItems.map(f => (
+                <div key={f.id} style={{ ...card, padding: "10px 12px" }}>
+                  <div style={{ fontFamily: T.font, fontSize: 11, color: T.text, marginBottom: 4 }}>{f.name}</div>
+                  <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginBottom: 6 }}>{f.city}, {f.country}</div>
+                  <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginBottom: 8 }}>{f.dates2027}</div>
+                  <select
+                    value={f.status}
+                    onChange={e => updateStatus(f.id, e.target.value)}
+                    style={{ ...inputStyle, width: "100%", fontSize: 10 }}
+                  >
+                    {statuses.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
-        <div style={{ borderTop: "1px solid #1E0E0E", paddingTop: 20, marginTop: 8 }}>
-          {[
-            { label: "Ivan (management)", value: mgmtTake, color: "#7A6060" },
-            { label: "Agent", value: agentTake, color: "#7A6060" },
-            { label: "Direct costs", value: costs, color: "#7A6060" },
-          ].map(({ label, value, color }) => (
-            <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #1E0E0E" }}>
-              <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color }}>{label}</span>
-              <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color }}>€ {value.toLocaleString()}</span>
+// ─── Showcases view ───────────────────────────────────────────────────────────
+
+function ShowcasesView() {
+  const { data, loading, save } = useSection<Showcase[]>("showcases");
+  const [items, setItems] = useState<Showcase[]>([]);
+
+  useEffect(() => { if (data) setItems(data); }, [data]);
+
+  const updateStatus = (id: number, status: string) => {
+    const updated = items.map(s => s.id === id ? { ...s, status } : s);
+    setItems(updated);
+    save(updated);
+  };
+
+  if (loading || !items.length) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
+
+  const statuses = ["Not started", "Research", "Applied", "Confirmed", "Rejected"];
+
+  return (
+    <div>
+      <p style={{ ...label9, marginBottom: 16 }}>Industry Showcases & Key Festivals</p>
+      {items.map(s => (
+        <div key={s.id} style={{ ...card, display: "flex", flexWrap: "wrap", gap: 12, alignItems: "flex-start" }}>
+          <div style={{ flex: "1 1 180px", minWidth: 0 }}>
+            <div style={{ fontFamily: T.font, fontSize: 13, color: T.text, marginBottom: 4 }}>{s.name}</div>
+            <div style={{ fontFamily: T.font, fontSize: 11, color: T.muted }}>{s.location} · {s.when}</div>
+            <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginTop: 4 }}>{s.notes}</div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", flexShrink: 0 }}>
+            <FitBadge fit={s.fit} />
+            <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>Deadline: {s.deadline}</div>
+            <select
+              value={s.status}
+              onChange={e => updateStatus(s.id, e.target.value)}
+              style={{ ...inputStyle, fontSize: 10 }}
+            >
+              {statuses.map(st => <option key={st} value={st}>{st}</option>)}
+            </select>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Outreach view ────────────────────────────────────────────────────────────
+
+function OutreachView() {
+  const [copied, setCopied] = useState<number | null>(null);
+
+  const steps = [
+    {
+      n: 1, label: "Research",
+      body: "Find the right contact — promoter, talent buyer, or booker. Check socials and past line-ups to confirm fit before reaching out.",
+    },
+    {
+      n: 2, label: "First Email",
+      body: `Subject: DJ Donn Stone — [Event/Festival Name] 2027 Booking Inquiry
+
+Hi [Name],
+
+My name is Ivan, I manage DJ Donn Stone — a Rotterdam-based Afro house & Afro tech DJ with a growing profile in the NL scene.
+
+Donn brings a high-energy Afro house sound rooted in SA culture, built for festival floors and club nights. He's currently booking for 2027.
+
+I'd love to explore whether Donn could be a fit for [Event] 2027. Would you be open to a quick call or email exchange? I'll keep it brief.
+
+Best,
+Ivan`,
+    },
+    {
+      n: 3, label: "Follow-up 1 (Day 5)",
+      body: `Hi [Name],
+
+Just a short follow-up on my email below. Happy to send over our EPK or a set recording — whatever's most useful for your review.
+
+Best,
+Ivan`,
+    },
+    {
+      n: 4, label: "Follow-up 2 (Day 10)",
+      body: `Hi [Name],
+
+Last nudge from me. If timing isn't right for [Event] this cycle, I'd still love to keep the conversation open for a future edition.
+
+Here's a recent mix: [link]
+
+Best,
+Ivan`,
+    },
+    {
+      n: 5, label: "EPK Send (on response)",
+      body: `Hi [Name],
+
+Great to hear from you! Attaching our EPK with bio, links, and tech rider. Happy to answer any questions.
+
+Best,
+Ivan`,
+    },
+    {
+      n: 6, label: "Deal Discussion",
+      body: `Hi [Name],
+
+Thanks for your interest! For [Event] we're looking at a fee of €[X] + travel. Happy to discuss.
+
+What does your typical deal structure look like?
+
+Best,
+Ivan`,
+    },
+    {
+      n: 7, label: "Confirmation",
+      body: `Hi [Name],
+
+Great — let's confirm the booking for [date / event name]. Can you send over the contract? We'll get it signed and back to you quickly.
+
+Looking forward to it.
+
+Best,
+Ivan`,
+    },
+  ];
+
+  const copy = (n: number, text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(n);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  return (
+    <div>
+      <p style={{ ...label9, marginBottom: 20 }}>Cold Outreach Flow — 7 Steps</p>
+      {steps.map(s => (
+        <div key={s.n} style={{ ...card, marginBottom: 12 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{
+                fontFamily: T.font, fontSize: 10, background: T.accent,
+                color: T.text, padding: "2px 8px",
+              }}>STEP {s.n}</span>
+              <span style={{ fontFamily: T.font, fontSize: 12, color: T.text }}>{s.label}</span>
+            </div>
+            <button style={ghostBtn} onClick={() => copy(s.n, s.body)}>
+              {copied === s.n ? "✓ Copied" : "Copy"}
+            </button>
+          </div>
+          <pre style={{
+            fontFamily: T.font, fontSize: 11, color: T.muted,
+            whiteSpace: "pre-wrap", margin: 0, lineHeight: 1.7,
+          }}>{s.body}</pre>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Marketing view ───────────────────────────────────────────────────────────
+
+function MarketingView() {
+  const { data, loading, save } = useSection<MarketingData>("marketing");
+  const [tab, setTab] = useState<"pillars" | "collabs" | "kpis">("pillars");
+  const [items, setItems] = useState<MarketingData | null>(null);
+
+  useEffect(() => { if (data) setItems(data); }, [data]);
+
+  if (loading || !items) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
+
+  const tabs: { key: "pillars" | "collabs" | "kpis"; label: string }[] = [
+    { key: "pillars", label: "Content Pillars" },
+    { key: "collabs", label: "Collabs" },
+    { key: "kpis", label: "KPIs" },
+  ];
+
+  const updateCollab = (id: number, status: string) => {
+    const updated = { ...items, collabs: items.collabs.map(c => c.id === id ? { ...c, status } : c) };
+    setItems(updated);
+    save(updated);
+  };
+
+  const updateKpi = (id: number, current: number) => {
+    const updated = { ...items, kpis: items.kpis.map(k => k.id === id ? { ...k, current } : k) };
+    setItems(updated);
+    save(updated);
+  };
+
+  const collabStatuses = ["Not started", "Identified", "Reached out", "In talks", "Done"];
+  const priorities: Record<string, { bg: string; color: string }> = {
+    High: { bg: "#1a2a1a", color: "#4CAF50" },
+    Medium: { bg: "#3a3a1a", color: "#FFD700" },
+    Low: { bg: T.border2, color: T.muted },
+  };
+
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 0, marginBottom: 20, borderBottom: `1px solid ${T.border}` }}>
+        {tabs.map(t => (
+          <button key={t.key} onClick={() => setTab(t.key)} style={{
+            fontFamily: T.font, fontSize: 11, letterSpacing: "0.1em",
+            background: "none", border: "none", color: tab === t.key ? T.text : T.muted,
+            padding: "8px 16px", cursor: "pointer",
+            borderBottom: tab === t.key ? `2px solid ${T.accent}` : "2px solid transparent",
+          }}>{t.label}</button>
+        ))}
+      </div>
+
+      {tab === "pillars" && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+          {items.pillars.map(p => (
+            <div key={p.id} style={{ ...card, marginBottom: 0 }}>
+              <div style={{ fontFamily: T.font, fontSize: 12, color: T.accent, marginBottom: 6 }}>{p.pillar}</div>
+              <div style={{ fontFamily: T.font, fontSize: 11, color: T.text, marginBottom: 8 }}>{p.description}</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>
+                {p.formats.map(f => (
+                  <span key={f} style={{ fontFamily: T.font, fontSize: 9, background: T.border2, color: T.muted, padding: "2px 6px" }}>{f}</span>
+                ))}
+              </div>
+              <div style={{ ...label9 }}>{p.frequency}</div>
             </div>
           ))}
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "14px 0 0" }}>
-            <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, fontWeight: 700, color: "#EAD5C8" }}>Donn net</span>
-            <div style={{ textAlign: "right" }}>
-              <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 20, fontWeight: 700, color: net >= 0 ? "#4A7A4A" : "#9B1D20" }}>
-                € {net.toLocaleString()}
-              </span>
-              <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#7A6060", display: "block" }}>
-                {netPct}% of gross
-              </span>
+        </div>
+      )}
+
+      {tab === "collabs" && items.collabs.map(c => (
+        <div key={c.id} style={{ ...card, display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
+          <div style={{ flex: "1 1 180px", minWidth: 0 }}>
+            <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, marginBottom: 4 }}>{c.target}</div>
+            <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{c.type} · {c.platform}</div>
+          </div>
+          <span style={{
+            fontFamily: T.font, fontSize: 10, padding: "2px 8px",
+            background: priorities[c.priority]?.bg ?? T.border2,
+            color: priorities[c.priority]?.color ?? T.muted,
+          }}>{c.priority}</span>
+          <select value={c.status} onChange={e => updateCollab(c.id, e.target.value)} style={{ ...inputStyle, fontSize: 10 }}>
+            {collabStatuses.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+      ))}
+
+      {tab === "kpis" && items.kpis.map(k => {
+        const targetNum = parseInt(k.target);
+        const pct = targetNum > 0 ? Math.min(100, (k.current / targetNum) * 100) : 0;
+        return (
+          <div key={k.id} style={{ ...card }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 8 }}>
+              <span style={{ fontFamily: T.font, fontSize: 12, color: T.text, flex: 1 }}>{k.metric}</span>
+              <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>Target: {k.target} {k.unit}</span>
+              <input
+                type="number"
+                value={k.current}
+                onChange={e => updateKpi(k.id, parseInt(e.target.value) || 0)}
+                style={{ ...inputStyle, width: 70 }}
+              />
+            </div>
+            <ProgressBar value={pct} max={100} color={pct >= 100 ? "#4CAF50" : T.accent} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Calculator view ──────────────────────────────────────────────────────────
+
+function CalculatorView() {
+  const [phase, setPhase] = useState<1 | 2>(1);
+  const [base, setBase] = useState(phase === 1 ? 200 : 500);
+  const [travel, setTravel] = useState(false);
+  const [equipment, setEquipment] = useState(false);
+  const [agentPct, setAgentPct] = useState(15);
+
+  useEffect(() => { setBase(phase === 1 ? 200 : 500); }, [phase]);
+
+  const gross = base + (travel ? 150 : 0) + (equipment ? 100 : 0);
+  const agentCut = Math.round(gross * agentPct / 100);
+  const net = gross - agentCut;
+
+  const standards = [
+    "Minimum set time: 60 minutes",
+    "Soundcheck required: minimum 30 min before doors",
+    "Travel: economy flights or fuel reimbursement",
+    "Accommodation: hotel if >100km from Rotterdam",
+    "Meals: hot meal or €25 buyout day-of-show",
+    "Billing: name on flyer minimum 48h before event",
+    "Promo package: artwork/bio within 5 days of signing",
+    "Set time confirmation: 48h before event",
+    "Payment: 50% deposit on signing, 50% day-of-show",
+    "Cancellation <14 days: 50% kill fee; <7 days: 100%",
+    "Tech rider: venue responsible for compliance",
+    "Social: venue tags @donnstone on all promo posts",
+  ];
+
+  return (
+    <div>
+      <p style={{ ...label9, marginBottom: 16 }}>Deal Calculator</p>
+
+      <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+        {([1, 2] as const).map(p => (
+          <button key={p} onClick={() => setPhase(p)} style={{
+            ...phase === p ? btn : ghostBtn,
+          }}>Phase {p} — {p === 1 ? "Emerging" : "Established"}</button>
+        ))}
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+        <div style={{ ...card }}>
+          <div style={{ ...label9, marginBottom: 12 }}>Quote Builder</div>
+
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ ...label9, marginBottom: 4 }}>Base Fee (€)</div>
+            <input
+              type="number"
+              value={base}
+              onChange={e => setBase(parseInt(e.target.value) || 0)}
+              style={{ ...inputStyle, width: "100%" }}
+            />
+          </div>
+
+          <div style={{ marginBottom: 8 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+              <input type="checkbox" checked={travel} onChange={e => setTravel(e.target.checked)} />
+              <span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>Travel + Accommodation (+€150)</span>
+            </label>
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+              <input type="checkbox" checked={equipment} onChange={e => setEquipment(e.target.checked)} />
+              <span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>Equipment Rider (+€100)</span>
+            </label>
+          </div>
+
+          <div style={{ marginBottom: 8 }}>
+            <div style={{ ...label9, marginBottom: 4 }}>Agent % (if signed): {agentPct}%</div>
+            <input
+              type="range" min={15} max={20} value={agentPct}
+              onChange={e => setAgentPct(parseInt(e.target.value))}
+              style={{ width: "100%", accentColor: T.accent }}
+            />
+          </div>
+        </div>
+
+        <div style={{ ...card }}>
+          <div style={{ ...label9, marginBottom: 16 }}>Result</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ fontFamily: T.font, fontSize: 11, color: T.muted }}>Gross Offer</span>
+              <span style={{ fontFamily: T.font, fontSize: 16, color: T.text }}>€{gross}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ fontFamily: T.font, fontSize: 11, color: T.muted }}>Agent Cut ({agentPct}%)</span>
+              <span style={{ fontFamily: T.font, fontSize: 14, color: "#FF6B6B" }}>-€{agentCut}</span>
+            </div>
+            <div style={{ height: 1, background: T.border2 }} />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ fontFamily: T.font, fontSize: 11, color: T.muted }}>Your Net</span>
+              <span style={{ fontFamily: T.font, fontSize: 20, color: T.accent }}>€{net}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Market rate reference */}
-      <div style={{ background: "#0D0606", border: "1px solid #1E0E0E", padding: 20 }}>
-        <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: "0.16em", textTransform: "uppercase", color: "#9B1D20", margin: "0 0 16px" }}>
-          Market rates reference
-        </p>
-        <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#3D2020", margin: "0 0 14px", lineHeight: 1.6 }}>
-          Unvalidated estimates — replace with real offers as they come in.
-        </p>
-        {MARKET_RATES.map((r) => (
-          <div key={r.market + r.type} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #1E0E0E", gap: 8, flexWrap: "wrap" }}>
-            <div>
-              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#EAD5C8", margin: "0 0 2px" }}>{r.market} · {r.type}</p>
-              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: "#7A6060", margin: 0 }}>{r.note}</p>
+      <div style={{ ...card, marginTop: 4 }}>
+        <div style={{ ...label9, marginBottom: 12 }}>Booking Standard — 12 Non-Negotiables</div>
+        {standards.map((s, i) => (
+          <div key={i} style={{
+            display: "flex", gap: 10, padding: "6px 0",
+            borderBottom: i < standards.length - 1 ? `1px solid ${T.border}` : "none",
+          }}>
+            <span style={{ fontFamily: T.font, fontSize: 10, color: T.accent, flexShrink: 0, minWidth: 16 }}>{i + 1}.</span>
+            <span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{s}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Agencies view ────────────────────────────────────────────────────────────
+
+function AgenciesView() {
+  const { data: gateData, loading: gateLoading, save: saveGate } = useSection<AgentGate>("agentgate");
+  const { data: agencyData, loading: agencyLoading, save: saveAgencies } = useSection<Agency[]>("agencies");
+  const [gate, setGate] = useState<AgentGate | null>(null);
+  const [agencies, setAgencies] = useState<Agency[]>([]);
+
+  useEffect(() => { if (gateData) setGate(gateData); }, [gateData]);
+  useEffect(() => { if (agencyData) setAgencies(agencyData); }, [agencyData]);
+
+  if (gateLoading || agencyLoading || !gate) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
+
+  const metCount = gate.indicators.filter(i => i.met).length;
+  const locked = metCount < gate.threshold;
+
+  const toggleIndicator = (id: number) => {
+    const updated = { ...gate, indicators: gate.indicators.map(i => i.id === id ? { ...i, met: !i.met } : i) };
+    setGate(updated);
+    saveGate(updated);
+  };
+
+  const updateAgencyStatus = (name: string, status: string) => {
+    const updated = agencies.map(a => a.name === name ? { ...a, status } : a);
+    setAgencies(updated);
+    saveAgencies(updated);
+  };
+
+  const agencyStatuses = ["Not started", "Researching", "Reached out", "In talks", "Signed"];
+
+  return (
+    <div>
+      {/* Agent Gate */}
+      <div style={{ ...card, marginBottom: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <span style={{ ...label9 }}>Agent Gate</span>
+          <span style={{ fontFamily: T.font, fontSize: 12, color: locked ? "#FF6B6B" : "#4CAF50" }}>
+            {metCount}/{gate.threshold} — {locked ? "LOCKED" : "UNLOCKED"}
+          </span>
+        </div>
+        <ProgressBar value={metCount} max={8} color={locked ? "#FF6B6B" : "#4CAF50"} />
+        {locked && (
+          <div style={{
+            marginTop: 12, padding: "8px 12px", background: "#3a0a0a",
+            border: `1px solid ${T.accent}`, fontFamily: T.font, fontSize: 11, color: "#FF6B6B",
+          }}>
+            ⚠ Meet {gate.threshold}/8 indicators before approaching agencies
+          </div>
+        )}
+        <div style={{ marginTop: 16 }}>
+          {gate.indicators.map(ind => (
+            <div key={ind.id} style={{
+              display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 0",
+              borderBottom: `1px solid ${T.border}`, cursor: "pointer",
+            }} onClick={() => toggleIndicator(ind.id)}>
+              <div style={{
+                width: 14, height: 14, border: `1px solid ${ind.met ? "#4CAF50" : T.border2}`,
+                background: ind.met ? "#4CAF50" : "transparent", flexShrink: 0, marginTop: 2,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                {ind.met && <span style={{ color: "#000", fontSize: 10 }}>✓</span>}
+              </div>
+              <div>
+                <div style={{ fontFamily: T.font, fontSize: 12, color: T.text }}>{ind.label}</div>
+                <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{ind.description}</div>
+              </div>
             </div>
-            <div style={{ textAlign: "right" }}>
-              <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, color: "#BFA8A0" }}>
-                {r.currency} {r.low.toLocaleString()} – {r.high.toLocaleString()}
-              </span>
-              <button
-                onClick={() => setGross(r.currency === "EUR" ? Math.round((r.low + r.high) / 2) : gross)}
-                style={{ ...S.btnGhost, display: "block", marginTop: 4, fontSize: 8, padding: "3px 8px" }}
-                title="Use midpoint in calculator"
+          ))}
+        </div>
+      </div>
+
+      {/* Agency list */}
+      <div style={{ position: "relative" }}>
+        {locked && (
+          <div style={{
+            position: "absolute", inset: 0, background: "rgba(10,5,4,0.8)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            zIndex: 10,
+          }}>
+            <div style={{ fontFamily: T.font, fontSize: 14, color: T.accent, letterSpacing: "0.2em" }}>
+              🔒 LOCKED — {gate.threshold - metCount} more indicators needed
+            </div>
+          </div>
+        )}
+        <p style={{ ...label9, marginBottom: 12 }}>Agency List ({agencies.length})</p>
+        {agencies.map(a => (
+          <div key={a.name} style={{ ...card, display: "flex", flexWrap: "wrap", gap: 12, alignItems: "flex-start" }}>
+            <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+              <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, marginBottom: 4 }}>{a.name}</div>
+              <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginBottom: 4 }}>{a.base}</div>
+              <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{a.what}</div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", flexShrink: 0 }}>
+              <FitBadge fit={a.fit} />
+              <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{a.when}</div>
+              <select
+                value={a.status}
+                onChange={e => updateAgencyStatus(a.name, e.target.value)}
+                style={{ ...inputStyle, fontSize: 10 }}
+                disabled={locked}
               >
-                {r.currency === "EUR" ? "Use midpoint" : "AED"}
-              </button>
+                {agencyStatuses.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
             </div>
           </div>
         ))}
       </div>
     </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+type View =
+  | "Timeline" | "Dashboard"
+  | "Checklist" | "Festivals" | "Showcases"
+  | "Outreach" | "Marketing"
+  | "Calculator"
+  | "Agencies";
+
+interface NavGroup {
+  label: string;
+  items: View[];
+}
+
+const NAV: NavGroup[] = [
+  { label: "OVERVIEW", items: ["Timeline", "Dashboard"] },
+  { label: "EXECUTION", items: ["Checklist", "Festivals", "Showcases"] },
+  { label: "OUTREACH", items: ["Outreach", "Marketing"] },
+  { label: "DEALS", items: ["Calculator"] },
+  { label: "AGENCIES", items: ["Agencies"] },
+];
+
+export default function ManagementSection() {
+  const [active, setActive] = useState<View>("Timeline");
+  const [, setMobileNavOpen] = useState(false);
+
+  const navigate = (view: View) => {
+    setActive(view);
+    setMobileNavOpen(false);
+  };
+
+  const sidebar = (
+    <div style={{
+      width: 200, flexShrink: 0, borderRight: `1px solid ${T.border}`,
+      background: T.bg, overflowY: "auto", padding: "16px 0",
+    }}>
+      {NAV.map(group => (
+        <div key={group.label} style={{ marginBottom: 16 }}>
+          <div style={{ ...label9, padding: "0 16px", marginBottom: 6 }}>{group.label}</div>
+          {group.items.map(item => (
+            <button key={item} onClick={() => navigate(item)} style={{
+              display: "block", width: "100%", textAlign: "left",
+              background: "none", border: "none",
+              borderLeft: active === item ? `3px solid ${T.accent}` : "3px solid transparent",
+              color: active === item ? T.text : T.muted,
+              fontFamily: T.font, fontSize: 11,
+              padding: "7px 16px", cursor: "pointer",
+              letterSpacing: "0.05em",
+            }}>{item}</button>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <>
+      <style>{`
+        .mgmt-wrapper { display: flex; height: calc(100vh - 120px); overflow: hidden; }
+        .mgmt-sidebar { display: flex; flex-direction: column; }
+        .mgmt-content { flex: 1; overflow-y: auto; padding: 24px; width: 0; }
+        .mgmt-mobile-nav { display: none; }
+        @media (max-width: 640px) {
+          .mgmt-wrapper { flex-direction: column; height: auto; }
+          .mgmt-sidebar { display: none; }
+          .mgmt-mobile-nav { display: flex; gap: 0; overflow-x: auto; padding: 8px 0; border-bottom: 1px solid #1E0E0E; flex-shrink: 0; }
+          .mgmt-content { padding: 16px 12px; width: 100%; }
+        }
+      `}</style>
+
+      <div className="mgmt-wrapper">
+        <div className="mgmt-sidebar">{sidebar}</div>
+
+        {/* Mobile horizontal nav */}
+        <div className="mgmt-mobile-nav">
+          {NAV.flatMap(g => g.items).map(item => (
+            <button key={item} onClick={() => setActive(item)} style={{
+              background: "none", border: "none", flexShrink: 0,
+              borderBottom: active === item ? `2px solid ${T.accent}` : "2px solid transparent",
+              color: active === item ? T.text : T.muted,
+              fontFamily: T.font, fontSize: 10, padding: "6px 12px", cursor: "pointer",
+              whiteSpace: "nowrap",
+            }}>{item}</button>
+          ))}
+        </div>
+
+        <div className="mgmt-content">
+          {active === "Dashboard" && <DashboardView onNavigate={v => setActive(v as View)} />}
+          {active === "Timeline" && <TimelineView />}
+          {active === "Checklist" && <ChecklistView />}
+          {active === "Festivals" && <FestivalsView />}
+          {active === "Showcases" && <ShowcasesView />}
+          {active === "Outreach" && <OutreachView />}
+          {active === "Marketing" && <MarketingView />}
+          {active === "Calculator" && <CalculatorView />}
+          {active === "Agencies" && <AgenciesView />}
+        </div>
+      </div>
+    </>
   );
 }

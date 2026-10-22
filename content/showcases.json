@@ -1,0 +1,12 @@
+[
+  {"id":1,"name":"ESNS (Eurosonic Noorderslag)","location":"Groningen, NL","when":"Jan 2027","deadline":"Sep 2026","type":"Industry","fit":"High","status":"Research","notes":"Key EU industry event; application opens ~May"},
+  {"id":2,"name":"SXSW Showcase","location":"Austin, TX","when":"Mar 2028","deadline":"Sep 2027","type":"Industry","fit":"Medium","status":"Not started","notes":"Apply Sep 2027; needs US press/label interest"},
+  {"id":3,"name":"ADE (Amsterdam Dance Event)","location":"Amsterdam, NL","when":"Oct 2027","deadline":"Mar 2027","type":"Industry+Fan","fit":"Very High","status":"Research","notes":"Home turf; satellite shows easiest entry"},
+  {"id":4,"name":"Primavera Sound","location":"Barcelona / Buenos Aires","when":"May/Jun 2027","deadline":"Oct 2026","type":"Festival","fit":"Medium","status":"Not started","notes":"Submit via Groover or agent pitch"},
+  {"id":5,"name":"Sonar","location":"Barcelona","when":"Jun 2027","deadline":"Nov 2026","type":"Festival+Industry","fit":"High","status":"Not started","notes":"Strong electronic/Afro crossover potential"},
+  {"id":6,"name":"Dekmantel","location":"Amsterdam, NL","when":"Aug 2027","deadline":"Jan 2027","type":"Festival","fit":"Medium-High","status":"Not started","notes":"Afro house growing on lineup"},
+  {"id":7,"name":"Woo Hah!","location":"Beekse Bergen, NL","when":"Jul 2027","deadline":"Feb 2027","type":"Festival","fit":"High","status":"Not started","notes":"NL hip-hop/urban; Afro crossover"},
+  {"id":8,"name":"Kwaku Summer Festival","location":"Amsterdam, NL","when":"Aug 2027","deadline":"Mar 2027","type":"Festival","fit":"Very High","status":"Not started","notes":"Afro/Caribbean community flagship"},
+  {"id":9,"name":"Afro Nation Portugal","location":"Porto","when":"Jun 2027","deadline":"Dec 2026","type":"Festival","fit":"High","status":"Not started","notes":"Fast-growing Afrobeats/house event"},
+  {"id":10,"name":"Lowlands","location":"Biddinghuizen, NL","when":"Aug 2027","deadline":"Jan 2027","type":"Festival","fit":"Medium","status":"Not started","notes":"Broad Dutch audience; aspirational for 2028"}
+]
