@@ -19,7 +19,7 @@ function verifySession(req: VercelRequest): boolean {
   return sig === expected;
 }
 
-async function createIssue(title: string, body: string) {
+async function createIssue(title: string, body: string, labels: string[]) {
   const url = `https://api.github.com/repos/${GITHUB_REPO}/issues`;
   const res = await fetch(url, {
     method: "POST",
@@ -28,7 +28,7 @@ async function createIssue(title: string, body: string) {
       Accept: "application/vnd.github+json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ title, body, labels: ["booking", "status: new"] }),
+    body: JSON.stringify({ title, body, labels }),
   });
   if (!res.ok) return null;
   return res.json();
@@ -83,17 +83,20 @@ async function updateIssueStatus(issueNumber: number, newStatus: string) {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "POST") {
-    const { name, email, date, venue, details } = req.body as {
+    const { name, email, date, venue, details, type } = req.body as {
       name: string;
       email: string;
       date: string;
       venue: string;
       details: string;
+      type?: string;
     };
-    const title = `Booking: ${name} — ${date}`;
-    const body = `**Name:** ${name}\n**Email:** ${email}\n**Date:** ${date}\n**Venue/Event:** ${venue}\n\n**Details:**\n${details}\n\n---\n*Submitted: ${new Date().toISOString()}*`;
-    const issue = await createIssue(title, body);
-    if (!issue) return res.status(500).json({ error: "Failed to create booking" });
+    const isEpk = type === "epk";
+    const title = isEpk ? name : `Booking: ${name} — ${date}`;
+    const body = details || `**Name:** ${name}\n**Email:** ${email}\n**Date:** ${date}\n**Venue/Event:** ${venue}\n\n---\n*Submitted: ${new Date().toISOString()}*`;
+    const labels = isEpk ? ["epk-request"] : ["booking", "status: new"];
+    const issue = await createIssue(title, body, labels);
+    if (!issue) return res.status(500).json({ error: "Failed to create request" });
     return res.json({ ok: true });
   }
 

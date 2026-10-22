@@ -831,14 +831,46 @@ function BookingsSection({ onCountChange }: { onCountChange?: (n: number) => voi
               marginBottom: 12,
             }}
           >
-            {/* Top row: name + date */}
-            <div style={{ marginBottom: 16 }}>
-              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, color: "#EAD5C8", margin: "0 0 4px", fontWeight: 700 }}>
-                {parseName(b.title)}
-              </p>
-              <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", margin: 0, letterSpacing: "0.1em" }}>
-                {parseDate(b.title)} &nbsp;·&nbsp; {new Date(b.created_at).toLocaleDateString("nl-NL")}
-              </p>
+            {/* Top row: name + date + download buttons */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+              <div>
+                <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, color: "#EAD5C8", margin: "0 0 4px", fontWeight: 700 }}>
+                  {parseName(b.title)}
+                </p>
+                <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", margin: 0, letterSpacing: "0.1em" }}>
+                  {parseDate(b.title)} &nbsp;·&nbsp; {new Date(b.created_at).toLocaleDateString("nl-NL")}
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                <a
+                  href="/downloads/Donn_Stone_EPK_2027.pdf"
+                  download="Donn_Stone_EPK_2027.pdf"
+                  style={{
+                    fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700,
+                    letterSpacing: "0.14em", textTransform: "uppercase",
+                    color: "#EAD5C8", background: "#9B1D20",
+                    border: "none", padding: "8px 12px",
+                    textDecoration: "none", display: "inline-block",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  ↓ EPK
+                </a>
+                <a
+                  href="/downloads/Donn_Stone_Technical_Rider_2027.pdf"
+                  download="Donn_Stone_Technical_Rider_2027.pdf"
+                  style={{
+                    fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700,
+                    letterSpacing: "0.14em", textTransform: "uppercase",
+                    color: "#7A6060", background: "none",
+                    border: "1px solid #2A1414", padding: "8px 12px",
+                    textDecoration: "none", display: "inline-block",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  ↓ Rider
+                </a>
+              </div>
             </div>
 
             {/* Status row: badge + dropdown stacked on mobile */}
