@@ -8,6 +8,15 @@ import ManagementSection from "./ManagementSection";
 const SECTIONS = ["Home", "Video", "Tour", "Bio", "Bookings", "Management"] as const;
 type Section = (typeof SECTIONS)[number];
 
+const MGMT_NAV = [
+  { group: "OVERVIEW", items: ["Timeline", "Dashboard"] },
+  { group: "EXECUTION", items: ["Checklist", "Festivals", "Showcases"] },
+  { group: "OUTREACH", items: ["Outreach", "Marketing"] },
+  { group: "DEALS", items: ["Calculator"] },
+  { group: "AGENCIES", items: ["Agencies"] },
+] as const;
+type MgmtView = "Timeline" | "Dashboard" | "Checklist" | "Festivals" | "Showcases" | "Outreach" | "Marketing" | "Calculator" | "Agencies";
+
 const S = {
   input: {
     width: "100%",
@@ -983,6 +992,7 @@ function BookingsSection({ onCountChange }: { onCountChange?: (n: number) => voi
 
 export default function AdminDashboardPage() {
   const [active, setActive] = useState<Section>("Home");
+  const [mgmtView, setMgmtView] = useState<MgmtView>("Timeline");
   const [newBookingCount, setNewBookingCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -997,47 +1007,87 @@ export default function AdminDashboardPage() {
     setMenuOpen(false);
   }
 
+  function navToMgmt(view: MgmtView) {
+    setActive("Management");
+    setMgmtView(view);
+    setMenuOpen(false);
+  }
+
   const sidebarContent = (
     <>
       {SECTIONS.map((s) => (
-        <button
-          key={s}
-          onClick={() => navTo(s)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-            textAlign: "left",
-            fontFamily: '"Space Mono", monospace',
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: "0.16em",
-            textTransform: "uppercase",
-            color: active === s ? "#EAD5C8" : "#3D2020",
-            background: active === s ? "#1E0E0E" : "none",
-            border: "none",
-            borderLeft: active === s ? "3px solid #9B1D20" : "3px solid transparent",
-            padding: "14px 24px",
-            cursor: "pointer",
-            transition: "all 0.15s",
-            boxSizing: "border-box",
-          }}
-          onMouseEnter={(e) => { if (active !== s) e.currentTarget.style.color = "#7A6060"; }}
-          onMouseLeave={(e) => { if (active !== s) e.currentTarget.style.color = "#3D2020"; }}
-        >
-          {s}
-          {s === "Bookings" && newBookingCount > 0 && (
-            <span style={{
-              background: "#9B1D20", color: "#EAD5C8",
+        <div key={s}>
+          <button
+            onClick={() => navTo(s)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+              textAlign: "left",
               fontFamily: '"Space Mono", monospace',
-              fontSize: 9, fontWeight: 700,
-              padding: "2px 6px", borderRadius: 2, minWidth: 18, textAlign: "center",
-            }}>
-              {newBookingCount}
-            </span>
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: active === s ? "#EAD5C8" : "#3D2020",
+              background: active === s && s !== "Management" ? "#1E0E0E" : "none",
+              border: "none",
+              borderLeft: active === s ? "3px solid #9B1D20" : "3px solid transparent",
+              padding: "14px 24px",
+              cursor: "pointer",
+              transition: "all 0.15s",
+              boxSizing: "border-box",
+            }}
+            onMouseEnter={(e) => { if (active !== s) e.currentTarget.style.color = "#7A6060"; }}
+            onMouseLeave={(e) => { if (active !== s) e.currentTarget.style.color = "#3D2020"; }}
+          >
+            {s}
+            {s === "Bookings" && newBookingCount > 0 && (
+              <span style={{
+                background: "#9B1D20", color: "#EAD5C8",
+                fontFamily: '"Space Mono", monospace',
+                fontSize: 9, fontWeight: 700,
+                padding: "2px 6px", borderRadius: 2, minWidth: 18, textAlign: "center",
+              }}>
+                {newBookingCount}
+              </span>
+            )}
+          </button>
+
+          {/* Management sub-nav — shown when Management is active */}
+          {s === "Management" && active === "Management" && (
+            <div style={{ background: "#0A0504", borderLeft: "3px solid #9B1D20", marginBottom: 4 }}>
+              {MGMT_NAV.map(group => (
+                <div key={group.group}>
+                  <div style={{
+                    fontFamily: '"Space Mono", monospace',
+                    fontSize: 9, letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "#EAD5C8", fontWeight: 700,
+                    padding: "10px 20px 4px",
+                  }}>{group.group}</div>
+                  {group.items.map(item => (
+                    <button
+                      key={item}
+                      onClick={() => navToMgmt(item as MgmtView)}
+                      style={{
+                        display: "block", width: "100%", textAlign: "left",
+                        background: mgmtView === item ? "#1E0E0E" : "none",
+                        border: "none",
+                        borderLeft: mgmtView === item ? "2px solid #9B1D20" : "2px solid transparent",
+                        color: mgmtView === item ? "#EAD5C8" : "#7A6060",
+                        fontFamily: '"Space Mono", monospace', fontSize: 11,
+                        padding: "7px 20px", cursor: "pointer",
+                        letterSpacing: "0.05em", boxSizing: "border-box",
+                      }}
+                    >{item}</button>
+                  ))}
+                </div>
+              ))}
+            </div>
           )}
-        </button>
+        </div>
       ))}
       {/* Logout inside mobile menu */}
       <div style={{ padding: "24px 24px 0", borderTop: "1px solid #1E0E0E", marginTop: 16 }}>
@@ -1147,18 +1197,22 @@ export default function AdminDashboardPage() {
 
           {/* Main content */}
           <main className="admin-main">
-            <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16 }}>
-              Section
-            </p>
-            <h1 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: 28, letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 40px" }}>
-              {active}
-            </h1>
+            {active !== "Management" && (
+              <>
+                <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9B1D20", marginBottom: 16 }}>
+                  Section
+                </p>
+                <h1 style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: 28, letterSpacing: "0.06em", textTransform: "uppercase", color: "#EAD5C8", margin: "0 0 40px" }}>
+                  {active}
+                </h1>
+              </>
+            )}
             {active === "Home" && <HomeEditor />}
             {active === "Video" && <VideoEditor />}
             {active === "Tour" && <TourEditor />}
             {active === "Bio" && <BioEditor />}
             {active === "Bookings" && <BookingsSection onCountChange={setNewBookingCount} />}
-            {active === "Management" && <ManagementSection />}
+            {active === "Management" && <ManagementSection activeView={mgmtView} onNavigate={(v) => setMgmtView(v as MgmtView)} />}
           </main>
         </div>
       </div>

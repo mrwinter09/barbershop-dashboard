@@ -17,7 +17,11 @@ function verifySession(req: VercelRequest): boolean {
   if (Date.now() > parseInt(expiryStr)) return false;
   const secret = process.env.ADMIN_PASSWORD!;
   const expected = crypto.createHmac("sha256", secret).update(expiryStr).digest("hex");
-  return sig === expected;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+  } catch {
+    return false;
+  }
 }
 
 async function getFileFromGitHub(path: string) {
