@@ -52,7 +52,7 @@ export default function HomePage() {
             <span style={{ display: "block", color: "#9B1D20" }}>STONE</span>
           </h1>
           <p style={{ fontSize: "clamp(14px,2vw,18px)", color: "rgba(234,213,200,0.65)", marginBottom: 40, letterSpacing: "0.06em", animation: "fadeUp 1s ease 0.2s both" }}>
-            Electronic Powerhouse &amp; DJ
+            Electronic Powerhouse
           </p>
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap", animation: "fadeUp 1s ease 0.3s both" }}>
             <Link to="/booking" style={{
