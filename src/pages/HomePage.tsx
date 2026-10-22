@@ -125,7 +125,7 @@ export default function HomePage() {
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#7A6060", marginBottom: 32, textAlign: "center" }}>Supported by</p>
           <div style={{ display: "flex", gap: 40, flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
-            {["Paradiso Amsterdam", "Toffler Rotterdam", "ADE", "Operator Radio", "ECR Radio"].map(p => (
+            {["Paradiso Amsterdam", "Toffler Rotterdam", "ADE", "Operator Radio", "ECR Radio", "NTS Radio", "Sportscene SA"].map(p => (
               <span key={p} style={{ fontFamily: '"Space Mono", monospace', fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#7A6060" }}>{p}</span>
             ))}
           </div>
