@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminGuard from "./AdminGuard";
+import ManagementSection from "./ManagementSection";
 
-const SECTIONS = ["Home", "Video", "Tour", "Bio", "Bookings"] as const;
+const SECTIONS = ["Home", "Video", "Tour", "Bio", "Bookings", "Management"] as const;
 type Section = (typeof SECTIONS)[number];
 
 const S = {
@@ -1157,6 +1158,7 @@ export default function AdminDashboardPage() {
             {active === "Tour" && <TourEditor />}
             {active === "Bio" && <BioEditor />}
             {active === "Bookings" && <BookingsSection onCountChange={setNewBookingCount} />}
+            {active === "Management" && <ManagementSection />}
           </main>
         </div>
       </div>
