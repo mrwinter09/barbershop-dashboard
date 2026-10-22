@@ -1,0 +1,34 @@
+{
+  "pillars": [
+    {"id":1,"pillar":"Afro Roots","description":"Heritage connection: NL-born, SA/Afro house sound","formats":["Reel","Story","TikTok"],"frequency":"2x/week"},
+    {"id":2,"pillar":"Studio Process","description":"Behind-the-scenes production, loops, samples","formats":["Reel","TikTok","YouTube Short"],"frequency":"1x/week"},
+    {"id":3,"pillar":"Live Energy","description":"Gig clips, crowd moments, setup shots","formats":["Reel","Story","TikTok"],"frequency":"After every gig"},
+    {"id":4,"pillar":"Music Releases","description":"Single drops, EP teasers, release day content","formats":["Reel","Story","YouTube"],"frequency":"Per release"},
+    {"id":5,"pillar":"Culture & Scene","description":"Events, community, collab moments","formats":["Story","Reel"],"frequency":"1x/week"},
+    {"id":6,"pillar":"Personal Brand","description":"Lifestyle, travel, identity as NL Afro artist","formats":["Story","TikTok"],"frequency":"Organic"},
+    {"id":7,"pillar":"Educational","description":"Music theory, Afro house history, DJ tips","formats":["Carousel","YouTube","TikTok"],"frequency":"2x/month"},
+    {"id":8,"pillar":"Fan Engagement","description":"Q&A, polls, DM replies, community shoutouts","formats":["Story","Live"],"frequency":"Weekly"}
+  ],
+  "collabs": [
+    {"id":1,"target":"Local NL Afro/urban artists","type":"Feature / co-release","platform":"SoundCloud + IG","priority":"High","status":"Not started"},
+    {"id":2,"target":"Afro house DJ in BE/NL scene","type":"B2B set + social clip","platform":"IG + TikTok","priority":"High","status":"Not started"},
+    {"id":3,"target":"SA artist (Afro house / Amapiano)","type":"Remote collab track","platform":"Streaming + IG","priority":"Medium","status":"Not started"},
+    {"id":4,"target":"NL lifestyle / streetwear brand","type":"Sponsored reel","platform":"IG","priority":"Medium","status":"Not started"},
+    {"id":5,"target":"Afro lifestyle photographer NL","type":"Shoot for EPK + socials","platform":"IG + press","priority":"High","status":"Not started"},
+    {"id":6,"target":"NL Afro culture podcast","type":"Guest appearance","platform":"Spotify + YouTube","priority":"Medium","status":"Not started"},
+    {"id":7,"target":"Groover playlist curator (Afro)","type":"Track pitch","platform":"Groover","priority":"High","status":"Not started"},
+    {"id":8,"target":"YouTube Afro house channel (5k+)","type":"Premiere or feature","platform":"YouTube","priority":"Medium","status":"Not started"}
+  ],
+  "kpis": [
+    {"id":1,"metric":"Instagram followers","target":"5000","current":0,"unit":"followers"},
+    {"id":2,"metric":"TikTok followers","target":"3000","current":0,"unit":"followers"},
+    {"id":3,"metric":"Monthly Spotify streams","target":"1000","current":0,"unit":"streams"},
+    {"id":4,"metric":"Monthly SoundCloud plays","target":"2000","current":0,"unit":"plays"},
+    {"id":5,"metric":"YouTube subscribers","target":"500","current":0,"unit":"subscribers"},
+    {"id":6,"metric":"Gigs played (paid)","target":"10","current":0,"unit":"gigs"},
+    {"id":7,"metric":"Festival slots","target":"2","current":0,"unit":"slots"},
+    {"id":8,"metric":"Press mentions","target":"5","current":0,"unit":"mentions"},
+    {"id":9,"metric":"Industry showcases","target":"1","current":0,"unit":"showcases"},
+    {"id":10,"metric":"Agency interest (formal)","target":"2","current":0,"unit":"agencies"}
+  ]
+}

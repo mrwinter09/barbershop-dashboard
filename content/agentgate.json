@@ -1,0 +1,13 @@
+{
+  "threshold": 6,
+  "indicators": [
+    {"id":1,"label":"Release-ready tracks (≥3)","description":"3 or more original tracks ready for streaming release","met":false},
+    {"id":2,"label":"Streaming presence","description":"Live on Spotify, Apple Music, SoundCloud","met":false},
+    {"id":3,"label":"EPK complete","description":"Bio, photos, music links, tech rider in one doc","met":false},
+    {"id":4,"label":"Social traction (≥3k IG)","description":"Instagram at 3,000+ followers","met":false},
+    {"id":5,"label":"Live track record (≥5 paid gigs)","description":"At least 5 documented paid performances","met":false},
+    {"id":6,"label":"Festival slot (≥1)","description":"At least one confirmed festival booking","met":false},
+    {"id":7,"label":"Press or playlist feature","description":"At least one editorial playlist or press mention","met":false},
+    {"id":8,"label":"Post-summer data ready","description":"Streaming numbers + gig count compiled for pitch","met":false}
+  ]
+}
