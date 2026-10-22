@@ -865,7 +865,7 @@ const NAV: NavGroup[] = [
 
 export default function ManagementSection() {
   const [active, setActive] = useState<View>("Timeline");
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [, setMobileNavOpen] = useState(false);
 
   const navigate = (view: View) => {
     setActive(view);
