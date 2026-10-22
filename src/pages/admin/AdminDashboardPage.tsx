@@ -362,11 +362,10 @@ function VideoEditor() {
 interface TourItem {
   id: string;
   date: string;
+  event: string;
   venue: string;
   city: string;
-  country: string;
-  ticketUrl: string;
-  active: boolean;
+  tickets: string;
 }
 
 function TourEditor() {
@@ -379,23 +378,15 @@ function TourEditor() {
     fetch("/api/content?section=tour")
       .then((r) => r.json())
       .then((j) => {
-        setItems(j.data);
+        setItems(j.data || []);
         setSha(j.sha);
       });
   }, []);
 
   function addRow() {
     setItems([
+      { id: Date.now().toString(), date: "", event: "", venue: "", city: "", tickets: "" },
       ...items,
-      {
-        id: Date.now().toString(),
-        date: "",
-        venue: "",
-        city: "",
-        country: "",
-        ticketUrl: "",
-        active: true,
-      },
     ]);
   }
 
@@ -403,7 +394,7 @@ function TourEditor() {
     setItems(items.filter((t) => t.id !== id));
   }
 
-  function update(id: string, field: keyof TourItem, value: string | boolean) {
+  function update(id: string, field: keyof TourItem, value: string) {
     setItems(items.map((t) => (t.id === id ? { ...t, [field]: value } : t)));
   }
 
@@ -426,42 +417,19 @@ function TourEditor() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <button style={S.btn} onClick={addRow}>
-          + Add date
-        </button>
+        <button style={S.btn} onClick={addRow}>+ Add show</button>
       </div>
       {items.map((t) => (
-        <div
-          key={t.id}
-          style={{
-            background: "#0D0606",
-            border: "1px solid #1E0E0E",
-            padding: 20,
-            marginBottom: 16,
-          }}
-        >
-          <div className="admin-tour-card-top" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-              <input
-                type="checkbox"
-                checked={t.active}
-                onChange={(e) => update(t.id, "active", e.target.checked)}
-                style={{ accentColor: "#9B1D20", width: 14, height: 14 }}
-              />
-              <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: "#7A6060", letterSpacing: "0.14em", textTransform: "uppercase" }}>
-                Active / visible
-              </span>
-            </label>
-            <button
-              style={{ ...S.btnGhost, color: "#9B1D20", borderColor: "#3D1010" }}
-              onClick={() => remove(t.id)}
-            >
-              Remove
-            </button>
+        <div key={t.id} style={{ background: "#0D0606", border: "1px solid #1E0E0E", padding: 20, marginBottom: 16 }}>
+          <div className="admin-tour-card-top" style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
+            <button style={{ ...S.btnGhost, color: "#9B1D20", borderColor: "#3D1010" }} onClick={() => remove(t.id)}>Remove</button>
           </div>
           <div className="admin-grid-4col">
-            <Field label="Date">
-              <input {...fi} type="date" value={t.date} onChange={(e) => update(t.id, "date", e.target.value)} />
+            <Field label="Date (e.g. 19 Sep 2026)">
+              <input {...fi} value={t.date} onChange={(e) => update(t.id, "date", e.target.value)} placeholder="19 Sep 2026" />
+            </Field>
+            <Field label="Event">
+              <input {...fi} value={t.event} onChange={(e) => update(t.id, "event", e.target.value)} />
             </Field>
             <Field label="Venue">
               <input {...fi} value={t.venue} onChange={(e) => update(t.id, "venue", e.target.value)} />
@@ -469,21 +437,14 @@ function TourEditor() {
             <Field label="City">
               <input {...fi} value={t.city} onChange={(e) => update(t.id, "city", e.target.value)} />
             </Field>
-            <Field label="Country">
-              <input {...fi} value={t.country} onChange={(e) => update(t.id, "country", e.target.value)} placeholder="NL" />
-            </Field>
           </div>
-          <Field label="Ticket URL">
-            <input {...fi} value={t.ticketUrl} onChange={(e) => update(t.id, "ticketUrl", e.target.value)} placeholder="https://..." />
+          <Field label="Ticket URL (optional)">
+            <input {...fi} value={t.tickets} onChange={(e) => update(t.id, "tickets", e.target.value)} placeholder="https://..." />
           </Field>
         </div>
       ))}
-      <button
-        style={{ ...S.btn, opacity: saving ? 0.6 : 1 }}
-        onClick={save}
-        disabled={saving}
-      >
-        {saving ? "Saving..." : saved ? "Saved!" : "Save tour dates"}
+      <button style={{ ...S.btn, opacity: saving ? 0.6 : 1 }} onClick={save} disabled={saving}>
+        {saving ? "Saving..." : saved ? "Saved!" : "Save shows"}
       </button>
     </div>
   );

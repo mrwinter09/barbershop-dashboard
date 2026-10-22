@@ -1,11 +1,66 @@
 [
   {
     "id": "1",
-    "date": "2026-11-15",
-    "venue": "Shelter Amsterdam",
+    "date": "19 Sep 2026",
+    "event": "Bairro Summer Closing",
+    "venue": "Kunstfabriek",
+    "city": "Rotterdam",
+    "tickets": ""
+  },
+  {
+    "id": "2",
+    "date": "23 May 2026",
+    "event": "Toffler",
+    "venue": "Toffler",
+    "city": "Rotterdam",
+    "tickets": ""
+  },
+  {
+    "id": "3",
+    "date": "26 Jul 2025",
+    "event": "Toffler",
+    "venue": "Toffler",
+    "city": "Rotterdam",
+    "tickets": ""
+  },
+  {
+    "id": "4",
+    "date": "06 Apr 2025",
+    "event": "House of",
+    "venue": "Bitterzoet",
     "city": "Amsterdam",
-    "country": "NL",
-    "ticketUrl": "",
-    "active": true
+    "tickets": ""
+  },
+  {
+    "id": "5",
+    "date": "24 Aug 2024",
+    "event": "Audio Obscura Festival",
+    "venue": "Van Nelle Fabriek",
+    "city": "Rotterdam",
+    "tickets": ""
+  },
+  {
+    "id": "6",
+    "date": "18 Aug 2024",
+    "event": "LatinVillage Festival · 20 Year Anniversary",
+    "venue": "Spaarnwoude",
+    "city": "Velsen-Zuid",
+    "tickets": ""
+  },
+  {
+    "id": "7",
+    "date": "21 Oct 2023",
+    "event": "Thuishaven · Day ADE",
+    "venue": "Thuishaven terrein",
+    "city": "Amsterdam",
+    "tickets": ""
+  },
+  {
+    "id": "8",
+    "date": "30 Sep 2023",
+    "event": "Africa Rising",
+    "venue": "IJland",
+    "city": "Amsterdam",
+    "tickets": ""
   }
 ]
