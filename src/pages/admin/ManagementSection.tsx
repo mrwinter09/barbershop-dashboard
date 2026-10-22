@@ -1416,95 +1416,27 @@ type View =
   | "Calculator"
   | "Agencies";
 
-interface NavGroup {
-  label: string;
-  items: View[];
-}
-
-const NAV: NavGroup[] = [
-  { label: "OVERVIEW", items: ["Timeline", "Dashboard"] },
-  { label: "EXECUTION", items: ["Checklist", "Festivals", "Showcases"] },
-  { label: "OUTREACH", items: ["Outreach", "Marketing"] },
-  { label: "DEALS", items: ["Calculator"] },
-  { label: "AGENCIES", items: ["Agencies"] },
-];
-
-export default function ManagementSection() {
-  const [active, setActive] = useState<View>("Timeline");
-  const [, setMobileNavOpen] = useState(false);
-
-  const navigate = (view: View) => {
-    setActive(view);
-    setMobileNavOpen(false);
-  };
-
-  const sidebar = (
-    <div style={{
-      width: 200, flexShrink: 0, borderRight: `1px solid ${T.border}`,
-      background: T.bg, overflowY: "auto", padding: "16px 0",
-    }}>
-      {NAV.map(group => (
-        <div key={group.label} style={{ marginBottom: 16 }}>
-          <div style={{ ...label9, padding: "0 16px", marginBottom: 6, color: T.text, fontWeight: 700 }}>{group.label}</div>
-          {group.items.map(item => (
-            <button key={item} onClick={() => navigate(item)} style={{
-              display: "block", width: "100%", textAlign: "left",
-              background: "none", border: "none",
-              borderLeft: active === item ? `3px solid ${T.accent}` : "3px solid transparent",
-              color: active === item ? T.text : T.muted,
-              fontFamily: T.font, fontSize: 11,
-              padding: "7px 16px", cursor: "pointer",
-              letterSpacing: "0.05em",
-            }}>{item}</button>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
+export default function ManagementSection({
+  activeView = "Timeline",
+  onNavigate,
+}: {
+  activeView?: string;
+  onNavigate?: (view: string) => void;
+}) {
+  const active = activeView as View;
+  const setActive = (v: View) => onNavigate?.(v);
 
   return (
-    <>
-      <style>{`
-        .mgmt-wrapper { display: flex; height: calc(100vh - 120px); overflow: hidden; }
-        .mgmt-sidebar { display: flex; flex-direction: column; }
-        .mgmt-content { flex: 1; overflow-y: auto; padding: 24px; width: 0; }
-        .mgmt-mobile-nav { display: none; }
-        @media (max-width: 640px) {
-          .mgmt-wrapper { flex-direction: column; height: auto; }
-          .mgmt-sidebar { display: none; }
-          .mgmt-mobile-nav { display: flex; gap: 0; overflow-x: auto; padding: 8px 0; border-bottom: 1px solid #1E0E0E; flex-shrink: 0; }
-          .mgmt-content { padding: 16px 12px; width: 100%; }
-        }
-      `}</style>
-
-      <div className="mgmt-wrapper">
-        <div className="mgmt-sidebar">{sidebar}</div>
-
-        {/* Mobile horizontal nav */}
-        <div className="mgmt-mobile-nav">
-          {NAV.flatMap(g => g.items).map(item => (
-            <button key={item} onClick={() => setActive(item)} style={{
-              background: "none", border: "none", flexShrink: 0,
-              borderBottom: active === item ? `2px solid ${T.accent}` : "2px solid transparent",
-              color: active === item ? T.text : T.muted,
-              fontFamily: T.font, fontSize: 10, padding: "6px 12px", cursor: "pointer",
-              whiteSpace: "nowrap",
-            }}>{item}</button>
-          ))}
-        </div>
-
-        <div className="mgmt-content">
-          {active === "Dashboard" && <DashboardView onNavigate={v => setActive(v as View)} />}
-          {active === "Timeline" && <TimelineView />}
-          {active === "Checklist" && <ChecklistView />}
-          {active === "Festivals" && <FestivalsView />}
-          {active === "Showcases" && <ShowcasesView />}
-          {active === "Outreach" && <OutreachView />}
-          {active === "Marketing" && <MarketingView />}
-          {active === "Calculator" && <CalculatorView />}
-          {active === "Agencies" && <AgenciesView />}
-        </div>
-      </div>
-    </>
+    <div style={{ padding: "0" }}>
+      {active === "Dashboard" && <DashboardView onNavigate={v => setActive(v as View)} />}
+      {active === "Timeline" && <TimelineView />}
+      {active === "Checklist" && <ChecklistView />}
+      {active === "Festivals" && <FestivalsView />}
+      {active === "Showcases" && <ShowcasesView />}
+      {active === "Outreach" && <OutreachView />}
+      {active === "Marketing" && <MarketingView />}
+      {active === "Calculator" && <CalculatorView />}
+      {active === "Agencies" && <AgenciesView />}
+    </div>
   );
 }
