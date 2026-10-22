@@ -8,8 +8,11 @@ interface ChecklistItem {
   id: number; phase: string; task: string; owner: string; due: string; done: boolean;
 }
 interface Showcase {
-  id: number; name: string; location: string; when: string; deadline: string;
-  type: string; fit: string; status: string; notes: string;
+  id: number; name: string; city: string; country: string;
+  dates2027: string; artistApplication: string;
+  deadline: string; deadlineNote: string;
+  whyItMatters: string; recommendedMove: string;
+  status: string; source: string; website: string;
 }
 interface MarketingData {
   pillars: { id: number; pillar: string; description: string; formats: string[]; frequency: string }[];
@@ -163,58 +166,247 @@ function DashboardView({ onNavigate }: { onNavigate: (view: string) => void }) {
 
 // ─── Timeline view ────────────────────────────────────────────────────────────
 
-function TimelineView() {
-  const milestones = [
-    { date: "Oct 2026", label: "Brand Setup (Phase A start)", phase: "A", active: true },
-    { date: "Nov 2026", label: "First Tracks & EPK", phase: "A", active: false },
-    { date: "Dec 2026", label: "First Paid Gigs", phase: "A", active: false },
-    { date: "Jan 2027", label: "First Single Release", phase: "B", active: false },
-    { date: "Feb 2027", label: "NL Booking Push", phase: "B", active: false },
-    { date: "Mar 2027", label: "Festival Submissions", phase: "B", active: false },
-    { date: "Apr 2027", label: "Industry Showcases", phase: "B", active: false },
-    { date: "Jun 2027", label: "Summer Festival Season", phase: "B", active: false },
-    { date: "Jul 2027", label: "EP Release", phase: "C", active: false },
-    { date: "Sep 2027", label: "Post-summer Agency Pitch", phase: "C", active: false },
-    { date: "Oct 2027", label: "ADE 2027", phase: "C", active: false },
-    { date: "Dec 2027", label: "Management / Agency Deal", phase: "C", active: false },
-    { date: "Jan 2028", label: "EU Tour Planning (Phase C end)", phase: "C", active: false },
-  ];
+const TIMELINE_MONTHS = [
+  {
+    date: "Oct 2026", phase: "1 · Foundation", active: true,
+    headline: "Make Donn bookable",
+    deliverable: "EPK live + 15 outreach emails sent",
+    tasks: [
+      "Register all social handles (IG, TikTok, SoundCloud, YouTube) under a consistent name",
+      "Build a 1-page EPK: bio, mix link, genre, tech rider, contact",
+      "Finalise 3 release-ready tracks — at minimum mixes approved",
+      "Draft the cold email template (see Outreach tab)",
+      "Build a target list: Tier A festivals + local NL promoters",
+      "Send 15 first-contact emails to NL venues / local promoters",
+      "Set up booking email address (booking@… or manager@…)",
+      "Confirm IG profile looks like a working artist (photo, link, bio)",
+    ],
+  },
+  {
+    date: "Nov 2026", phase: "1 · Foundation",
+    headline: "Decide on the big asks",
+    deliverable: "Tier A festivals pitched, follow-ups logged",
+    tasks: [
+      "Send Tier A festival pitches (Rotterdam Caribbean, Afro Nation, Woo Hah etc.)",
+      "Follow up October emails (Day 5 + Day 10 cadence)",
+      "First NL paid gig booked or confirmed",
+      "Secure a local Afro/urban photographer for EPK shoot",
+      "Record a 30-min live set for EPK — clean audio + video",
+      "Publish first 2 pieces of content from the Content Pillar plan",
+      "Start SoundCloud + Spotify distribution pipeline (DistroKid / TuneCore)",
+    ],
+  },
+  {
+    date: "Dec 2026", phase: "2 · Pitch Season",
+    headline: "Tier A + early Tier B pitched",
+    deliverable: "10+ festivals pitched, first track on streaming",
+    tasks: [
+      "Release first single on Spotify / Apple Music / SoundCloud",
+      "Pitch early-deadline Tier B festivals (Afronation Portugal Dec deadline etc.)",
+      "Apply for The Great Escape showcase (deadline ~Dec 2026)",
+      "First local paid gig played — collect content + testimonial",
+      "Submit to Groover Afro playlist curators",
+      "Send year-end recap email to all contacts pitched so far",
+      "Review and update EPK with streaming links",
+    ],
+  },
+  {
+    date: "Jan 2027", phase: "2 · Pitch Season",
+    headline: "ESNS + NL spring festivals",
+    deliverable: "Industry meetings logged from ESNS",
+    tasks: [
+      "Attend ESNS (Eurosonic) as delegate — pre-book 10–15 meetings",
+      "Target Afro/urban bookers and NL festival programmers at ESNS",
+      "Pitch NL spring festivals (Pinkpop, Into The Great Wide Open — check deadlines)",
+      "Follow up all December pitches",
+      "Release second track or remix",
+      "First Spotify editorial pitch (via distributor dashboard)",
+    ],
+  },
+  {
+    date: "Feb 2027", phase: "2 · Pitch Season",
+    headline: "Home market lock-in",
+    deliverable: "3–5 NL bookings confirmed",
+    tasks: [
+      "Target: 3–5 confirmed NL bookings by end of month",
+      "Pitch mid-tier NL festivals (Dekmantel, Lowlands — check deadlines)",
+      "Follow up all January meetings from ESNS",
+      "Send EPK to ADE satellite venue promoters (early outreach)",
+      "Reach out to NL booking agencies for introductory meeting",
+      "Post 2× per week on IG — live energy + studio content",
+    ],
+  },
+  {
+    date: "Mar 2027", phase: "3 · Routing",
+    headline: "Side events + season structure",
+    deliverable: "Afro Nation Portugal week booked",
+    tasks: [
+      "Book Afro Nation Portugal (Jun 2027) or confirm status",
+      "Build a routing map: string gigs/festivals into logical geographic routes",
+      "Pitch Sonar Barcelona via agent or direct",
+      "Follow up all NL pitches — close open conversations",
+      "Apply for SXSW 2027 (if not done — deadline Jan/Feb for 2027 edition)",
+      "Connect with at least one NL booking agent for a formal intro meeting",
+    ],
+  },
+  {
+    date: "Apr 2027", phase: "3 · Routing",
+    headline: "Route the summer",
+    deliverable: "Routing map complete — summer calendar set",
+    tasks: [
+      "Confirm routing map: festival run Jun–Aug in logical sequence",
+      "All summer travel/logistics pre-booked (flights, accommodation)",
+      "EP or second single in final mix — release date set",
+      "Brief photographer / videographer for festival season coverage",
+      "Pitch Kwaku Summer Festival Amsterdam (Aug 2027)",
+      "Update EPK with confirmed bookings + streaming stats",
+    ],
+  },
+  {
+    date: "May 2027", phase: "4 · Season",
+    headline: "Spring warm-up gigs",
+    deliverable: "Content library ready for summer",
+    tasks: [
+      "Play 2–3 warm-up gigs in NL ahead of festival season",
+      "Batch-produce content from gig nights (reels, behind-scenes)",
+      "Release EP / second single",
+      "Pitch EP to editorial playlists + press contacts",
+      "Confirm all summer festival logistics",
+      "Final outreach push to any un-responded festival targets",
+    ],
+  },
+  {
+    date: "Jun 2027", phase: "4 · Season",
+    headline: "Afro Nation week + summer start",
+    deliverable: "Afro Nation content + next booking from the set",
+    tasks: [
+      "Play Afro Nation Portugal — document everything",
+      "Post daily from festival — stories, reels, TikToks",
+      "Collect contact details of fellow artists, bookers encountered",
+      "Follow up with any booker/programmer who attended the set",
+      "Pitch any remaining summer festival spots",
+    ],
+  },
+  {
+    date: "Jul 2027", phase: "4 · Season",
+    headline: "Festival run peak",
+    deliverable: "Gig log with contacts, footage, and data",
+    tasks: [
+      "Execute festival bookings — maintain energy and professionalism",
+      "Log every gig: venue, promoter contact, fee, attendance, video clip",
+      "Collect testimonials from promoters after each show",
+      "Keep posting: 3× per week minimum through the season",
+      "Track streaming stats weekly — note any spikes after gigs",
+    ],
+  },
+  {
+    date: "Aug 2027", phase: "4 · Season",
+    headline: "Festival run + UK push",
+    deliverable: "Rebook list + UK intro emails sent",
+    tasks: [
+      "Final summer festival gigs",
+      "Build rebook list: promoters to contact for 2028 immediately",
+      "Send UK intro emails using ESNS contacts (Great Escape connection)",
+      "Compile post-summer data: streams, gig count, audience size",
+      "Update EPK with summer results",
+      "Begin evaluating booking agencies — who makes sense now?",
+    ],
+  },
+  {
+    date: "Sep 2027", phase: "5 · Leverage",
+    headline: "Turn summer into an agent deal",
+    deliverable: "Agent shortlist + formal intro meetings",
+    tasks: [
+      "Compile the 'summer deck': stats, footage, press, rebook list",
+      "Identify 3–5 target booking agencies (see Agencies tab)",
+      "Send formal intro / pitch to each target agency",
+      "Follow up ESNS delegate contacts from January",
+      "Prepare for ADE October — book satellite show + conference pass",
+      "Release post-summer single or EP update track",
+    ],
+  },
+  {
+    date: "Oct–Dec 2027", phase: "5 · Leverage",
+    headline: "ADE + World Tour legs",
+    deliverable: "Agent signed or in final negotiation — 2028 plan ready",
+    tasks: [
+      "Play ADE satellite show — maximise industry visibility",
+      "Attend ADE conference: agent meetings, label meetings",
+      "Close agency deal or finalise terms",
+      "Plan 2028 routing: EU tour legs, UK return, potential US/MENA leg",
+      "Set 2028 festival pitch targets — this time with an agent",
+      "Brief agent on 2028 strategy",
+    ],
+  },
+];
 
-  const phaseColor: Record<string, string> = { A: "#4CAF50", B: "#FFD700", C: T.accent };
+function TimelineView() {
+  const [expanded, setExpanded] = useState<string>("Oct 2026");
+  const phaseColor: Record<string, string> = {
+    "1": "#4CAF50", "2": "#FFD700", "3": "#f59e0b", "4": T.accent, "5": "#a78bfa",
+  };
+
+  const getPhaseNum = (phase: string) => phase.split(" ")[0];
 
   return (
     <div>
-      <p style={{ ...label9, marginBottom: 20 }}>13-Month Plan</p>
+      <p style={{ ...label9, marginBottom: 20 }}>13-Month Plan — click a month to expand</p>
       <div style={{ position: "relative", paddingLeft: 32 }}>
-        <div style={{
-          position: "absolute", left: 8, top: 8, bottom: 8,
-          width: 2, background: T.border2,
-        }} />
-        {milestones.map((m, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: 20, position: "relative" }}>
-            <div style={{
-              position: "absolute", left: -28, top: 4,
-              width: 12, height: 12, borderRadius: "50%",
-              background: m.active ? phaseColor[m.phase] : T.border2,
-              border: `2px solid ${phaseColor[m.phase]}`,
-              boxSizing: "border-box",
-            }} />
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted, minWidth: 70 }}>{m.date}</span>
-                <span style={{ fontFamily: T.font, fontSize: 12, color: m.active ? T.text : T.muted }}>{m.label}</span>
-                <span style={{
-                  fontFamily: T.font, fontSize: 9, padding: "1px 6px",
-                  background: `${phaseColor[m.phase]}22`, color: phaseColor[m.phase],
-                  letterSpacing: "0.1em",
-                }}>Phase {m.phase}</span>
-                {m.active && (
-                  <span style={{ fontFamily: T.font, fontSize: 9, color: T.accent, letterSpacing: "0.12em" }}>◆ NOW</span>
+        <div style={{ position: "absolute", left: 8, top: 0, bottom: 0, width: 2, background: T.border2 }} />
+        {TIMELINE_MONTHS.map((m) => {
+          const isOpen = expanded === m.date;
+          const pNum = getPhaseNum(m.phase);
+          const pColor = phaseColor[pNum] || T.muted;
+          const isPast = false;
+          return (
+            <div key={m.date} style={{ position: "relative", marginBottom: 12 }}>
+              <div style={{
+                position: "absolute", left: -28, top: 10,
+                width: 12, height: 12, borderRadius: "50%",
+                background: m.active ? pColor : T.border2,
+                border: `2px solid ${pColor}`,
+                boxSizing: "border-box",
+              }} />
+              <div
+                onClick={() => setExpanded(isOpen ? "" : m.date)}
+                style={{
+                  ...card, marginBottom: 0, cursor: "pointer",
+                  borderColor: m.active ? T.accent : isOpen ? T.border2 : T.border,
+                  background: m.active ? "#1a0808" : T.bg,
+                  opacity: isPast ? 0.5 : 1,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                  <span style={{ fontFamily: T.font, fontSize: 11, color: m.active ? T.text : T.muted, minWidth: 80 }}>{m.date}</span>
+                  <span style={{
+                    fontFamily: T.font, fontSize: 9, padding: "1px 6px",
+                    background: `${pColor}22`, color: pColor, letterSpacing: "0.1em", flexShrink: 0,
+                  }}>Phase {m.phase}</span>
+                  <span style={{ fontFamily: T.font, fontSize: 12, color: m.active ? T.text : T.muted, flex: 1 }}>{m.headline}</span>
+                  {m.active && <span style={{ fontFamily: T.font, fontSize: 9, color: T.accent, letterSpacing: "0.12em", flexShrink: 0 }}>◆ NOW</span>}
+                  <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted, flexShrink: 0 }}>{isOpen ? "▲" : "▼"}</span>
+                </div>
+                {isOpen && (
+                  <div style={{ marginTop: 14 }}>
+                    <div style={{ fontFamily: T.font, fontSize: 10, color: pColor, marginBottom: 10, letterSpacing: "0.1em" }}>
+                      DELIVERABLE: {m.deliverable}
+                    </div>
+                    {m.tasks.map((t, i) => (
+                      <div key={i} style={{
+                        display: "flex", gap: 10, paddingBottom: 8,
+                        borderBottom: i < m.tasks.length - 1 ? `1px solid ${T.border}` : "none",
+                        marginBottom: 8,
+                      }}>
+                        <span style={{ fontFamily: T.font, fontSize: 10, color: T.accent, flexShrink: 0, marginTop: 1 }}>→</span>
+                        <span style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.6 }}>{t}</span>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -296,6 +488,8 @@ function FestivalsView() {
   const { data, loading, save } = useSection<Festival[]>("festivals");
   const [items, setItems] = useState<Festival[]>([]);
   const [filter, setFilter] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"board" | "list">("list");
 
   useEffect(() => { if (data) setItems(data); }, [data]);
 
@@ -308,46 +502,138 @@ function FestivalsView() {
   if (loading || !items.length) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
 
   const statuses = ["Not started", "Pitched", "Confirmed", "Rejected", "On hold"];
-  const cols = statuses.slice(0, 4);
   const filtered = filter
-    ? items.filter(f => f.name.toLowerCase().includes(filter.toLowerCase()) || f.country.toLowerCase().includes(filter.toLowerCase()))
+    ? items.filter(f =>
+        f.name.toLowerCase().includes(filter.toLowerCase()) ||
+        f.country.toLowerCase().includes(filter.toLowerCase()) ||
+        f.tier.toLowerCase().includes(filter.toLowerCase()) ||
+        f.region.toLowerCase().includes(filter.toLowerCase())
+      )
     : items;
+
+  const tierOrder: Record<string, number> = { A: 0, B: 1, C: 2 };
+  const sorted = [...filtered].sort((a, b) => (tierOrder[a.tier] ?? 9) - (tierOrder[b.tier] ?? 9));
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
         <p style={{ ...label9, margin: 0 }}>Festival Pipeline ({items.length})</p>
         <input
-          style={{ ...inputStyle, width: 180 }}
-          placeholder="Filter by name / country…"
+          style={{ ...inputStyle, width: 200 }}
+          placeholder="Filter name / country / tier / region…"
           value={filter}
           onChange={e => setFilter(e.target.value)}
         />
+        <div style={{ display: "flex", gap: 0, marginLeft: "auto" }}>
+          {(["list", "board"] as const).map(m => (
+            <button key={m} onClick={() => setViewMode(m)} style={{
+              ...ghostBtn,
+              background: viewMode === m ? T.accent : "transparent",
+              color: viewMode === m ? T.text : T.accent,
+              borderRadius: 0, padding: "4px 12px", fontSize: 10,
+            }}>{m.toUpperCase()}</button>
+          ))}
+        </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
-        {cols.map(col => {
-          const colItems = filtered.filter(f => f.status === col);
-          return (
-            <div key={col}>
-              <div style={{ ...label9, marginBottom: 8 }}>{col} ({colItems.length})</div>
-              {colItems.map(f => (
-                <div key={f.id} style={{ ...card, padding: "10px 12px" }}>
-                  <div style={{ fontFamily: T.font, fontSize: 11, color: T.text, marginBottom: 4 }}>{f.name}</div>
-                  <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginBottom: 6 }}>{f.city}, {f.country}</div>
-                  <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginBottom: 8 }}>{f.dates2027}</div>
-                  <select
-                    value={f.status}
-                    onChange={e => updateStatus(f.id, e.target.value)}
-                    style={{ ...inputStyle, width: "100%", fontSize: 10 }}
-                  >
-                    {statuses.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+
+      {viewMode === "list" ? (
+        <div>
+          {["A", "B", "C"].map(tier => {
+            const tierItems = sorted.filter(f => f.tier === tier);
+            if (!tierItems.length) return null;
+            return (
+              <div key={tier} style={{ marginBottom: 20 }}>
+                <div style={{ ...label9, marginBottom: 8, color: tier === "A" ? "#4CAF50" : tier === "B" ? "#FFD700" : T.muted }}>
+                  TIER {tier} — {tierItems.length} festivals
                 </div>
-              ))}
-            </div>
-          );
-        })}
-      </div>
+                {tierItems.map(f => {
+                  const isOpen = expandedId === f.id;
+                  return (
+                    <div key={f.id} style={{ ...card, marginBottom: 8 }}>
+                      <div
+                        onClick={() => setExpandedId(isOpen ? null : f.id)}
+                        style={{ cursor: "pointer", display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-start" }}
+                      >
+                        <div style={{ flex: "1 1 180px", minWidth: 0 }}>
+                          <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, marginBottom: 3 }}>{f.name}</div>
+                          <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{f.city}, {f.country} · {f.timing}</div>
+                          <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginTop: 2 }}>{f.genre}</div>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", flexShrink: 0 }}>
+                          <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>Pitch by {f.pitchBy}</div>
+                          <select
+                            value={f.status}
+                            onChange={e => { e.stopPropagation(); updateStatus(f.id, e.target.value); }}
+                            onClick={e => e.stopPropagation()}
+                            style={{ ...inputStyle, fontSize: 10 }}
+                          >
+                            {statuses.map(s => <option key={s} value={s}>{s}</option>)}
+                          </select>
+                          <span style={{ fontFamily: T.font, fontSize: 9, color: T.muted }}>{isOpen ? "▲" : "▼ details"}</span>
+                        </div>
+                      </div>
+                      {isOpen && (
+                        <div style={{ marginTop: 12, borderTop: `1px solid ${T.border}`, paddingTop: 12 }}>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 16px", marginBottom: 10 }}>
+                            <div><span style={{ ...label9, marginRight: 4 }}>Entry:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{f.entryRoute}</span></div>
+                            <div><span style={{ ...label9, marginRight: 4 }}>Target:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{f.target}</span></div>
+                            <div><span style={{ ...label9, marginRight: 4 }}>2027 Dates:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{f.dates2027 || "TBC"}</span></div>
+                            <div><span style={{ ...label9, marginRight: 4 }}>Website:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.accent }}>{f.website}</span></div>
+                          </div>
+                          {f.notes && (
+                            <div style={{ marginBottom: 8 }}>
+                              <div style={{ ...label9, marginBottom: 4 }}>NOTES</div>
+                              <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.6 }}>{f.notes}</div>
+                            </div>
+                          )}
+                          {f.pitchRoute && (
+                            <div>
+                              <div style={{ ...label9, marginBottom: 4, color: T.accent }}>HOW TO PITCH</div>
+                              <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{f.pitchRoute}</div>
+                            </div>
+                          )}
+                          {f.contact && (
+                            <div style={{ marginTop: 8 }}>
+                              <span style={{ ...label9, marginRight: 4 }}>Contact:</span>
+                              <span style={{ fontFamily: T.font, fontSize: 11, color: T.accent }}>{f.contact}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* Board view — kanban by status */
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+          {statuses.slice(0, 4).map(col => {
+            const colItems = sorted.filter(f => f.status === col);
+            return (
+              <div key={col}>
+                <div style={{ ...label9, marginBottom: 8 }}>{col} ({colItems.length})</div>
+                {colItems.map(f => (
+                  <div key={f.id} style={{ ...card, padding: "10px 12px" }}>
+                    <div style={{ fontFamily: T.font, fontSize: 11, color: T.text, marginBottom: 4 }}>{f.name}</div>
+                    <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginBottom: 4 }}>{f.city}, {f.country}</div>
+                    <div style={{ fontFamily: T.font, fontSize: 9, color: T.muted, marginBottom: 6 }}>Tier {f.tier} · {f.timing}</div>
+                    <select
+                      value={f.status}
+                      onChange={e => updateStatus(f.id, e.target.value)}
+                      style={{ ...inputStyle, width: "100%", fontSize: 10 }}
+                    >
+                      {statuses.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -357,6 +643,7 @@ function FestivalsView() {
 function ShowcasesView() {
   const { data, loading, save } = useSection<Showcase[]>("showcases");
   const [items, setItems] = useState<Showcase[]>([]);
+  const [expanded, setExpanded] = useState<number | null>(null);
 
   useEffect(() => { if (data) setItems(data); }, [data]);
 
@@ -369,30 +656,78 @@ function ShowcasesView() {
   if (loading || !items.length) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
 
   const statuses = ["Not started", "Research", "Applied", "Confirmed", "Rejected"];
+  const deadlineUrgent = (dl: string) => {
+    if (!dl) return false;
+    const d = new Date(dl);
+    const now = new Date();
+    return (d.getTime() - now.getTime()) < 90 * 24 * 60 * 60 * 1000;
+  };
 
   return (
     <div>
-      <p style={{ ...label9, marginBottom: 16 }}>Industry Showcases & Key Festivals</p>
-      {items.map(s => (
-        <div key={s.id} style={{ ...card, display: "flex", flexWrap: "wrap", gap: 12, alignItems: "flex-start" }}>
-          <div style={{ flex: "1 1 180px", minWidth: 0 }}>
-            <div style={{ fontFamily: T.font, fontSize: 13, color: T.text, marginBottom: 4 }}>{s.name}</div>
-            <div style={{ fontFamily: T.font, fontSize: 11, color: T.muted }}>{s.location} · {s.when}</div>
-            <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginTop: 4 }}>{s.notes}</div>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", flexShrink: 0 }}>
-            <FitBadge fit={s.fit} />
-            <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>Deadline: {s.deadline}</div>
-            <select
-              value={s.status}
-              onChange={e => updateStatus(s.id, e.target.value)}
-              style={{ ...inputStyle, fontSize: 10 }}
+      <p style={{ ...label9, marginBottom: 16 }}>Industry Showcases ({items.length}) — click to expand</p>
+      {items.map(s => {
+        const isOpen = expanded === s.id;
+        const urgent = deadlineUrgent(s.deadline);
+        return (
+          <div key={s.id} style={{ ...card, marginBottom: 10 }}>
+            <div
+              onClick={() => setExpanded(isOpen ? null : s.id)}
+              style={{ cursor: "pointer" }}
             >
-              {statuses.map(st => <option key={st} value={st}>{st}</option>)}
-            </select>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "flex-start" }}>
+                <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+                  <div style={{ fontFamily: T.font, fontSize: 13, color: T.text, marginBottom: 4 }}>{s.name}</div>
+                  <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{s.city}, {s.country} · {s.dates2027}</div>
+                  <div style={{
+                    fontFamily: T.font, fontSize: 10, marginTop: 4,
+                    color: urgent ? "#FFD700" : T.muted,
+                  }}>{s.deadlineNote}</div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", flexShrink: 0 }}>
+                  <select
+                    value={s.status}
+                    onChange={e => { e.stopPropagation(); updateStatus(s.id, e.target.value); }}
+                    onClick={e => e.stopPropagation()}
+                    style={{ ...inputStyle, fontSize: 10 }}
+                  >
+                    {statuses.map(st => <option key={st} value={st}>{st}</option>)}
+                  </select>
+                  <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>
+                    {isOpen ? "▲ collapse" : "▼ details"}
+                  </span>
+                </div>
+              </div>
+            </div>
+            {isOpen && (
+              <div style={{ marginTop: 14, borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ ...label9, marginBottom: 4, color: T.accent }}>APPLICATION</div>
+                  <div style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{s.artistApplication}</div>
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ ...label9, marginBottom: 4, color: "#4CAF50" }}>WHY IT MATTERS</div>
+                  <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.7 }}>{s.whyItMatters}</div>
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ ...label9, marginBottom: 4, color: "#FFD700" }}>RECOMMENDED MOVE</div>
+                  <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.7 }}>{s.recommendedMove}</div>
+                </div>
+                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                  <div>
+                    <span style={{ ...label9, marginRight: 6 }}>Source:</span>
+                    <span style={{ fontFamily: T.font, fontSize: 11, color: T.muted }}>{s.source}</span>
+                  </div>
+                  <div>
+                    <span style={{ ...label9, marginRight: 6 }}>Website:</span>
+                    <span style={{ fontFamily: T.font, fontSize: 11, color: T.accent }}>{s.website}</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -879,7 +1214,7 @@ export default function ManagementSection() {
     }}>
       {NAV.map(group => (
         <div key={group.label} style={{ marginBottom: 16 }}>
-          <div style={{ ...label9, padding: "0 16px", marginBottom: 6 }}>{group.label}</div>
+          <div style={{ ...label9, padding: "0 16px", marginBottom: 6, color: T.text, fontWeight: 700 }}>{group.label}</div>
           {group.items.map(item => (
             <button key={item} onClick={() => navigate(item)} style={{
               display: "block", width: "100%", textAlign: "left",
