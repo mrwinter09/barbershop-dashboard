@@ -61,7 +61,7 @@ async function writeFileToGitHub(
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const section = req.query.section as string;
-  const validSections = ["home", "videos", "tour", "bio"];
+  const validSections = ["home", "videos", "tour", "bio", "festivals", "agencies"];
   if (!section || !validSections.includes(section)) {
     return res.status(400).json({ error: "Invalid section" });
   }
