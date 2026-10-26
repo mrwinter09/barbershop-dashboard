@@ -507,7 +507,7 @@ function FestivalsView() {
     setImportMsg("Reading file…");
     const ab = await file.arrayBuffer();
     try {
-      const { read, utils } = await import("https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm" as string) as typeof import("xlsx");
+      const { read, utils } = await import("xlsx");
       const wb = read(ab, { type: "array" });
       const sheetName = wb.SheetNames.find(n => n.toLowerCase().includes("new market")) || wb.SheetNames[0];
       const ws = wb.Sheets[sheetName];
