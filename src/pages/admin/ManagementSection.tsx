@@ -739,6 +739,29 @@ function OutreachView() {
 
   const steps = [
     {
+      n: 0, label: "Verkenning Email (2027 nog onzeker)",
+      body: `Subject: DJ Donn Stone — [Festival Naam] 2027 — Orientatie
+
+Hi [Name],
+
+Mijn naam is Ivan, ik manage DJ Donn Stone — een Rotterdam-gebaseerde Afro-electronic DJ die de afgelopen jaren een sterke naam heeft opgebouwd in de NL clubscene.
+
+Donn speelde o.a. bij Paradiso Amsterdam (Parallel stage), Toffler Rotterdam (all-night sets), Bairro (zomerresidentie 2026) en is een officieel Amsterdam Dance Event artist. Zijn geluid is geworteld in de SA Afro-electronic scene en brengt een cultureel rijke, dansbare energie naar elk podium.
+
+We zijn momenteel onze festivalkalender voor 2027 aan het opbouwen en [Festival Naam] staat hoog op onze lijst — het publiek en de sfeer passen perfect bij wat Donn brengt.
+
+Mijn vraag: gaat [Festival Naam] in 2027 door, en zo ja — wanneer openen de artist applications of hoe kunnen artiesten zich aanmelden?
+
+Alvast onze EPK voor je referentie: donnstone.com
+
+Dank je wel en graag tot contact.
+
+Met vriendelijke groet,
+Ivan
+Management DJ Donn Stone
+mgmt@donnstone.com`,
+    },
+    {
       n: 1, label: "Research",
       body: "Find the right contact — promoter, talent buyer, or booker. Check socials and past line-ups to confirm fit before reaching out.",
     },
