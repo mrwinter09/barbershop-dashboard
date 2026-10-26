@@ -763,73 +763,125 @@ mgmt@donnstone.com`,
     },
     {
       n: 1, label: "Research",
-      body: "Find the right contact — promoter, talent buyer, or booker. Check socials and past line-ups to confirm fit before reaching out.",
+      body: `Find the right contact by name — promoter, talent buyer or booker of the stage that fits Donn. Check socials, RA and past line-ups: did they book Afro-electronic / amapiano DJs before? Note one event of theirs to mention. Log name, role and date in the tracker.`,
     },
     {
       n: 2, label: "First Email",
-      body: `Subject: DJ Donn Stone — [Event/Festival Name] 2027 Booking Inquiry
+      body: `Subject: Afro-electronic DJ for [Event] 2027 — quick question
 
 Hi [Name],
 
-My name is Ivan, I manage DJ Donn Stone — a Rotterdam-based Afro-electronic DJ with a growing profile in the NL scene.
+I'm Ivan, manager of Donn Stone, an Afro-electronic DJ from Rotterdam (Paradiso, ADE, Bairro summer residency 2026).
 
-Donn brings a high-energy Afro-electronic sound rooted in SA culture, built for festival floors and club nights. He's currently booking for 2027.
+Saw [their event / line-up] — quick question before I pitch anything: are you booking Afro-electronic DJs for [Event] 2027, and when do you usually lock your line-up?
 
-I'd love to explore whether Donn could be a fit for [Event] 2027. Would you be open to a quick call or email exchange? I'll keep it brief.
+60-sec clip: [link]
+EPK: donnstone.com
 
-Best,
+A one-line answer already helps.
+
+Ivan Winter
+Management — Donn Stone
+booking@donnstone.com · [phone]`,
+    },
+    {
+      n: 3, label: "Follow-up 1 (Day 7)",
+      body: `Hi [Name],
+
+Bumping this once in case it got buried. Even a "not for us" or "ask again in [month]" helps me plan.
+
 Ivan`,
     },
     {
-      n: 3, label: "Follow-up 1 (Day 5)",
+      n: 4, label: "Follow-up 2 (Day 14 — last one)",
       body: `Hi [Name],
 
-Just a short follow-up on my email below. Happy to send over our EPK or a set recording — whatever's most useful for your review.
+Last one from me — I'll take it this isn't the right moment for [Event] 2027. If anything changes, Donn's latest set is here: [link]
 
-Best,
+Thanks for your time.
+
 Ivan`,
     },
     {
-      n: 4, label: "Follow-up 2 (Day 10)",
+      n: 5, label: "On Response (they're interested)",
       body: `Hi [Name],
 
-Last nudge from me. If timing isn't right for [Event] this cycle, I'd still love to keep the conversation open for a future edition.
+Thanks for coming back. Happy to share more — what would be most useful: a full recent set, his tech & hospitality rider, or availability for specific dates?
 
-Here's a recent mix: [link]
+Full set: [link]
+EPK: donnstone.com
 
-Best,
+Which date(s) and slot are you thinking of?
+
 Ivan`,
     },
     {
-      n: 5, label: "EPK Send (on response)",
+      n: 6, label: "Offer (once there's a date)",
       body: `Hi [Name],
 
-Great to hear from you! Attaching our EPK with bio, links, and tech rider. Happy to answer any questions.
+Here's a clear offer for [date] at [event/venue]:
 
-Best,
-Ivan`,
-    },
-    {
-      n: 6, label: "Deal Discussion",
-      body: `Hi [Name],
+• Fee: [amount + currency] (excl. VAT)
+• Set: [length], [time slot]
+• Travel: return [flight/train] for 2 (artist + manager) from Rotterdam
+• Hotel: 2 rooms, [nights] night(s)
+• Ground transport: airport/station – hotel – venue
+• 50% deposit on signing, balance before the show
 
-Thanks for your interest! For [Event] we're looking at a fee of €[X] + travel. Happy to discuss.
+If you prefer one all-in number, that's [all-in amount] and we book travel ourselves.
 
-What does your typical deal structure look like?
+Happy to work around your budget — tell me what fits.
 
-Best,
-Ivan`,
+Ivan
+
+(NL shows only: remove travel & hotel lines)`,
     },
     {
       n: 7, label: "Confirmation",
       body: `Hi [Name],
 
-Great — let's confirm the booking for [date / event name]. Can you send over the contract? We'll get it signed and back to you quickly.
+Great — confirming Donn Stone for [event], [date], [set time].
+
+Attached: our performance agreement with the deal sheet filled in, plus Donn's tech & hospitality rider. Once it's signed and the 50% deposit is in, we're fully confirmed.
 
 Looking forward to it.
 
-Best,
-Ivan`,
+Ivan Winter
+Management — Donn Stone`,
+    },
+    {
+      n: 8, label: "Advance (10–14 days before show)",
+      body: `Subject: Advance — Donn Stone, [event], [date]
+
+Hi [Name],
+
+Advancing [date] so everything runs smoothly on the day:
+
+• Set time & changeover: [time] — please confirm
+• Booth: DJM-V10, RMX-1000, 3× CDJ-3000 (Player 1 left of the mixer, Players 2 & 3 right), SM58, 2 monitors + sub — as per the rider
+• Tickets for Donn + Ivan: [received / please send]
+• Hotel booking reference: [ ]
+• Pick-up times & driver contact: [ ]
+• Guest list (5): names to follow
+• Day-of contact: [name + phone]
+
+Rider attached again for your sound engineer. Thanks — looking forward to it.
+
+Ivan Winter
+Management — Donn Stone`,
+    },
+    {
+      n: 9, label: "After the Show (within 24h)",
+      body: `Subject: Thank you — [event]
+
+Hi [Name],
+
+Thanks for having Donn at [event] — [one specific moment from the night]. Clips are going up today, we'll tag you.
+
+Would you have him back? If yes, what dates are you looking at for [next edition / 2027–2028]?
+
+Ivan Winter
+Management — Donn Stone`,
     },
   ];
 
