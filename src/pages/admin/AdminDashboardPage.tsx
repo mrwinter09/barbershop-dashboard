@@ -10,12 +10,12 @@ type Section = (typeof SECTIONS)[number];
 
 const MGMT_NAV = [
   { group: "OVERVIEW", items: ["Timeline", "Dashboard"] },
-  { group: "EXECUTION", items: ["Checklist", "Festivals", "Showcases"] },
+  { group: "EXECUTION", items: ["Checklist", "Festivals", "WorldTour"] },
   { group: "OUTREACH", items: ["Outreach", "Marketing"] },
   { group: "DEALS", items: ["Calculator"] },
   { group: "AGENCIES", items: ["Agencies"] },
 ] as const;
-type MgmtView = "Timeline" | "Dashboard" | "Checklist" | "Festivals" | "Showcases" | "Outreach" | "Marketing" | "Calculator" | "Agencies";
+type MgmtView = "Timeline" | "Dashboard" | "Checklist" | "Festivals" | "WorldTour" | "Outreach" | "Marketing" | "Calculator" | "Agencies";
 
 const S = {
   input: {

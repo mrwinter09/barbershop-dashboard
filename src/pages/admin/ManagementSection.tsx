@@ -1482,6 +1482,458 @@ function CalculatorView() {
   );
 }
 
+// ─── World Tour view ──────────────────────────────────────────────────────────
+
+interface TourOrg {
+  name: string; type: string; what: string; contactRoute: string; message: string;
+  status: string; dateSent: string; reply: string; nextStep: string; source: string;
+  pitched: boolean; ig: string; email: string; notes: string;
+}
+interface TourCalc {
+  // Run 1
+  window?: string; days?: string[]; flightPP?: number; persons?: number;
+  hotelPerNight?: number; rooms?: number; nights?: number; localTransport?: number;
+  tripCost?: number; avgFee?: number; feeSource?: string; donnTarget?: number; showsNeeded?: number;
+  lockedFees?: number[]; counterOffers?: Record<string, number>;
+  // Run 2
+  festivalAnchor?: string; note?: string; avgClubFee?: number; clubShows?: number;
+  festivalFeeNeeded?: number; festivalLocked?: boolean; festivalFeeAgreed?: number;
+}
+interface TourCountry {
+  num: number; name: string; route: string; window: string; why: string; visa: string;
+  priority: string; status: string; run: number; orgs: TourOrg[]; calc: TourCalc;
+}
+
+const ORG_STATUSES = ["Not contacted","Message sent","Follow-up sent","Replied","In talks","Booked","Declined","Next year"];
+
+function WorldTourView() {
+  const { data, loading, save } = useSection<TourCountry[]>("worldtour");
+  const [items, setItems] = useState<TourCountry[]>([]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<Record<string, "overview"|"contacts"|"calc">>({});
+  const [copiedMsg, setCopiedMsg] = useState<string | null>(null);
+
+  useEffect(() => { if (data) setItems(data); }, [data]);
+
+  const updateCountry = (name: string, updater: (c: TourCountry) => TourCountry) => {
+    const updated = items.map(c => c.name === name ? updater(c) : c);
+    setItems(updated);
+    save(updated);
+  };
+
+  const updateOrg = (countryName: string, orgIdx: number, field: string, value: string | boolean) => {
+    updateCountry(countryName, c => ({
+      ...c,
+      orgs: c.orgs.map((o, i) => i === orgIdx ? { ...o, [field]: value } : o),
+    }));
+  };
+
+  const updateCalc = (countryName: string, field: string, value: number | boolean | number[]) => {
+    updateCountry(countryName, c => ({ ...c, calc: { ...c.calc, [field]: value } }));
+  };
+
+  const copyMsg = (msg: string, key: string) => {
+    navigator.clipboard.writeText(msg);
+    setCopiedMsg(key);
+    setTimeout(() => setCopiedMsg(null), 2000);
+  };
+
+  if (loading || !items.length) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
+
+  const run1 = items.filter(c => c.run === 1);
+  const run2 = items.filter(c => c.run === 2);
+
+  const priorityColor = (p: string) => {
+    if (p === "High") return "#4CAF50";
+    if (p === "Medium") return "#FFD700";
+    return T.muted;
+  };
+
+  const statusColor = (s: string) => {
+    if (s === "Booked") return "#4CAF50";
+    if (s === "In talks" || s === "Building") return "#FFD700";
+    if (s === "Declined") return "#FF6B6B";
+    return T.muted;
+  };
+
+  const countryStatuses = ["Not started","Building","Pitched","In talks","Booked","On hold"];
+
+  const renderCountryCard = (c: TourCountry) => {
+    const key = c.name;
+    const isOpen = expandedId === key;
+    const tab = activeTab[key] || "overview";
+    const pitchedCount = c.orgs.filter(o => o.pitched).length;
+    const calc = c.calc || {};
+
+    // Financial calc for Run 1
+    const lockedFees: number[] = calc.lockedFees || [];
+    const counterOffers: Record<string,number> = calc.counterOffers || {};
+    const avgFee = calc.avgFee || 0;
+    const showsNeeded = calc.showsNeeded || 0;
+    const tripCost = calc.tripCost || 0;
+    const donnTarget = calc.donnTarget || 2000;
+
+    // Compute totals
+    const orgFees = c.orgs.map((_, i) => {
+      if (lockedFees[i] != null && lockedFees[i] > 0) return lockedFees[i];
+      if (counterOffers[String(i)] != null && counterOffers[String(i)] > 0) return counterOffers[String(i)];
+      return 0;
+    });
+    const hasAnyFees = orgFees.some(f => f > 0);
+    const totalFees = hasAnyFees ? orgFees.reduce((a, b) => a + b, 0) : avgFee * showsNeeded;
+    const ivanCut = Math.round(totalFees * 0.15);
+    const donnNet = Math.round(totalFees - ivanCut - tripCost);
+    const isProfit = donnNet >= donnTarget;
+
+    // Run 2
+    const isRun2 = c.run === 2;
+    const clubFees = (calc.avgClubFee || 0) * (calc.clubShows || 4);
+    const festFee = calc.festivalLocked ? (calc.festivalFeeAgreed || 0) : (calc.festivalFeeNeeded || 0);
+    const run2Total = isRun2 ? clubFees + festFee : 0;
+    const run2Ivan = Math.round(run2Total * 0.15);
+    const run2Net = Math.round(run2Total - run2Ivan - (calc.tripCost || 0));
+
+    return (
+      <div key={key} style={{ ...card, marginBottom: 8 }}>
+        {/* Header row */}
+        <div onClick={() => setExpandedId(isOpen ? null : key)} style={{ cursor: "pointer" }}>
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", flexWrap: "wrap" }}>
+            <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+                <span style={{ fontFamily: T.font, fontSize: 13, color: T.text }}>{c.name}</span>
+                <span style={{ fontFamily: T.font, fontSize: 9, color: priorityColor(c.priority), border: `1px solid ${priorityColor(c.priority)}`, padding: "1px 5px" }}>{c.priority}</span>
+                <span style={{ fontFamily: T.font, fontSize: 9, color: c.run === 1 ? T.accent : "#7a6aaa", border: `1px solid ${c.run === 1 ? T.accent : "#7a6aaa"}`, padding: "1px 5px" }}>RUN {c.run}</span>
+              </div>
+              <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{c.route} · {c.window}</div>
+              <div style={{ display: "flex", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
+                {c.orgs.map((o, i) => (
+                  <span key={i} style={{
+                    fontFamily: T.font, fontSize: 9, padding: "1px 6px",
+                    background: o.pitched ? `${T.accent}33` : T.border,
+                    color: o.pitched ? T.accent : T.muted,
+                    border: `1px solid ${o.pitched ? T.accent : T.border2}`,
+                  }}>{o.name.split(" ")[0]}{o.pitched ? " ✓" : ""}</span>
+                ))}
+                {pitchedCount > 0 && <span style={{ fontFamily: T.font, fontSize: 9, color: T.accent }}>{pitchedCount}/3 pitched</span>}
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", flexShrink: 0 }}>
+              <select
+                value={c.status}
+                onChange={e => { e.stopPropagation(); updateCountry(c.name, cc => ({ ...cc, status: e.target.value })); }}
+                onClick={e => e.stopPropagation()}
+                style={{ ...inputStyle, fontSize: 10, color: statusColor(c.status) }}
+              >
+                {countryStatuses.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <span style={{ fontFamily: T.font, fontSize: 9, color: T.muted }}>{isOpen ? "▲" : "▼ details"}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Expanded */}
+        {isOpen && (
+          <div style={{ marginTop: 12, borderTop: `1px solid ${T.border}`, paddingTop: 12 }}>
+            {/* Tab bar */}
+            <div style={{ display: "flex", gap: 0, marginBottom: 14, borderBottom: `1px solid ${T.border}` }}>
+              {(["overview","contacts","calc"] as const).map(t => (
+                <button key={t} onClick={() => setActiveTab(prev => ({ ...prev, [key]: t }))} style={{
+                  fontFamily: T.font, fontSize: 10, letterSpacing: "0.1em", background: "none",
+                  border: "none", borderBottom: tab === t ? `2px solid ${T.accent}` : "2px solid transparent",
+                  color: tab === t ? T.text : T.muted, padding: "6px 14px", cursor: "pointer",
+                }}>
+                  {t === "overview" ? "OVERVIEW" : t === "contacts" ? `CONTACTS (${c.orgs.length})` : "CALCULATOR"}
+                </button>
+              ))}
+            </div>
+
+            {/* OVERVIEW tab */}
+            {tab === "overview" && (
+              <div>
+                <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.7, marginBottom: 12 }}>{c.why}</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 16px", marginBottom: 12 }}>
+                  <div><span style={{ ...label9, marginRight: 4 }}>Route:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{c.route}</span></div>
+                  <div><span style={{ ...label9, marginRight: 4 }}>Window:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.accent }}>{c.window}</span></div>
+                  <div style={{ gridColumn: "1/-1" }}><span style={{ ...label9, marginRight: 4 }}>Visa:</span><span style={{ fontFamily: T.font, fontSize: 11, color: "#FFD700" }}>{c.visa}</span></div>
+                </div>
+                {calc.days && (
+                  <div>
+                    <div style={{ ...label9, marginBottom: 8, color: T.accent }}>5-DAY PLAN</div>
+                    {calc.days.map((d, i) => (
+                      <div key={i} style={{ display: "flex", gap: 10, padding: "6px 0", borderBottom: i < 4 ? `1px solid ${T.border}` : "none" }}>
+                        <span style={{ fontFamily: T.font, fontSize: 10, color: T.accent, minWidth: 40, flexShrink: 0 }}>DAY {i+1}</span>
+                        <span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{d}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {isRun2 && calc.festivalAnchor && (
+                  <div style={{ marginTop: 12, padding: "8px 10px", background: "#1a0a2a", border: `1px solid #7a6aaa` }}>
+                    <div style={{ ...label9, marginBottom: 4, color: "#7a6aaa" }}>FESTIVAL ANCHOR</div>
+                    <div style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{calc.festivalAnchor}</div>
+                    {calc.note && <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginTop: 4 }}>{calc.note}</div>}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* CONTACTS tab */}
+            {tab === "contacts" && (
+              <div>
+                {c.orgs.map((org, i) => (
+                  <div key={i} style={{ marginBottom: 16, padding: "12px", background: T.bg2, border: `1px solid ${T.border2}` }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
+                      <div>
+                        <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, marginBottom: 2 }}>{org.name}</div>
+                        <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{org.type} · {org.contactRoute}</div>
+                      </div>
+                      <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
+                        <button
+                          onClick={() => updateOrg(c.name, i, "pitched", !org.pitched)}
+                          style={{ ...org.pitched ? btn : ghostBtn, fontSize: 9, padding: "3px 10px" }}
+                        >
+                          {org.pitched ? "✓ PITCHED" : "PITCHED?"}
+                        </button>
+                        <select
+                          value={org.status}
+                          onChange={e => updateOrg(c.name, i, "status", e.target.value)}
+                          style={{ ...inputStyle, fontSize: 10 }}
+                        >
+                          {ORG_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                    {/* 3 contact fields */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 10px", marginBottom: 8 }}>
+                      <div>
+                        <div style={{ ...label9, marginBottom: 3 }}>Instagram / DM</div>
+                        <input style={{ ...inputStyle, width: "100%", boxSizing: "border-box" }} defaultValue={org.ig} placeholder="@handle" onBlur={e => updateOrg(c.name, i, "ig", e.target.value)} />
+                      </div>
+                      <div>
+                        <div style={{ ...label9, marginBottom: 3 }}>Email</div>
+                        <input style={{ ...inputStyle, width: "100%", boxSizing: "border-box" }} defaultValue={org.email} placeholder="booking@…" onBlur={e => updateOrg(c.name, i, "email", e.target.value)} />
+                      </div>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <div style={{ ...label9, marginBottom: 3 }}>Notes / reply</div>
+                      <textarea style={{ ...inputStyle, width: "100%", boxSizing: "border-box", minHeight: 48, resize: "vertical", lineHeight: 1.5 }} defaultValue={org.notes || org.reply} placeholder="Add notes, reply, next step…" onBlur={e => updateOrg(c.name, i, "notes", e.target.value)} />
+                    </div>
+                    {/* DM to copy */}
+                    {org.message && (
+                      <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                          <div style={{ ...label9, color: "#7a6aaa" }}>MESSAGE TO SEND</div>
+                          <button style={{ ...ghostBtn, fontSize: 9, padding: "2px 8px", borderColor: "#7a6aaa", color: "#7a6aaa" }} onClick={() => copyMsg(org.message, `${c.name}-${i}`)}>
+                            {copiedMsg === `${c.name}-${i}` ? "✓ Copied" : "Copy"}
+                          </button>
+                        </div>
+                        <pre style={{ fontFamily: T.font, fontSize: 10, color: T.muted, whiteSpace: "pre-wrap", margin: 0, lineHeight: 1.6, maxHeight: 120, overflow: "auto" }}>{org.message}</pre>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* CALCULATOR tab */}
+            {tab === "calc" && !isRun2 && (
+              <div>
+                {/* Trip costs */}
+                <div style={{ marginBottom: 14 }}>
+                  <div style={{ ...label9, marginBottom: 8, color: T.accent }}>TRIP COSTS</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 12px" }}>
+                    {[
+                      { label: "Flight p.p. (€)", field: "flightPP", val: calc.flightPP },
+                      { label: "Persons", field: "persons", val: calc.persons },
+                      { label: "Hotel p.n./room (€)", field: "hotelPerNight", val: calc.hotelPerNight },
+                      { label: "Rooms × Nights", field: "nights", val: calc.nights },
+                      { label: "Local transport (€)", field: "localTransport", val: calc.localTransport },
+                    ].map(({ label, field, val }) => (
+                      <div key={field}>
+                        <div style={{ ...label9, marginBottom: 3 }}>{label}</div>
+                        <input type="number" defaultValue={val || 0} style={{ ...inputStyle, width: "100%", boxSizing: "border-box" }}
+                          onBlur={e => updateCalc(c.name, field, parseFloat(e.target.value) || 0)} />
+                      </div>
+                    ))}
+                    <div>
+                      <div style={{ ...label9, marginBottom: 3 }}>Promoters pay (€)</div>
+                      <input type="number" defaultValue={calc.promotersPay || 0} style={{ ...inputStyle, width: "100%", boxSizing: "border-box" }}
+                        onBlur={e => updateCalc(c.name, "promotersPay", parseFloat(e.target.value) || 0)} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Per-org fee + locked/counter */}
+                <div style={{ marginBottom: 14 }}>
+                  <div style={{ ...label9, marginBottom: 8, color: "#4CAF50" }}>FEES PER SHOW</div>
+                  <div style={{ ...label9, marginBottom: 6, color: T.muted }}>Average fee: €{avgFee.toLocaleString()} · {calc.feeSource}</div>
+                  {c.orgs.map((org, i) => {
+                    const locked = lockedFees[i] > 0;
+                    const counter = counterOffers[String(i)];
+                    return (
+                      <div key={i} style={{ marginBottom: 8, padding: "8px 10px", background: locked ? "#0a1a0a" : T.border, border: `1px solid ${locked ? "#4CAF50" : T.border2}` }}>
+                        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                          <span style={{ fontFamily: T.font, fontSize: 11, color: T.text, flex: 1 }}>{org.name}</span>
+                          <button
+                            onClick={() => {
+                              const newFees = [...(lockedFees || [0,0,0])];
+                              newFees[i] = locked ? 0 : (counter || avgFee);
+                              updateCalc(c.name, "lockedFees", newFees);
+                            }}
+                            style={{ ...locked ? btn : ghostBtn, fontSize: 9, padding: "3px 8px", background: locked ? "#1a3a1a" : "transparent", borderColor: locked ? "#4CAF50" : T.border2, color: locked ? "#4CAF50" : T.muted }}
+                          >
+                            {locked ? "✓ LOCKED IN" : "LOCK IN"}
+                          </button>
+                        </div>
+                        <div style={{ display: "flex", gap: 8, marginTop: 6, alignItems: "center" }}>
+                          <span style={{ ...label9, marginRight: 2 }}>Fee (€)</span>
+                          <input type="number" placeholder={String(avgFee)}
+                            defaultValue={locked ? lockedFees[i] : (counter || "")}
+                            style={{ ...inputStyle, width: 90, fontSize: 11 }}
+                            onBlur={e => {
+                              const val = parseFloat(e.target.value) || 0;
+                              const newCounters = { ...(counterOffers || {}) };
+                              newCounters[String(i)] = val;
+                              updateCalc(c.name, "counterOffers", newCounters as unknown as number[]);
+                              if (locked) {
+                                const newFees = [...(lockedFees || [0,0,0])];
+                                newFees[i] = val;
+                                updateCalc(c.name, "lockedFees", newFees);
+                              }
+                            }}
+                          />
+                          {counter && counter < avgFee * 0.8 && !locked && (
+                            <span style={{ fontFamily: T.font, fontSize: 9, color: "#FF6B6B" }}>⚠ below avg</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Summary */}
+                <div style={{ borderTop: `1px solid ${T.border2}`, paddingTop: 12 }}>
+                  <div style={{ ...label9, marginBottom: 8, color: T.accent }}>RESULT</div>
+                  {[
+                    { label: `${showsNeeded} shows × €${avgFee.toLocaleString()}`, value: `€${totalFees.toLocaleString()}`, color: T.text },
+                    { label: "Ivan 15%", value: `−€${ivanCut.toLocaleString()}`, color: "#FF6B6B" },
+                    { label: "Trip cost", value: `−€${tripCost.toLocaleString()}`, color: "#FF6B6B" },
+                  ].map(({ label, value, color }) => (
+                    <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${T.border}` }}>
+                      <span style={{ fontFamily: T.font, fontSize: 11, color: T.muted }}>{label}</span>
+                      <span style={{ fontFamily: T.font, fontSize: 11, color }}>{value}</span>
+                    </div>
+                  ))}
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0 4px", background: isProfit ? "#0a1a0a" : "#1a0a0a", marginTop: 4, paddingLeft: 8, paddingRight: 8 }}>
+                    <span style={{ fontFamily: T.font, fontSize: 13, color: isProfit ? "#4CAF50" : "#FF6B6B" }}>DONN TAKES HOME</span>
+                    <span style={{ fontFamily: T.font, fontSize: 18, color: isProfit ? "#4CAF50" : "#FF6B6B" }}>€{donnNet.toLocaleString()}</span>
+                  </div>
+                  {!isProfit && (
+                    <div style={{ fontFamily: T.font, fontSize: 10, color: "#FF6B6B", marginTop: 6 }}>
+                      ⚠ Below target of €{donnTarget.toLocaleString()} — need higher fees or more shows
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* CALCULATOR tab — Run 2 */}
+            {tab === "calc" && isRun2 && (
+              <div>
+                <div style={{ padding: "8px 10px", background: "#1a0a2a", border: `1px solid #7a6aaa`, marginBottom: 14 }}>
+                  <div style={{ fontFamily: T.font, fontSize: 11, color: "#7a6aaa", marginBottom: 4 }}>RUN 2 — Only viable if a festival covers the flights</div>
+                  <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{calc.note}</div>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 12px", marginBottom: 14 }}>
+                  {[
+                    { label: "Flight p.p. (€)", field: "flightPP", val: calc.flightPP },
+                    { label: "Club shows", field: "clubShows", val: calc.clubShows },
+                    { label: "Avg club fee (€)", field: "avgClubFee", val: calc.avgClubFee },
+                    { label: "Hotel p.n./room (€)", field: "hotelPerNight", val: calc.hotelPerNight },
+                    { label: "Local transport (€)", field: "localTransport", val: calc.localTransport },
+                    { label: "Donn target net (€)", field: "donnTarget", val: calc.donnTarget },
+                  ].map(({ label, field, val }) => (
+                    <div key={field}>
+                      <div style={{ ...label9, marginBottom: 3 }}>{label}</div>
+                      <input type="number" defaultValue={val || 0} style={{ ...inputStyle, width: "100%", boxSizing: "border-box" }}
+                        onBlur={e => updateCalc(c.name, field, parseFloat(e.target.value) || 0)} />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Festival anchor fee */}
+                <div style={{ marginBottom: 14, padding: "10px", background: T.bg2, border: `1px solid ${calc.festivalLocked ? "#4CAF50" : T.border2}` }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <div style={{ ...label9, color: calc.festivalLocked ? "#4CAF50" : "#7a6aaa" }}>FESTIVAL ANCHOR FEE</div>
+                    <button
+                      onClick={() => updateCalc(c.name, "festivalLocked", !calc.festivalLocked)}
+                      style={{ ...calc.festivalLocked ? btn : ghostBtn, fontSize: 9, padding: "3px 10px", background: calc.festivalLocked ? "#1a3a1a" : "transparent", borderColor: calc.festivalLocked ? "#4CAF50" : "#7a6aaa", color: calc.festivalLocked ? "#4CAF50" : "#7a6aaa" }}
+                    >
+                      {calc.festivalLocked ? "✓ LOCKED IN" : "LOCK IN"}
+                    </button>
+                  </div>
+                  <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted, marginBottom: 6 }}>Needed to break even: €{(calc.festivalFeeNeeded || 0).toLocaleString()}</div>
+                  <input type="number" defaultValue={calc.festivalFeeAgreed || ""} placeholder={String(calc.festivalFeeNeeded || 0)}
+                    style={{ ...inputStyle, width: "100%", boxSizing: "border-box" }}
+                    onBlur={e => updateCalc(c.name, "festivalFeeAgreed", parseFloat(e.target.value) || 0)}
+                  />
+                  {calc.festivalFeeAgreed && calc.festivalFeeAgreed < (calc.festivalFeeNeeded || 0) && (
+                    <div style={{ fontFamily: T.font, fontSize: 10, color: "#FF6B6B", marginTop: 4 }}>⚠ Below breakeven — will lose €{((calc.festivalFeeNeeded||0) - calc.festivalFeeAgreed).toLocaleString()}</div>
+                  )}
+                </div>
+
+                {/* Run 2 summary */}
+                <div style={{ borderTop: `1px solid ${T.border2}`, paddingTop: 12 }}>
+                  {[
+                    { label: `${calc.clubShows || 4} club shows × €${(calc.avgClubFee||0).toLocaleString()}`, value: `€${clubFees.toLocaleString()}` },
+                    { label: `Festival fee`, value: `€${festFee.toLocaleString()}` },
+                    { label: "Ivan 15%", value: `−€${run2Ivan.toLocaleString()}`, color: "#FF6B6B" },
+                    { label: "Trip cost", value: `−€${(calc.tripCost||0).toLocaleString()}`, color: "#FF6B6B" },
+                  ].map(({ label, value, color }) => (
+                    <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${T.border}` }}>
+                      <span style={{ fontFamily: T.font, fontSize: 11, color: T.muted }}>{label}</span>
+                      <span style={{ fontFamily: T.font, fontSize: 11, color: color || T.text }}>{value}</span>
+                    </div>
+                  ))}
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 8px 4px", background: run2Net >= (calc.donnTarget||2000) ? "#0a1a0a" : "#1a0a0a", marginTop: 4 }}>
+                    <span style={{ fontFamily: T.font, fontSize: 13, color: run2Net >= (calc.donnTarget||2000) ? "#4CAF50" : "#FF6B6B" }}>DONN TAKES HOME</span>
+                    <span style={{ fontFamily: T.font, fontSize: 18, color: run2Net >= (calc.donnTarget||2000) ? "#4CAF50" : "#FF6B6B" }}>€{run2Net.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const totalRun1Pitched = run1.reduce((sum, c) => sum + c.orgs.filter(o => o.pitched).length, 0);
+  const totalRun1Booked = run1.filter(c => c.status === "Booked").length;
+
+  return (
+    <div>
+      {/* RUN 1 */}
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12, flexWrap: "wrap" }}>
+          <p style={{ ...label9, margin: 0, color: T.accent }}>RUN 1 — Club Circuit 2027 ({run1.length} countries)</p>
+          <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{totalRun1Pitched} pitched · {totalRun1Booked} booked</span>
+        </div>
+        {run1.map(renderCountryCard)}
+      </div>
+
+      {/* RUN 2 */}
+      <div>
+        <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12, flexWrap: "wrap" }}>
+          <p style={{ ...label9, margin: 0, color: "#7a6aaa" }}>RUN 2 — Long Haul / Festival Anchor ({run2.length} countries)</p>
+          <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>Needs festival fee to cover flights</span>
+        </div>
+        {run2.map(renderCountryCard)}
+      </div>
+    </div>
+  );
+}
+
 // ─── Agencies view ────────────────────────────────────────────────────────────
 
 function AgenciesView() {
@@ -1597,7 +2049,7 @@ function AgenciesView() {
 
 type View =
   | "Timeline" | "Dashboard"
-  | "Checklist" | "Festivals" | "Showcases"
+  | "Checklist" | "Festivals" | "WorldTour"
   | "Outreach" | "Marketing"
   | "Calculator"
   | "Agencies";
@@ -1618,7 +2070,7 @@ export default function ManagementSection({
       {active === "Timeline" && <TimelineView />}
       {active === "Checklist" && <ChecklistView />}
       {active === "Festivals" && <FestivalsView />}
-      {active === "Showcases" && <ShowcasesView />}
+      {active === "WorldTour" && <WorldTourView />}
       {active === "Outreach" && <OutreachView />}
       {active === "Marketing" && <MarketingView />}
       {active === "Calculator" && <CalculatorView />}
