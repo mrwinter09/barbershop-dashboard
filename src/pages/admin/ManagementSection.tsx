@@ -749,100 +749,6 @@ function FestivalsView() {
   );
 }
 
-// ─── Showcases view ───────────────────────────────────────────────────────────
-
-function ShowcasesView() {
-  const { data, loading, save } = useSection<Showcase[]>("showcases");
-  const [items, setItems] = useState<Showcase[]>([]);
-  const [expanded, setExpanded] = useState<number | null>(null);
-
-  useEffect(() => { if (data) setItems(data); }, [data]);
-
-  const updateStatus = (id: number, status: string) => {
-    const updated = items.map(s => s.id === id ? { ...s, status } : s);
-    setItems(updated);
-    save(updated);
-  };
-
-  if (loading || !items.length) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
-
-  const statuses = ["Not started", "Research", "Applied", "Confirmed", "Rejected"];
-  const deadlineUrgent = (dl: string) => {
-    if (!dl) return false;
-    const d = new Date(dl);
-    const now = new Date();
-    return (d.getTime() - now.getTime()) < 90 * 24 * 60 * 60 * 1000;
-  };
-
-  return (
-    <div>
-      <p style={{ ...label9, marginBottom: 16 }}>Industry Showcases ({items.length}) — click to expand</p>
-      {items.map(s => {
-        const isOpen = expanded === s.id;
-        const urgent = deadlineUrgent(s.deadline);
-        return (
-          <div key={s.id} style={{ ...card, marginBottom: 10 }}>
-            <div
-              onClick={() => setExpanded(isOpen ? null : s.id)}
-              style={{ cursor: "pointer" }}
-            >
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "flex-start" }}>
-                <div style={{ flex: "1 1 200px", minWidth: 0 }}>
-                  <div style={{ fontFamily: T.font, fontSize: 13, color: T.text, marginBottom: 4 }}>{s.name}</div>
-                  <div style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>{s.city}, {s.country} · {s.dates2027}</div>
-                  <div style={{
-                    fontFamily: T.font, fontSize: 10, marginTop: 4,
-                    color: urgent ? "#FFD700" : T.muted,
-                  }}>{s.deadlineNote}</div>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", flexShrink: 0 }}>
-                  <select
-                    value={s.status}
-                    onChange={e => { e.stopPropagation(); updateStatus(s.id, e.target.value); }}
-                    onClick={e => e.stopPropagation()}
-                    style={{ ...inputStyle, fontSize: 10 }}
-                  >
-                    {statuses.map(st => <option key={st} value={st}>{st}</option>)}
-                  </select>
-                  <span style={{ fontFamily: T.font, fontSize: 10, color: T.muted }}>
-                    {isOpen ? "▲ collapse" : "▼ details"}
-                  </span>
-                </div>
-              </div>
-            </div>
-            {isOpen && (
-              <div style={{ marginTop: 14, borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
-                <div style={{ marginBottom: 12 }}>
-                  <div style={{ ...label9, marginBottom: 4, color: T.accent }}>APPLICATION</div>
-                  <div style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{s.artistApplication}</div>
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <div style={{ ...label9, marginBottom: 4, color: "#4CAF50" }}>WHY IT MATTERS</div>
-                  <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.7 }}>{s.whyItMatters}</div>
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <div style={{ ...label9, marginBottom: 4, color: "#FFD700" }}>RECOMMENDED MOVE</div>
-                  <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.7 }}>{s.recommendedMove}</div>
-                </div>
-                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                  <div>
-                    <span style={{ ...label9, marginRight: 6 }}>Source:</span>
-                    <span style={{ fontFamily: T.font, fontSize: 11, color: T.muted }}>{s.source}</span>
-                  </div>
-                  <div>
-                    <span style={{ ...label9, marginRight: 6 }}>Website:</span>
-                    <span style={{ fontFamily: T.font, fontSize: 11, color: T.accent }}>{s.website}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 // ─── Outreach view ────────────────────────────────────────────────────────────
 
 function OutreachView() {
@@ -1493,7 +1399,7 @@ interface TourCalc {
   // Run 1
   window?: string; days?: string[]; flightPP?: number; persons?: number;
   hotelPerNight?: number; rooms?: number; nights?: number; localTransport?: number;
-  tripCost?: number; avgFee?: number; feeSource?: string; donnTarget?: number; showsNeeded?: number;
+  tripCost?: number; promotersPay?: number; avgFee?: number; feeSource?: string; donnTarget?: number; showsNeeded?: number;
   lockedFees?: number[]; counterOffers?: Record<string, number>;
   // Run 2
   festivalAnchor?: string; note?: string; avgClubFee?: number; clubShows?: number;
