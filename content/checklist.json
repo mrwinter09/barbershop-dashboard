@@ -5,7 +5,7 @@
     "task": "Define artist name + brand identity",
     "owner": "Donn",
     "due": "2026-10",
-    "done": false
+    "done": true
   },
   {
     "id": 2,
@@ -13,7 +13,7 @@
     "task": "Register social handles (IG, TikTok, SoundCloud, YouTube)",
     "owner": "Donn",
     "due": "2026-10",
-    "done": false
+    "done": true
   },
   {
     "id": 3,
@@ -29,7 +29,7 @@
     "task": "Create EPK (bio, photo, links, music)",
     "owner": "Donn",
     "due": "2026-11",
-    "done": false
+    "done": true
   },
   {
     "id": 5,
