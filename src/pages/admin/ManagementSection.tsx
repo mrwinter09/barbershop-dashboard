@@ -501,6 +501,12 @@ function FestivalsView() {
     save(updated);
   };
 
+  const updateField = (id: string, field: string, value: string) => {
+    const updated = items.map(f => f.id === id ? { ...f, [field]: value } : f);
+    setItems(updated);
+    save(updated);
+  };
+
   const handleXlsxImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -569,7 +575,7 @@ function FestivalsView() {
 
   if (loading || !items.length) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
 
-  const statuses = ["Not started", "Pitched", "Confirmed", "Rejected", "On hold"];
+  const statuses = ["Not started", "Researching", "Pitched", "Confirmed", "Rejected", "On hold"];
   const rejectedCount = items.filter(f => f.status === "Rejected").length;
 
   const filtered = items.filter(f => {
@@ -660,26 +666,49 @@ function FestivalsView() {
                             <div><span style={{ ...label9, marginRight: 4 }}>Entry:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{f.entryRoute}</span></div>
                             <div><span style={{ ...label9, marginRight: 4 }}>Target:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{f.target}</span></div>
                             <div><span style={{ ...label9, marginRight: 4 }}>2027 Dates:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.text }}>{f.dates2027 || "TBC"}</span></div>
-                            <div><span style={{ ...label9, marginRight: 4 }}>Website:</span><span style={{ fontFamily: T.font, fontSize: 11, color: T.accent }}>{f.website}</span></div>
                           </div>
-                          {f.notes && (
-                            <div style={{ marginBottom: 8 }}>
-                              <div style={{ ...label9, marginBottom: 4 }}>NOTES</div>
-                              <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.6 }}>{f.notes}</div>
-                            </div>
-                          )}
                           {f.pitchRoute && (
-                            <div>
+                            <div style={{ marginBottom: 12 }}>
                               <div style={{ ...label9, marginBottom: 4, color: T.accent }}>HOW TO PITCH</div>
                               <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{f.pitchRoute}</div>
                             </div>
                           )}
-                          {f.contact && (
-                            <div style={{ marginTop: 8 }}>
-                              <span style={{ ...label9, marginRight: 4 }}>Contact:</span>
-                              <span style={{ fontFamily: T.font, fontSize: 11, color: T.accent }}>{f.contact}</span>
+                          {/* ── Editable contact section ── */}
+                          <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 10, marginTop: 4 }}>
+                            <div style={{ ...label9, marginBottom: 8, color: "#7a6aaa" }}>CONTACT INFO</div>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 12px", marginBottom: 8 }}>
+                              <div>
+                                <div style={{ ...label9, marginBottom: 3 }}>Website / URL</div>
+                                <input
+                                  style={{ ...inputStyle, width: "100%", boxSizing: "border-box" }}
+                                  defaultValue={f.website}
+                                  placeholder="https://…"
+                                  onBlur={e => updateField(f.id, "website", e.target.value)}
+                                  onClick={e => e.stopPropagation()}
+                                />
+                              </div>
+                              <div>
+                                <div style={{ ...label9, marginBottom: 3 }}>Email / Web contact</div>
+                                <input
+                                  style={{ ...inputStyle, width: "100%", boxSizing: "border-box" }}
+                                  defaultValue={f.contact}
+                                  placeholder="name@festival.com or form URL"
+                                  onBlur={e => updateField(f.id, "contact", e.target.value)}
+                                  onClick={e => e.stopPropagation()}
+                                />
+                              </div>
                             </div>
-                          )}
+                            <div>
+                              <div style={{ ...label9, marginBottom: 3 }}>My notes</div>
+                              <textarea
+                                style={{ ...inputStyle, width: "100%", boxSizing: "border-box", minHeight: 64, resize: "vertical", lineHeight: 1.6 }}
+                                defaultValue={f.notes}
+                                placeholder="Add notes, research, context…"
+                                onBlur={e => updateField(f.id, "notes", e.target.value)}
+                                onClick={e => e.stopPropagation()}
+                              />
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
