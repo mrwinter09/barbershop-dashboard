@@ -7,13 +7,6 @@ import { useState, useEffect, useCallback } from "react";
 interface ChecklistItem {
   id: number; phase: string; task: string; owner: string; due: string; done: boolean;
 }
-interface Showcase {
-  id: number; name: string; city: string; country: string;
-  dates2027: string; artistApplication: string;
-  deadline: string; deadlineNote: string;
-  whyItMatters: string; recommendedMove: string;
-  status: string; source: string; website: string;
-}
 interface MarketingData {
   pillars: { id: number; pillar: string; description: string; formats: string[]; frequency: string }[];
   collabs: { id: number; target: string; type: string; platform: string; priority: string; status: string }[];
