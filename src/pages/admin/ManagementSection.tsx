@@ -490,6 +490,8 @@ function FestivalsView() {
   const [filter, setFilter] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"board" | "list">("list");
+  const [hideRejected, setHideRejected] = useState(true);
+  const [importMsg, setImportMsg] = useState("");
 
   useEffect(() => { if (data) setItems(data); }, [data]);
 
@@ -499,24 +501,94 @@ function FestivalsView() {
     save(updated);
   };
 
+  const handleXlsxImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportMsg("Reading file…");
+    const ab = await file.arrayBuffer();
+    try {
+      const { read, utils } = await import("xlsx");
+      const wb = read(ab, { type: "array" });
+      const sheetName = wb.SheetNames.find(n => n.toLowerCase().includes("new market")) || wb.SheetNames[0];
+      const ws = wb.Sheets[sheetName];
+      const rows: Record<string, string>[] = utils.sheet_to_json(ws, { header: "A", defval: "" });
+      // skip title rows — find header row (contains "Country" in col A)
+      const headerIdx = rows.findIndex(r => String(r["A"] || "").toLowerCase() === "country");
+      const dataRows = headerIdx >= 0 ? rows.slice(headerIdx + 1) : rows.slice(3);
+      const skipWords = ["count by priority", "high", "medium", "long shot", "research", "multiple"];
+      const validRows = dataRows.filter(r => {
+        const a = String(r["A"] || "").trim();
+        const c = String(r["C"] || "").trim();
+        return a && c && !skipWords.includes(a.toLowerCase());
+      });
+      const countryMap: Record<string, string> = {
+        Albania:"AL",Malta:"MT",Greece:"GR",Spain:"ES",UAE:"AE",Japan:"JP",Thailand:"TH",
+        Mexico:"MX","China / HK":"HK",China:"CN",Morocco:"MA",Portugal:"PT",UK:"UK",
+        Egypt:"EG",Turkey:"TR",Indonesia:"ID",Singapore:"SG",India:"IN",Colombia:"CO",
+        Australia:"AU",Kenya:"KE",Germany:"DE",USA:"US",Belgium:"BE",Ireland:"IE",
+        Poland:"PL",Switzerland:"CH",Canada:"CA",Hungary:"HU",Cyprus:"CY",Romania:"RO",Multiple:"INT",
+      };
+      const existingIds = items.map(f => f.id).filter(id => /^f\d+$/.test(id));
+      let lastNum = existingIds.length ? Math.max(...existingIds.map(id => parseInt(id.slice(1)))) : 70;
+      const newEntries = validRows.map((row, i) => {
+        const country = String(row["A"] || "").trim();
+        const city = String(row["B"] || "").trim();
+        const name = String(row["C"] || "").trim();
+        const notesRaw = String(row["D"] || "").trim();
+        const timing = String(row["E"] || "").trim();
+        const entry = String(row["F"] || "").trim();
+        const practical = String(row["G"] || "").trim();
+        const priority = String(row["H"] || "").trim();
+        const nextAction = String(row["K"] || "").trim();
+        const source = String(row["L"] || "").trim();
+        const cc = countryMap[country] || country.slice(0, 2).toUpperCase();
+        const notes = practical ? `${notesRaw} | Practical: ${practical}` : notesRaw;
+        return {
+          id: `f${lastNum + 1 + i}`,
+          name, city, country: cc, region: "New Market",
+          genre: "Afro-electronic / amapiano", tier: "D",
+          timing, dates2027: "TBC", pitchBy: "",
+          entryRoute: entry, target: entry,
+          status: "Not started", website: "", contact: "",
+          lastContact: "", nextAction, notes, source,
+          pitchRoute: nextAction, priority,
+        };
+      });
+      // deduplicate by name
+      const existingNames = new Set(items.map(f => f.name.toLowerCase()));
+      const fresh = newEntries.filter(e => !existingNames.has(e.name.toLowerCase()));
+      const merged = [...items, ...fresh];
+      setItems(merged);
+      save(merged);
+      setImportMsg(`✓ Added ${fresh.length} new entries (${newEntries.length - fresh.length} duplicates skipped)`);
+    } catch (err) {
+      setImportMsg("Error: could not read file. Make sure it's a .xlsx file.");
+    }
+    e.target.value = "";
+  };
+
   if (loading || !items.length) return <div style={{ fontFamily: T.font, fontSize: 12, color: T.muted }}>Loading...</div>;
 
   const statuses = ["Not started", "Pitched", "Confirmed", "Rejected", "On hold"];
-  const filtered = filter
-    ? items.filter(f =>
-        f.name.toLowerCase().includes(filter.toLowerCase()) ||
-        f.country.toLowerCase().includes(filter.toLowerCase()) ||
-        f.tier.toLowerCase().includes(filter.toLowerCase()) ||
-        f.region.toLowerCase().includes(filter.toLowerCase())
-      )
-    : items;
+  const rejectedCount = items.filter(f => f.status === "Rejected").length;
 
-  const tierOrder: Record<string, number> = { A: 0, B: 1, C: 2 };
+  const filtered = items.filter(f => {
+    if (hideRejected && f.status === "Rejected") return false;
+    if (!filter) return true;
+    return (
+      f.name.toLowerCase().includes(filter.toLowerCase()) ||
+      f.country.toLowerCase().includes(filter.toLowerCase()) ||
+      f.tier.toLowerCase().includes(filter.toLowerCase()) ||
+      f.region.toLowerCase().includes(filter.toLowerCase())
+    );
+  });
+
+  const tierOrder: Record<string, number> = { S: 0, A: 1, B: 2, C: 3, D: 4 };
   const sorted = [...filtered].sort((a, b) => (tierOrder[a.tier] ?? 9) - (tierOrder[b.tier] ?? 9));
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
         <p style={{ ...label9, margin: 0 }}>Festival Pipeline ({items.length})</p>
         <input
           style={{ ...inputStyle, width: 200 }}
@@ -524,6 +596,13 @@ function FestivalsView() {
           value={filter}
           onChange={e => setFilter(e.target.value)}
         />
+        <button onClick={() => setHideRejected(h => !h)} style={{ ...ghostBtn, fontSize: 10, padding: "4px 10px", color: hideRejected ? T.muted : T.accent, borderColor: hideRejected ? T.border : T.accent }}>
+          {hideRejected ? `Show rejected (${rejectedCount})` : "Hide rejected"}
+        </button>
+        <label style={{ ...ghostBtn, fontSize: 10, padding: "4px 10px", cursor: "pointer", display: "inline-block" }}>
+          ↑ Import XLSX
+          <input type="file" accept=".xlsx" style={{ display: "none" }} onChange={handleXlsxImport} />
+        </label>
         <div style={{ display: "flex", gap: 0, marginLeft: "auto" }}>
           {(["list", "board"] as const).map(m => (
             <button key={m} onClick={() => setViewMode(m)} style={{
@@ -535,16 +614,19 @@ function FestivalsView() {
           ))}
         </div>
       </div>
+      {importMsg && <p style={{ fontFamily: T.font, fontSize: 11, color: T.accent, marginBottom: 8 }}>{importMsg}</p>}
 
       {viewMode === "list" ? (
         <div>
-          {["A", "B", "C"].map(tier => {
+          {["S", "A", "B", "C", "D"].map(tier => {
             const tierItems = sorted.filter(f => f.tier === tier);
             if (!tierItems.length) return null;
+            const tierColor = tier === "A" ? "#4CAF50" : tier === "B" ? "#FFD700" : tier === "S" ? T.accent : tier === "D" ? "#7a6aaa" : T.muted;
+            const tierLabel = tier === "D" ? `TIER D — New Markets (${tierItems.length})` : tier === "S" ? `TIER S — Priority (${tierItems.length})` : `TIER ${tier} — ${tierItems.length} festivals`;
             return (
               <div key={tier} style={{ marginBottom: 20 }}>
-                <div style={{ ...label9, marginBottom: 8, color: tier === "A" ? "#4CAF50" : tier === "B" ? "#FFD700" : T.muted }}>
-                  TIER {tier} — {tierItems.length} festivals
+                <div style={{ ...label9, marginBottom: 8, color: tierColor }}>
+                  {tierLabel}
                 </div>
                 {tierItems.map(f => {
                   const isOpen = expandedId === f.id;
@@ -610,7 +692,7 @@ function FestivalsView() {
       ) : (
         /* Board view — kanban by status */
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
-          {statuses.slice(0, 4).map(col => {
+          {statuses.map(col => {
             const colItems = sorted.filter(f => f.status === col);
             return (
               <div key={col}>
