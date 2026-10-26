@@ -28,7 +28,6 @@ export default function Footer() {
             {[
               { to: "/video", label: "Video" },
               { to: "/tour", label: "Tour" },
-              { to: "/press", label: "Press & EPK" },
               { to: "/booking", label: "Bookings" },
             ].map(l => (
               <Link key={l.to} to={l.to} style={{ display: "block", textDecoration: "none", color: "#5A3A32", fontSize: 14, marginBottom: 10, transition: "color 0.2s" }}

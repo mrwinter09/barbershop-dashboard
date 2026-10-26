@@ -748,9 +748,9 @@ function OutreachView() {
 
 Hi [Name],
 
-My name is Ivan, I manage DJ Donn Stone — a Rotterdam-based Afro house & Afro tech DJ with a growing profile in the NL scene.
+My name is Ivan, I manage DJ Donn Stone — a Rotterdam-based Afro-electronic DJ with a growing profile in the NL scene.
 
-Donn brings a high-energy Afro house sound rooted in SA culture, built for festival floors and club nights. He's currently booking for 2027.
+Donn brings a high-energy Afro-electronic sound rooted in SA culture, built for festival floors and club nights. He's currently booking for 2027.
 
 I'd love to explore whether Donn could be a fit for [Event] 2027. Would you be open to a quick call or email exchange? I'll keep it brief.
 
